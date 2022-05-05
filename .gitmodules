@@ -1,0 +1,6 @@
+[submodule "app"]
+	path = app
+	url = https://github.com/nyarla/p5-Kalaclista
+[submodule "content"]
+	path = content
+	url = https://github.com/nyarla/the.kalaclista.com-content
