@@ -434,6 +434,21 @@ let
           "Perl extension for creating asynchronous forking queue processing applications";
       };
     };
+    PlackMiddlewareDirIndex = buildPerlPackage {
+      pname = "Plack-Middleware-DirIndex";
+      version = "1.01";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/D/DA/DAVECROSS/Plack-Middleware-DirIndex-1.01.tar.gz";
+        sha256 =
+          "cb12eb9cbc079ada8908be7eb3508b2625e1596035e7e6ec58e5df6ca5c7413d";
+      };
+      propagatedBuildInputs = [ Plack ];
+      meta = {
+        description = "Append an index file to request PATH's ending with a /";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     ModuleBuildPluggable = buildPerlModule {
       pname = "Module-Build-Pluggable";
       version = "0.10";
@@ -517,6 +532,7 @@ in with modules; [
   PathTiny
   PathTinyGlob
   Plack
+  PlackMiddlewareDirIndex
   ProcWait3
   Proclet
   RoleTiny
