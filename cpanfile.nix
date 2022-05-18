@@ -38,6 +38,51 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    ParallelScoreboard = buildPerlPackage {
+      pname = "Parallel-Scoreboard";
+      version = "0.08";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/K/KA/KAZUHO/Parallel-Scoreboard-0.08.tar.gz";
+        sha256 =
+          "d0b0718e0840bd8ab0c9aac2ea8cafc98de68a67aebb7bc267a5d5b1d2b95951";
+      };
+      propagatedBuildInputs = [ ClassAccessorLite HTMLParser JSON SubUplevel ];
+      meta = {
+        description = "A scoreboard for monitoring status of many workers";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    LogMinimal = buildPerlModule {
+      pname = "Log-Minimal";
+      version = "0.19";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/K/KA/KAZEBURO/Log-Minimal-0.19.tar.gz";
+        sha256 =
+          "e44b59041e709b54df1053d3eac1412a0648d5305ef3b4cd39590a721e525f68";
+      };
+      meta = {
+        homepage = "https://github.com/kazeburo/Log-Minimal";
+        description = "Minimal but customizable logger";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    FilesysNotifySimple = buildPerlPackage {
+      pname = "Filesys-Notify-Simple";
+      version = "0.14";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/M/MI/MIYAGAWA/Filesys-Notify-Simple-0.14.tar.gz";
+        sha256 =
+          "1fda712d4ba5e1868159ed35f6f8efbfae9d435d6376f5606d533bcb080555a4";
+      };
+      buildInputs = [ TestSharedFork ];
+      meta = {
+        homepage = "https://github.com/miyagawa/Filesys-Notify-Simple";
+        description = "Simple and dumb file system watcher";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     indirect = buildPerlPackage {
       pname = "indirect";
       version = "0.39";
@@ -100,6 +145,21 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    TimeCrontab = buildPerlModule {
+      pname = "Time-Crontab";
+      version = "0.04";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/K/KA/KAZEBURO/Time-Crontab-0.04.tar.gz";
+        sha256 =
+          "b5dc7bb2c30424b41144523bdc8c90b904efedb12c736624c0c749a36395ba6f";
+      };
+      propagatedBuildInputs = [ ListMoreUtils SetCrontab ];
+      meta = {
+        homepage = "https://github.com/kazeburo/Time-Crontab";
+        description = "Parser for crontab date and time field";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     MooXTypesMooseLike = buildPerlPackage {
       pname = "MooX-Types-MooseLike";
       version = "0.29";
@@ -116,6 +176,48 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    Proclet = buildPerlModule {
+      pname = "Proclet";
+      version = "0.35";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/K/KA/KAZEBURO/Proclet-0.35.tar.gz";
+        sha256 =
+          "185a3075598c1810f7fee3fcd9ce39e22d508decd7946ce2a29af786479f928f";
+      };
+      buildInputs = [ ListMoreUtils ParallelScoreboard TestRequires ];
+      propagatedBuildInputs = [
+        DataValidator
+        FileWhich
+        GetoptCompactWithCmd
+        LogMinimal
+        Mouse
+        ParallelPrefork
+        StringShellQuote
+        TimeCrontab
+        YAMLLibYAML
+      ];
+      meta = {
+        homepage = "https://github.com/kazeburo/Proclet";
+        description = "Minimalistic Supervisor";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    Appwatcher = buildPerlModule {
+      pname = "App-watcher";
+      version = "0.13";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/T/TO/TOKUHIROM/App-watcher-0.13.tar.gz";
+        sha256 =
+          "e0d5ab7ea586ebbc426e78f836d0614f9b8a216d5704ad2fb26e8773ef1f9512";
+      };
+      buildInputs = [ ModuleBuildTiny ];
+      propagatedBuildInputs = [ FilesysNotifySimple ];
+      meta = {
+        homepage = "https://github.com/tokuhirom/App-watcher";
+        description = "Watch the file updates";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     Carp = buildPerlPackage {
       pname = "Carp";
       version = "1.50";
@@ -126,6 +228,22 @@ let
       };
       meta = {
         description = "Alternative warn and die for modules";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    DataValidator = buildPerlModule {
+      pname = "Data-Validator";
+      version = "1.07";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/G/GF/GFUJI/Data-Validator-1.07.tar.gz";
+        sha256 =
+          "a1f96420e93c0f77c1faeb1954701580288a5bffed57a1e434e5811965500ff1";
+      };
+      buildInputs = [ TestRequires ];
+      propagatedBuildInputs = [ Mouse ];
+      meta = {
+        homepage = "https://github.com/gfx/p5-Data-Validator";
+        description = "Rule based validator on type constraint system";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -144,6 +262,39 @@ let
         license = lib.licenses.asl20;
       };
     };
+    GetoptCompactWithCmd = buildPerlModule {
+      pname = "Getopt-Compact-WithCmd";
+      version = "0.22";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/X/XA/XAICRON/Getopt-Compact-WithCmd-0.22.tar.gz";
+        sha256 =
+          "5b66f8f55c4ed5397f9042f9137218ab4b53f99f8701cf3ab24f86810beb89b4";
+      };
+      buildInputs = [ TestOutput TestRequires ];
+      propagatedBuildInputs = [ TextTable ];
+      meta = {
+        homepage = "https://github.com/xaicron/p5-Getopt-Compact-WithCmd";
+        description = "Sub-command friendly, like Getopt::Compact";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    ModuleBuildTiny = buildPerlModule {
+      pname = "Module-Build-Tiny";
+      version = "0.039";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/L/LE/LEONT/Module-Build-Tiny-0.039.tar.gz";
+        sha256 =
+          "7d580ff6ace0cbe555bf36b86dc8ea232581530cbeaaea09bccb57b55797f11c";
+      };
+      propagatedBuildInputs =
+        [ ExtUtilsConfig ExtUtilsHelpers ExtUtilsInstallPaths ];
+      meta = {
+        description = "A tiny replacement for Module::Build";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     barewordfilehandles = buildPerlPackage {
       pname = "bareword-filehandles";
       version = "0.007";
@@ -158,6 +309,24 @@ let
       meta = {
         homepage = "https://github.com/ilmari/bareword-filehandles";
         description = "Disables bareword filehandles";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    FileCopyRecursiveReduced = buildPerlPackage {
+      pname = "File-Copy-Recursive-Reduced";
+      version = "0.006";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/J/JK/JKEENAN/File-Copy-Recursive-Reduced-0.006.tar.gz";
+        sha256 =
+          "e618f993a69f4355205c58fffff6982609f28b47f646ec6e244e41b5c6707e2c";
+      };
+      buildInputs = [ CaptureTiny PathTiny ];
+      meta = {
+        homepage =
+          "http://thenceforward.net/perl/modules/File-Copy-Recursive-Reduced/";
+        description =
+          "Recursive copying of files and directories within Perl 5 toolchain";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -227,6 +396,16 @@ let
         license = lib.licenses.asl20;
       };
     };
+    SetCrontab = buildPerlPackage {
+      pname = "Set-Crontab";
+      version = "1.03";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/A/AM/AMS/Set-Crontab-1.03.tar.gz";
+        sha256 =
+          "47e294e88d2d139e2d06dfa544b91a3cc5656a3a6dd15594dc764759fbaa86da";
+      };
+      meta = { description = "Expand crontab(5)-style integer lists"; };
+    };
     HTML5DOM = buildPerlPackage {
       pname = "HTML5-DOM";
       version = "1.25";
@@ -274,6 +453,7 @@ let
     };
   };
 in with modules; [
+  Appwatcher
   BCOW
   BHooksOPCheck
   CaptureTiny
@@ -282,39 +462,68 @@ in with modules; [
   ClassMethodModifiers
   Clone
   CommonMark
+  CwdGuard
   DataOptList
   DataPerl
+  DataValidator
+  DevelCheckCompiler
   Encode
   EncodeDetect
+  EncodeLocale
   ExporterTiny
+  ExtUtilsConfig
   ExtUtilsDepends
+  ExtUtilsHelpers
+  ExtUtilsInstallPaths
+  FileCopyRecursiveReduced
   FileWhich
   Filepushd
+  FilesysNotifySimple
+  GetoptCompactWithCmd
   HTML5DOM
   HTMLEscape
+  HTMLParser
+  HTMLTagset
+  HTTPDate
+  HTTPMessage
   HTTPTinyish
+  IOHTML
   IPCRun3
+  IPCSignal
   ImageScale
   Importer
+  JSON
+  LWPMediaTypes
   ListLazy
   ListMoreUtils
   ListMoreUtilsXS
+  LogMinimal
   MockConfig
   ModuleBuild
   ModuleBuildPluggable
   ModuleBuildPluggablePPPort
+  ModuleBuildTiny
   ModuleCPANfile
   ModulePluggable
   ModuleRuntime
   Moo
   MooXHandlesVia
   MooXTypesMooseLike
+  Mouse
   ParallelForkBossWorkerAsync
+  ParallelPrefork
+  ParallelScoreboard
   ParamsUtil
   PathTiny
   PathTinyGlob
+  Plack
+  ProcWait3
+  Proclet
   RoleTiny
   ScopeGuard
+  SetCrontab
+  SignalMask
+  StringShellQuote
   SubInfo
   SubInstall
   SubQuote
@@ -331,10 +540,15 @@ in with modules; [
   TestRequires
   TestSharedFork
   TestWarn
+  TextAligner
+  TextTable
+  TimeCrontab
   TimeMoment
+  TimeDate
   TryTiny
   URI
   XMLLibXML
+  YAMLLibYAML
   YAMLTiny
   barewordfilehandles
   indirect
