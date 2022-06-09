@@ -247,6 +247,20 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+
+    JSONTiny = buildPerlPackage {
+      pname = "JSON-Tiny";
+      version = "0.58";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/D/DA/DAVIDO/JSON-Tiny-0.58.tar.gz";
+        sha256 =
+          "ad42e9137f5148df7fdb22aa52186b306032977bcd70d49f44a288070e4f0f23";
+      };
+      meta = {
+        description = "Minimalistic JSON. No dependencies";
+        license = lib.licenses.artistic2;
+      };
+    };
     ListMoreUtilsXS = buildPerlPackage {
       pname = "List-MoreUtils-XS";
       version = "0.430";
@@ -508,6 +522,7 @@ in with modules; [
   ImageScale
   Importer
   JSON
+  JSONTiny
   LWPMediaTypes
   ListLazy
   ListMoreUtils

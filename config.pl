@@ -4,9 +4,23 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::Directory;
+use FindBin;
+use Path::Tiny;
 
-my $dirs = Kalaclista::Directory->new(
+use Kalaclista::Directory;
+use Kalaclista::Page::Archive;
+
+my $root = path($FindBin::Bin);
+do {
+  if ( $root->child('app')->realpath->is_dir ) {
+    goto NEXT;
+  }
+} while ( defined( $root = $root->parent ) );
+
+NEXT:
+
+my $dirs = Kalaclista::Directory->instance(
+  root     => $root,
   dist     => 'dist',
   data     => 'content/data',
   assets   => 'content/assets',
@@ -15,10 +29,40 @@ my $dirs = Kalaclista::Directory->new(
   build    => 'resources',
 );
 
-$dirs->rootdir( $dirs->rootdir->parent );
+my $data = {
+  global => {
+    label   => 'カラクリスタ',
+    title   => 'カラクリスタ',
+    summary => '『輝かしい青春』なんて失かった人の Web サイトです。',
+  },
+
+  posts => {
+    label   => 'ブログ',
+    title   => 'カラクリスタ・ブログ',
+    summary => '『輝かしい青春』なんて失かった人のブログです。',
+    begin   => 2006,
+  },
+
+  echos => {
+    label   => '日記',
+    title   => 'カラクリスタ・エコーズ',
+    summary => '『輝かしい青春』なんて失かった人の日記です。',
+    begin   => 2018,
+  },
+
+  notes => {
+    label   => 'メモ帳',
+    title   => 'カラクリスタ・ノート',
+    summary => '『輝かしい青春』なんて失かった人のメモ帳です。',
+  },
+};
 
 my $functions = {
-  'postprocess.entry.meta' => sub {
+  'file.generate.templates' => sub {
+    return [ 'assets/stylesheet.css' => 'assets/stylesheet.pl', ];
+  },
+
+  'entry.postprocess.meta' => sub {
     my $meta = shift;
     my $path = $meta->href->path;
 
@@ -26,7 +70,7 @@ my $functions = {
     if ( $meta->slug ne q{} ) {
       my $slug = $meta->slug;
       utf8::decode($slug);
-      $path = qq(/notes/${slug});
+      $path = qq(/notes/${slug}/);
     }
 
     if ( $path =~ m{/index} ) {
@@ -42,61 +86,77 @@ my $functions = {
       $meta->type('pages');
     }
   },
+
+  'entries.archives.pages' => sub {
+    my @entries = @_;
+
+    my @pages;
+    my $template = $dirs->templates_dir->child("pages/archives.pl")->stringify;
+
+    my $current = (localtime)[5] + 1900;
+    for my $year ( 2006 .. $current ) {
+      for my $section (qw(posts echos)) {
+        if ( $section eq q{posts} || ( $section eq q{echos} && $year >= 2018 ) )
+        {
+          push @pages,
+            Kalaclista::Page::Archive->new(
+            out      => $dirs->distdir->child("${section}/${year}/index.html"),
+            template => $template,
+            vars     => {
+              home    => !!0,
+              section => $section,
+              kind    => 'archive',
+              year    => $year,
+              entries => [
+                grep { $_->date =~ m<^$year> && $_->type eq $section } @entries
+              ],
+              data => $data->{$section},
+            },
+            );
+
+          if ( $year eq $current ) {
+            push @pages,
+              Kalaclista::Page::Archive->new(
+              out      => $dirs->distdir->child("${section}/index.html"),
+              template => $template,
+              vars     => {
+                home    => !!1,
+                section => $section,
+                kind    => 'index',
+                year    => $year,
+                entries => [
+                  grep { $_->date =~ m<^$year> && $_->type eq $section }
+                    @entries
+                ],
+                data => $data->{$section},
+              },
+              );
+          }
+        }
+      }
+    }
+
+    push @pages,
+      Kalaclista::Page::Archive->new(
+      out      => $dirs->distdir->child("notes/index.html"),
+      template => $template,
+      vars     => {
+        home    => !!1,
+        section => 'notes',
+        kind    => 'index',
+        entries => [ grep { $_->type eq 'notes' } @entries ],
+        data    => $data->{'notes'},
+      },
+      );
+
+    return @pages;
+  },
 };
 
 my $config = {
   dirs      => $dirs,
   functions => $functions,
-
-  data => {
-    global => {
-      title   => 'カラクリスタ',
-      summary => '『輝かしい青春』なんて失かった人の Web サイトです',
-      links   => {
-        internals => [
-          { label => '運営方針', href => '/policies/' },
-          { label => '権利情報', href => '/licenses/' },
-          {
-            label => '検索',
-            href  =>
-'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0'
-          },
-        ],
-        externals => [
-          { label => 'GitHub',   href => 'https://github.com/nyarla/' },
-          { label => 'Zenn.dev', href => 'https://zenn.dev/nyarla' },
-          {
-            label => 'Twitter',
-            href  => 'https://twitter.com/kalaclista'
-          },
-          { label => 'note', href => 'https://note.com/kalaclista' },
-          {
-            label => 'Lapras',
-            href  => 'https://laspras.com/public/nyarla'
-          },
-          { label => 'トピア', href => 'https://user.topia.tv/5R9Y' },
-        ],
-      },
-    },
-
-    posts => {
-      label   => 'ブログ',
-      title   => 'カラクリスタ・ブログ',
-      summary => '『輝かしい青春』なんて失かった人のブログです',
-    },
-
-    echos => {
-      label   => '日記',
-      title   => 'カラクリスタ・エコーズ',
-      summary => '『輝かしい青春』なんて失かった人の日記です',
-    },
-
-    notes => {
-      label   => 'メモ帳',
-      title   => 'カラクリスタ・ノート',
-      summary => '『輝かしい青春』なんて失かった人のメモ帳です',
-    },
-  },
+  data      => $data,
 };
 
 $config;

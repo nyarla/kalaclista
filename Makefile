@@ -17,9 +17,15 @@ _gen_sitemap_xml: _gen_split_content
 _gen_archive: _gen_split_content
 	@$(MAKE) ACTION=generate-archive _gen
 
+_gen_assets:
+	@$(MAKE) ACTION=generate-by-template _gen
+	@cp -R content/static/* dist/
+	@cp -R templates/static/* dist/assets/
+
 generate: \
 	_gen_sitemap_xml \
-	_gen_archive
+	_gen_archive \
+	_gen_assets
 
 clean:
 	test ! -d dist || rm -rf dist
@@ -31,14 +37,15 @@ build:
 dev:
 	@$(MAKE) URL=http://nixos:1313 generate -j$(JOBS)
 
-test: clean release
-	prove t/*.t
+test: clean build
+	prove t/*/*.t
 
 .PHONY: shell serve
 
 shell:
 	@cp app/cpanfile.nix cpanfile.nix
 	@nix develop -c env SHELL=zsh sh -c 'env PERL5LIB=$(shell pwd)/app/lib:$$PERL5LIB zsh'
+	@pkill proclet || true
 
 serve:
-	proclet start	
+	proclet start --color	
