@@ -198,7 +198,7 @@ my $main = css(
 
           'time, span' => [
             display => 'block',
-            margin  => '50%',
+            width   => '50%',
           ],
 
           'span' => [
