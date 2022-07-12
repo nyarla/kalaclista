@@ -8,7 +8,9 @@ use FindBin;
 use Path::Tiny;
 
 use Kalaclista::Directory;
-use Kalaclista::Page::Archive;
+use Kalaclista::Page;
+
+require Kalaclista::Template;
 
 my $root = path($FindBin::Bin);
 do {
@@ -30,7 +32,7 @@ my $dirs = Kalaclista::Directory->instance(
 );
 
 my $data = {
-  global => {
+  pages => {
     label   => 'カラクリスタ',
     title   => 'カラクリスタ',
     summary => '『輝かしい青春』なんて失かった人の Web サイトです。',
@@ -57,12 +59,14 @@ my $data = {
   },
 };
 
-my $functions = {
-  'file.generate.templates' => sub {
-    return [ 'assets/stylesheet.css' => 'assets/stylesheet.pl', ];
-  },
+my @extensions = map {
+  Kalaclista::Template::load( $dirs->templates_dir->child($_)->stringify )
+  } qw(
+  extensions/images.pl
+  );
 
-  'entry.postprocess.meta' => sub {
+my $fixup = {
+  'Kalaclista::Entry::Meta' => sub {
     my $meta = shift;
     my $path = $meta->href->path;
 
@@ -70,6 +74,7 @@ my $functions = {
     if ( $meta->slug ne q{} ) {
       my $slug = $meta->slug;
       utf8::decode($slug);
+      $slug =~ s{ }{-}g;
       $path = qq(/notes/${slug}/);
     }
 
@@ -87,20 +92,66 @@ my $functions = {
     }
   },
 
-  'entries.archives.pages' => sub {
-    my @entries = @_;
+  'Kalaclista::Entry::Content' => sub {
+    my $content = shift;
+    my $meta    = shift;
+
+    # for my $extension (@extensions) {
+    #   my $transformer = $extension->($meta);
+    #   $content->tranform($transformer);
+    # }
+  },
+};
+
+my $call = {
+  fixup => sub {
+    my $object = shift;
+    my @args   = @_;
+    my $class  = ref $object;
+    if ( exists $fixup->{$class} ) {
+      $fixup->{$class}->( $object, @args );
+    }
+  },
+};
+
+my $query = {
+  assets => sub {
+    return ( 'assets/stylesheet.css' => 'assets/stylesheet.pl', );
+  },
+
+  permalink => sub {
+    my $content = shift;
+    my $meta    = shift;
+
+    my $path = uri_unescape( $meta->href->path );
+
+    my $page = Kalaclista::Page->new(
+      dist     => $dirs->distdir->child("${path}/index.html"),
+      template => $dirs->templates_dir->child('pages/permalink.pl')->stringify,
+      vars     => {
+        section => $meta->type,
+        data    => $data->{ $meta->type },
+        meta    => $meta,
+        content => $content,
+      },
+    );
+
+    return $page;
+  },
+
+  archives => sub {
+    my @entries  = @_;
+    my $template = $dirs->templates_dir->child('pages/archives.pl')->stringify;
+    my $current  = (localtime)[5] + 1900;
 
     my @pages;
-    my $template = $dirs->templates_dir->child("pages/archives.pl")->stringify;
 
-    my $current = (localtime)[5] + 1900;
     for my $year ( 2006 .. $current ) {
       for my $section (qw(posts echos)) {
-        if ( $section eq q{posts} || ( $section eq q{echos} && $year >= 2018 ) )
-        {
+        if ( $section eq q{posts} || $year >= 2018 ) {
           push @pages,
-            Kalaclista::Page::Archive->new(
-            out      => $dirs->distdir->child("${section}/${year}/index.html"),
+            Kalaclista::Page->new(
+            dist     => $dirs->distdir->child("${section}/${year}/index.html"),
             template => $template,
             vars     => {
               home    => !!0,
@@ -108,42 +159,41 @@ my $functions = {
               kind    => 'archive',
               year    => $year,
               entries => [
-                grep { $_->date =~ m<^$year> && $_->type eq $section } @entries
+                grep { $_->date =~ m(^$year) && $_->type eq $section } @entries
               ],
               data => $data->{$section},
-            },
+            }
             );
+        }
 
-          if ( $year eq $current ) {
-            push @pages,
-              Kalaclista::Page::Archive->new(
-              out      => $dirs->distdir->child("${section}/index.html"),
-              template => $template,
-              vars     => {
-                home    => !!1,
-                section => $section,
-                kind    => 'index',
-                year    => $year,
-                entries => [
-                  grep { $_->date =~ m<^$year> && $_->type eq $section }
-                    @entries
-                ],
-                data => $data->{$section},
-              },
-              );
-          }
+        if ( $current eq $year ) {
+          push @pages,
+            Kalaclista::Page->new(
+            dist     => $dirs->distdir->child("${section}/${year}/index.html"),
+            template => $template,
+            vars     => {
+              home    => !!1,
+              section => $section,
+              kind    => 'archive',
+              year    => $year,
+              entries => [
+                grep { $_->date =~ m(^$year) && $_->type eq $section } @entries
+              ],
+              data => $data->{$section},
+            }
+            );
         }
       }
     }
 
     push @pages,
-      Kalaclista::Page::Archive->new(
-      out      => $dirs->distdir->child("notes/index.html"),
+      Kalaclista::Page->new(
+      dist     => $dirs->distdir->child("notes/index.html"),
       template => $template,
       vars     => {
         home    => !!1,
-        section => 'notes',
-        kind    => 'index',
+        section => 'note',
+        kind    => 'archive',
         entries => [ grep { $_->type eq 'notes' } @entries ],
         data    => $data->{'notes'},
       },
@@ -154,9 +204,10 @@ my $functions = {
 };
 
 my $config = {
-  dirs      => $dirs,
-  functions => $functions,
-  data      => $data,
+  call  => $call,
+  data  => $data,
+  dirs  => $dirs,
+  query => $query,
 };
 
 $config;
