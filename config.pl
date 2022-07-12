@@ -169,7 +169,7 @@ my $query = {
         if ( $current eq $year ) {
           push @pages,
             Kalaclista::Page->new(
-            dist     => $dirs->distdir->child("${section}/${year}/index.html"),
+            dist     => $dirs->distdir->child("${section}/index.html"),
             template => $template,
             vars     => {
               home    => !!1,
@@ -192,7 +192,7 @@ my $query = {
       template => $template,
       vars     => {
         home    => !!1,
-        section => 'note',
+        section => 'notes',
         kind    => 'archive',
         entries => [ grep { $_->type eq 'notes' } @entries ],
         data    => $data->{'notes'},
