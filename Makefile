@@ -24,7 +24,7 @@ _gen_permalink: _gen_split_content
 	@$(MAKE) ACTION=generate-permalink _gen
 
 _gen_assets: _gen_resize_images
-	@$(MAKE) ACTION=generate-by-template _gen
+	@$(MAKE) ACTION=generate-assets _gen
 	@cp -R content/assets/* dist/
 	@cp -R templates/static/* dist/assets/
 
