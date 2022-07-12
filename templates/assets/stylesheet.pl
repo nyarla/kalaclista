@@ -62,235 +62,294 @@ sub linkColor {
       transition => 'color 0.125s',
     ],
 
-    '&:link, &:visited' => [
-      color => $from,
+    [qw( &:link &:visited )] => [
+      color => $from
     ],
 
-    '&:link:hover, &:visited:hover, &:link:active, &:visited:active' => [
-      color => $to,
-    ]
+    [qw( &:link:hover &:visited:hover &:link:active &:visited:active )] => [
+      color => $to
+    ],
   );
 }
 
-my $main = css(
-  [
-    # Global
-    # ======
-    'html, body' => [
-      backgroundColor => $base06,
-      color           => $base01,
-      minHeight       => '101%',
+my @global = (
+  [qw(html body)] => [
+    backgroundColor => $base06,
+    color           => $base01,
+    minHeight       => '101%',
 
-      fontSans,
+    fontSans,
+  ],
+
+  body => [
+    fontSize => '1.25em',
+  ],
+
+  a => [
+    linkColor( $base00, $base03 ), textDecoration => 'underline solid',
+  ],
+);
+
+my @container = (
+  [ '#global', '#profile', '#menu', '#copyright', '.entry' ] => [
+    margin   => '0 auto',
+    padding  => '0 1.5em',
+    maxWidth => '35em',
+  ],
+);
+
+my @widgets = (
+  '#global' => [
+    p => [
+      margin => '5em 0',
+
+      a => [ linkColor( $base00, $base03 ) ],
     ],
+  ],
 
-    'body' => [ fontSize => '1.25em' ],
+  '#profile' => [
+    marginTop    => '5em',
+    marginBottom => '0',
 
-    'a' => [
-      linkColor( $base00, $base03 ), textDecoration => 'underline solid',
-    ],
+    figure => [
+      margin => '0',
 
-    # Containers
-    # ----------
-    '#global, #profile, #menu, #copyright, .entry' => [
-      margin   => '0 auto',
-      padding  => '0 1.5em',
-      maxWidth => '35em',
-    ],
-
-    # Widgets
-    # =======
-
-    # #global
-    # -------
-    '#global' => [
-      p => [
-        margin => '5em 0',
-
-        a => [ linkColor( $base00, $base03 ) ],
-      ]
-    ],
-
-    # #profile
-    # --------
-    '#profile' => [
-      marginTop    => '5em',
-      marginBottom => '0',
-
-      figure => [
-        margin => '0',
-
-        p => [
-          float  => 'left',
-          margin => '0 1em 1em 0',
-        ],
-
-        figcaption => [
-          marginBottom => '0.5em',
-        ],
-      ],
-
-      '.entry__content' => [
-        p => [
-          margin   => '0',
-          fontSize => '0.75em',
-        ],
-      ],
-
-      'nav p' => [
-        fontSize => '0.75em',
-
-        a => [
-          marginRight => '0.5em'
-        ],
-      ],
-    ],
-
-    # #menu
-    # -----
-    '#menu' => [
-      marginBottom => '5em',
-
-      hr => [
-        marginBottom => '0.5em',
-      ],
-
-      p => [
-        fontSize => '0.75em',
-      ],
-
-      'p.kind' => [
-        float      => 'left',
-        marginLeft => '4.5%',
-        width      => '45%',
-        textAlign  => 'left',
-
-        a => [
-          marginRight => '0.5em',
-        ],
-      ],
-
-      'p.links' => [
-        float       => 'right',
-        marginRight => '4.5%',
-        width       => '45%',
-        textAlign   => 'right',
-
-        a => [
-          marginLeft => '0.5em',
-        ],
-      ],
-
-      '&::after' => [
-        display => 'block',
-        content => q(""),
-        clear   => 'both',
-      ],
-    ],
-
-    # entries
-    '.entry' => [
-      header => [
-        p => [
-          display       => 'flex',
-          flexDirection => 'row',
-          fontSize      => '0.865em',
-
-          'time, span' => [
-            display => 'block',
-            width   => '50%',
-          ],
-
-          'span' => [
-            textAlign => 'right'
-          ],
-        ],
-
-        h1 => [
-          a => [
-            linkColor( $base00, $base0A ),
-            textDecoration => 'none',
-            lineHeight     => '1.414em',
-          ],
-        ],
-      ],
+      p          => [ float        => 'left', margin => '0 1em 1em 0' ],
+      figcaption => [ marginBottom => '0.5em' ],
     ],
 
     '.entry__content' => [
-      '#profile__information' => [
-        textAlign => 'center',
+      'p' => [ margin => '0', fontSize => '0.75em' ],
+    ],
+    'nav p' => [ fontSize => '0.75em', a => [ marginRight => '0.5em' ] ],
+  ],
+);
 
-        img => [
-          margin => '0 auto',
-          width  => '256px',
-          height => '256px',
-          border => 'none',
+my @menu = (
+  '#menu' => [
+    marginBottom => '5em',
+
+    hr => [ marginBottom => '5em' ],
+    p  => [ fontSize     => '0.75em' ],
+
+    'p.kind' => [
+      float      => 'left',
+      marginLeft => '4.5%',
+      width      => '45%',
+      textAlign  => 'left',
+      a          => [ marginRight => '0.5em' ],
+    ],
+
+    'p.links' => [
+      float       => 'right',
+      marginRight => '4.5%',
+      width       => '45%',
+      textAlign   => 'right',
+      a           => [ marginLeft => '0.5em' ],
+    ],
+
+    '&::after' => [ display => 'block', content => q(""), clear => 'both' ],
+  ],
+);
+
+my @entry = (
+  '.entry' => [
+    header => [
+      p => [
+        display       => 'flex',
+        flexDirection => 'row',
+        fontSize      => '0.865em',
+
+        [qw(time span)] => [
+          display => 'block',
+          width   => '50%',
         ],
       ],
+      'h1 a' => [
+        linkColor( $base00, $base0A ),
+        textDecoration => 'none',
+        lineHeight     => '1.414em',
+      ],
+    ],
+  ],
+);
 
-      'h1, h2, h3, h4, h5, h6' => [
-        margin => '1em 0',
+my @cards = (
+
+  # website
+  '.entry__card--website' => [
+    a => [
+      display  => 'block',
+      overflow => 'hidden',
+
+      backgroundColor => $base06,
+      padding         => '0.25em 01em',
+      borderRadius    => '3pxi',
+
+      transition     => 'border-color 0.125s',
+      textDecoration => 'none',
+
+      '&:link, &:visited' => [
+        border => "1px solid ${base04}",
       ],
 
-      h1 => [ fontSize   => '1.5em' ],
-      h2 => [ fontSize   => '1.375em' ],
-      h3 => [ fontSize   => '1.25em' ],
-      h4 => [ fontSize   => '1.125em' ],
-      h5 => [ fontSize   => '1em' ],
-      h6 => [ fontWeight => 'normal', textDecoration => 'underline' ],
+      '&:hover, &:active' => [
+        border => "1px solid ${base0D}",
+      ],
+    ],
 
-      p => [ lineHeight => '1.727em' ],
+    ".content__card--title" => [
+      fontSize     => "1.2em",
+      marginBottom => 0,
+      color        => $base00,
+    ],
 
-      hr => [
-        margin          => '2em auto',
-        width           => '91%',
-        backgroundColor => $base04,
-        borderRadius    => '3px',
-        border          => 'none',
-        height          => '3px',
+    ".content__card--title + p" => [
+      margin => 0,
+    ],
+
+    cite => [
+      fontStyle  => 'normal',
+      fontWeight => 'bold',
+      fontSize   => '0.8em',
+      color      => $base0B,
+    ],
+
+    blockquote => [
+      marginTop => '0.5em',
+      fontSize  => '0.75em',
+      color     => $base02,
+    ],
+  ],
+
+  # affiliate
+  '.content__card--affiliate' => [
+    margin          => '1em 0',
+    backgroundColor => $base06,
+    padding         => '0.25em 1em',
+    borderRadius    => '3px',
+    border          => "1px solid ${base0B}",
+    overflow        => 'hidden',
+
+    h1 => [
+      fontSize => "1.2em",
+      float    => 'left',
+
+      a => [
+        linkColor( $base00, $base0A ), textDecoration => 'underline',
+      ]
+    ],
+
+    p => [
+      margin  => '0.8em 0',
+      padding => 0,
+      float   => 'right',
+    ],
+
+    ul => [
+      li => [
+        '&::before' => [
+          width        => '3px',
+          height       => 'auto',
+          top          => 0,
+          bottom       => 0,
+          left         => '-0.5em',
+          borderRadius => '3px',
+        ],
+
+        '&.amazon::before'     => [ backgroundColor => $colorAmazon ],
+        '&.rakuten::before'    => [ backgroundColor => $colorRakuten ],
+        '&.aliexpress::before' => [ backgroundColor => $colorAliexpress ],
+        '&.banggood::before'   => [ backgroundColor => $colorBanggood ],
+        '&.gearbest::before'   => [ backgroundColor => $colorGearbest ],
       ],
 
-      blockquote => [
-        position => 'relative',
-        margin   => '1em',
+      'li a' => [ linkColor( $base02, $base0A ), ],
+    ],
 
-        '& *:first-child' => [ marginTop    => 0 ],
-        '& *:last-child'  => [ marginBottom => 0 ],
+    '&::after' => [
+      display => 'block',
+      content => q(""),
+      clear   => 'both',
+    ],
+  ],
+);
+
+my @content = (
+  '.entry__content' => [
+
+    # profile page only
+    '#profile__information' => [
+      textAlign => 'center',
+
+      img => [
+        margin => '0 auto',
+        width  => '256px',
+        height => '256px',
+        border => 'none',
+      ]
+    ],
+
+    [qw( h1 h2 h3 h4 h5 h6 )] => [ margin => '1em 0' ],
+
+    h1 => [ fontSize   => '1.5em' ],
+    h2 => [ fontSize   => '1.375em' ],
+    h3 => [ fontSize   => '1.25em' ],
+    h4 => [ fontSize   => '1.125em' ],
+    h5 => [ fontSize   => '1em' ],
+    h6 => [ fontWeight => 'normal', textDecoration => 'underline' ],
+
+    p => [ lineHeight => '1.727em' ],
+
+    hr => [
+      margin          => '2em auto',
+      width           => '91%',
+      backgroundColor => $base04,
+      borderRadius    => '3px',
+      border          => 'none',
+      height          => '3px',
+    ],
+
+    blockquote => [
+      position => 'relative',
+      margin   => '1em',
+
+      '& *:first-child' => [ marginTop    => 0 ],
+      '& *:last-child'  => [ marginBottom => 0 ],
+
+      '&::before' => [
+        position        => 'absolute',
+        left            => '-0.75em',
+        bottom          => 0,
+        top             => 0,
+        display         => 'block',
+        content         => q(""),
+        width           => '3px',
+        backgroundColor => $base0E,
+        borderRadius    => '6px',
+      ],
+    ],
+
+    [qw(ul ol)] => [
+      paddingLeft => '1em',
+
+      li => [
+        margin => '0.125em 0 0.125em 0.5em',
+
+        'wbr:last-child' => [
+          display => 'none',
+        ],
+      ],
+    ],
+
+    'ul' => [
+      listStyle => 'none',
+
+      li => [
+        position   => 'relative',
+        lineHeight => '1.414em',
 
         '&::before' => [
-          position        => 'absolute',
-          left            => '-0.75em',
-          bottom          => 0,
-          top             => 0,
-          display         => 'block',
-          content         => q(""),
-          width           => '3px',
-          backgroundColor => $base0E,
-          borderRadius    => '6px',
-        ],
-      ],
-
-      [qw(ul ol)] => [
-        paddingLeft => '1em',
-
-        li => [
-          margin => '0.125em 0 0.125em 0.5em',
-
-          'wbr:last-child' => [
-            display => 'none',
-          ],
-        ],
-      ],
-
-      'ul' => [
-        listStyle => 'none',
-
-        li => [
-          position   => 'relative',
-          lineHeight => '1.414em'
-        ],
-
-        'li::before' => [
           display         => 'block',
           position        => 'absolute',
           content         => q(""),
@@ -302,165 +361,78 @@ my $main = css(
           left            => '-0.875em',
         ],
       ],
+    ],
 
-      dl => [
-        dt        => [ marginBottom => '0.25em' ],
-        dd        => [ marginLeft   => '1em' ],
-        'dd + dt' => [ marginTop    => '0.25em' ],
-      ],
+    dl => [
+      dt        => [ marginBottom => '0.25em' ],
+      dd        => [ marginLeft   => '1em' ],
+      'dd + dt' => [ marginTop    => '0.25em' ],
+    ],
 
-      'pre, *:not(pre) > code' => [
-        fontFamily => q("Inconsolata", monospace),
-      ],
+    'pre, *:not(pre) > code' => [
+      fontFamily => q("Inconsolata", monospace),
+    ],
 
-      pre => [
-        backgroundColor => $K01,
-        color           => $K06,
-        padding         => '0.25em 0.5em',
-        borderRadius    => '3px',
-        overflowX       => 'scroll',
-      ],
+    pre => [
+      backgroundColor => $K01,
+      color           => $K06,
+      padding         => '0.25em 0.5em',
+      borderRadius    => '3px',
+      overflowX       => 'scroll',
+    ],
 
-      '*:not(pre) > code' => [
-        backgroundColor => $base04,
-        borderRadius    => '3px',
-        fontSize        => '0.9em',
-        padding         => '0.1em 0.25em',
-      ],
+    '*:not(pre) > code' => [
+      backgroundColor => $base04,
+      borderRadius    => '3px',
+      fontSize        => '0.9em',
+      padding         => '0.1em 0.25em',
+    ],
 
-      'p.img > a > img' => [
-        borderRadius => '3px',
-        border       => "1px solid ${base06}",
-        hight        => 'auto',
-        maxHeight    => '100%'
-      ],
+    'p.img > a > img' => [
+      borderRadius => '3px',
+      border       => "1px solid ${base06}",
+      hight        => 'auto',
+      maxHeight    => '100%'
+    ],
 
-      strong => [
-        fontWeight => 600,
-      ],
+    strong => [
+      fontWeight => 600,
+    ],
 
-      '.content__card--website' => [
-        a => [
-          display  => 'block',
-          overflow => 'hidden',
+    @cards,
+  ],
+);
 
-          backgroundColor => $base06,
-          padding         => '0.25em 01em',
-          borderRadius    => '3pxi',
+my @archives = (
+  [qw( .entry__home .entry__archives .entry__related )] => [
+    '.entry__content .archives' => [
+      li => [
+        marginBottom => '1em',
+        fontSize     => '0.75em',
 
-          transition     => 'border-color 0.125s',
-          textDecoration => 'none',
-
-          '&:link, &:visited' => [
-            border => "1px solid ${base04}",
-          ],
-
-          '&:hover, &:active' => [
-            border => "1px solid ${base0D}",
-          ],
-        ],
-
-        ".content__card--title" => [
-          fontSize     => "1.2em",
-          marginBottom => 0,
-          color        => $base00,
-        ],
-
-        ".content__card--title + p" => [
-          margin => 0,
-        ],
-
-        cite => [
-          fontStyle  => 'normal',
-          fontWeight => 'bold',
-          fontSize   => '0.8em',
-          color      => $base0B,
-        ],
-
-        blockquote => [
-          marginTop => '0.5em',
-          fontSize  => '0.75em',
-          color     => $base02,
-        ],
-      ],
-
-      '.content__card--affiliate' => [
-        margin          => '1em 0',
-        backgroundColor => $base06,
-        padding         => '0.25em 1em',
-        borderRadius    => '3px',
-        border          => "1px solid ${base0B}",
-        overflow        => 'hidden',
-
-        h1 => [
-          fontSize => "1.2em",
-          float    => 'left',
-
-          a => [
-            linkColor( $base00, $base0A ), textDecoration => 'underline',
-          ]
-        ],
-
-        p => [
-          margin  => '0.8em 0',
-          padding => 0,
-          float   => 'right',
-        ],
-
-        ul => [
-          li => [
-            '&::before' => [
-              width        => '3px',
-              height       => 'auto',
-              top          => 0,
-              bottom       => 0,
-              left         => '-0.5em',
-              borderRadius => '3px',
-            ],
-
-            '&.amazon::before'     => [ backgroundColor => $colorAmazon ],
-            '&.rakuten::before'    => [ backgroundColor => $colorRakuten ],
-            '&.aliexpress::before' => [ backgroundColor => $colorAliexpress ],
-            '&.banggood::before'   => [ backgroundColor => $colorBanggood ],
-            '&.gearbest::before'   => [ backgroundColor => $colorGearbest ],
-          ],
-
-          'li a' => [ linkColor( $base02, $base0A ), ],
-        ],
-
-        '&::after' => [
-          display => 'block',
-          content => q(""),
-          clear   => 'both',
+        'a.title' => [
+          display    => 'block',
+          fontSize   => '1.25em',
+          lineHeight => '1.727em',
         ],
       ],
     ],
+  ],
+);
 
-    # copyright
-    # ---------
-    '#copyright' => [
-      marginTop    => '5em',
-      marginBottom => '5em',
-      textAlign    => 'center',
-      fontSize     => '0.75em',
-    ],
+my @copyright = (
+  '#copyright' => [
+    marginTop    => '5em',
+    marginBottom => '5em',
+    textAlign    => 'center',
+    fontSize     => '0.75em',
+  ],
+);
 
-    # archives
-    # --------
-    [qw( .entry__home .entry__archives .entry__related )] => [
-      '.entry__content .archives' => [
-        li => [
-          marginBottom => '1em',
-          fontSize     => '0.75em',
-
-          'a.title' => [
-            display    => 'block',
-            fontSize   => '1.25em',
-            lineHeight => '1.727em',
-          ],
-        ],
-      ],
-    ],
+my $main = css(
+  [
+    @global, @container, @widgets,  @menu,
+    @entry,  @content,   @archives, @copyright
   ]
 );
 
@@ -503,4 +475,6 @@ ${main}
 \@media screen and (max-width: 20em) {${small}}
 |;
 
-$css;
+my $assets = sub { return $css };
+
+$assets;
