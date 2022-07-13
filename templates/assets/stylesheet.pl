@@ -164,6 +164,9 @@ my @entry = (
           display => 'block',
           width   => '50%',
         ],
+
+        time => [ textAlign => 'left' ],
+        span => [ textAlign => 'right', ],
       ],
       'h1 a' => [
         linkColor( $base00, $base0A ),
