@@ -6,6 +6,7 @@ use utf8;
 
 use FindBin;
 use Path::Tiny;
+use URI::Escape qw(uri_unescape);
 
 use Kalaclista::Directory;
 use Kalaclista::Page;
@@ -119,7 +120,7 @@ my $query = {
     return ( 'assets/stylesheet.css' => 'assets/stylesheet.pl', );
   },
 
-  permalink => sub {
+  page => sub {
     my $content = shift;
     my $meta    = shift;
 
