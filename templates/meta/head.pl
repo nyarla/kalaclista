@@ -129,20 +129,21 @@ my $head = sub {
   );
 
   # document metadata
-  my @feeds = (
+  my $prefix = ( $section eq 'pages' ) ? "" : "/${section}";
+  my @feeds  = (
     feed(
       "${website}の RSS フィード",
-      href( "/${section}/index.xml", $baseURI ),
+      href( "${prefix}/index.xml", $baseURI ),
       "application/rss+xml"
     ),
     feed(
       "${website}の Atom フィード",
-      href( "/${section}/atom.xml", $baseURI ),
+      href( "${prefix}/atom.xml", $baseURI ),
       "application/atom+xml"
     ),
     feed(
       "${website}の JSON フィード",
-      href( "/${section}/jsonfeed.json", $baseURI ),
+      href( "${prefix}/jsonfeed.json", $baseURI ),
       "application/feed+json"
     ),
   );
@@ -152,8 +153,10 @@ my $head = sub {
     $title,  $permalink, types( $kind, $section ),
     $author, $publisher, $avatar, $parent
   );
-  my $jsonld =
-    script( { type => 'application/ld+json' }, jsonld( \%jsonld, $tree->@* ), );
+  my $jsonld = script(
+    { type => 'application/ld+json' },
+    raw( jsonld( \%jsonld, $tree->@* ) ),
+  );
 
   my $webmanifest =
     item( manifest => href( '/manifest.webmanifest', $baseURI ) );

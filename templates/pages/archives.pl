@@ -45,7 +45,7 @@ my $content = sub {
 
     @contents = (
       strong("${year}年："), ul( { class => 'archives' }, @archives ),
-      hr(),                p( "過去ログ：", ( join q{ / }, @years ) )
+      hr(),                p( "過去ログ：", raw( join q{ / }, @years ) )
     );
   }
 

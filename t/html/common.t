@@ -77,9 +77,10 @@ sub testing {
   my $atom   = $dom->at('link[rel="alternate"][type="application/atom+xml"]');
   my $jsfeed = $dom->at('link[rel="alternate"][type="application/feed+json"]');
 
-  like( $rss20->getAttribute('href'),  qr"/(posts|echos|notes)/index.xml" );
-  like( $atom->getAttribute('href'),   qr"/(posts|echos|notes)/atom.xml" );
-  like( $jsfeed->getAttribute('href'), qr"/(posts|echos|notes)/jsonfeed.json" );
+  like( $rss20->getAttribute('href'), qr"(?:/(posts|echos|notes))?/index.xml" );
+  like( $atom->getAttribute('href'),  qr"(?:/(posts|echos|notes))?/atom.xml" );
+  like( $jsfeed->getAttribute('href'),
+    qr"(?:/(posts|echos|notes))?/jsonfeed.json" );
 
   # assets
   is(
