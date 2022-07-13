@@ -120,11 +120,11 @@ my $template = sub {
   return document(
     expand( 'meta/head.pl', \%info, $baseURI ),
     [
-      expand( 'widgets/title.pl',   $vars, $baseURI ),
-      expand( 'widgets/profile.pl', $vars, $baseURI ),
-      expand( 'widgets/menu.pl',    $vars, $baseURI ),
+      expand( 'widgets/title.pl',   $baseURI ),
+      expand( 'widgets/profile.pl', $baseURI ),
+      expand( 'widgets/menu.pl',    $baseURI ),
       $content->( $vars, $baseURI ),
-      expand( 'widgets/info.pl', $vars, $baseURI )
+      expand( 'widgets/info.pl', $baseURI )
     ]
   );
 };

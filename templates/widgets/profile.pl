@@ -1,23 +1,24 @@
 my $profile = sub {
-  my $vars    = shift;
   my $baseURI = shift;
-  my $dir     = shift;
-
-  my $href =
-    sub { my $link = $baseURI->clone; $link->path( $_[0] ); $link->as_string };
 
   return section(
     { id => 'profile' },
     figure(
       p(
         a(
-          { href => $href->('/nyarla/') },
+          { href => href( '/nyarla/', $baseURI ) },
           img(
-            { src => $href->('/assets/avatar.svg'), height => 96, width => 96 }
+            {
+              src    => href( '/assets/avatar.svg', $baseURI ),
+              height => 96,
+              width  => 96
+            }
           )
         )
       ),
-      figcaption( a( { href => $href->('/nyarla/') }, 'にゃるら（カラクリスタ）' ) )
+      figcaption(
+        a( { href => href( '/nyarla/', $baseURI ) }, 'にゃるら（カラクリスタ）' )
+      )
     ),
     section(
       { class => 'entry__content' }, p('『輝かしい青春』なんて失かった人。病気療養中の家事手伝い'),
