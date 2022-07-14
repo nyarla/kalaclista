@@ -63,7 +63,7 @@ my $data = {
 my @extensions = map {
   Kalaclista::Template::load( $dirs->templates_dir->child($_)->stringify )
   } qw(
-  extensions/images.pl
+  extensions/ruby.pl
   );
 
 my $fixup = {
@@ -97,10 +97,10 @@ my $fixup = {
     my $content = shift;
     my $meta    = shift;
 
-    # for my $extension (@extensions) {
-    #   my $transformer = $extension->($meta);
-    #   $content->tranform($transformer);
-    # }
+    for my $extension (@extensions) {
+      my $transformer = $extension->($meta);
+      $content->transform($transformer);
+    }
   },
 };
 
