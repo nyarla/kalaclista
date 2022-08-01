@@ -160,6 +160,20 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    HTTPTiny = buildPerlPackage {
+      pname = "HTTP-Tiny";
+      version = "0.082";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/D/DA/DAGOLDEN/HTTP-Tiny-0.082.tar.gz";
+        sha256 =
+          "54e9e4a559a92cbb90e3f19c8a88ff067ec2f68fbe39bbb694ee70828cd5f4b8";
+      };
+      meta = {
+        homepage = "https://github.com/chansen/p5-http-tiny";
+        description = "A small, simple, correct HTTP/1.1 client";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     MooXTypesMooseLike = buildPerlPackage {
       pname = "MooX-Types-MooseLike";
       version = "0.29";
@@ -247,7 +261,6 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
-
     JSONTiny = buildPerlPackage {
       pname = "JSON-Tiny";
       version = "0.58";
@@ -379,11 +392,11 @@ let
     };
     ListLazy = buildPerlPackage {
       pname = "List-Lazy";
-      version = "0.3.2";
+      version = "0.3.3";
       src = fetchurl {
-        url = "mirror://cpan/authors/id/Y/YA/YANICK/List-Lazy-0.3.2.tar.gz";
+        url = "mirror://cpan/authors/id/Y/YA/YANICK/List-Lazy-0.3.3.tar.gz";
         sha256 =
-          "52b53709be0dfb7feae7edf212b8e1843bce72f02afd8dc74fb879305d982832";
+          "cb00f5c6f0329af46fde82f688775a0b6a3fe0ceecfff390b4814a11f3b2fad7";
       };
       buildInputs = [ TestWarn ];
       propagatedBuildInputs =
@@ -515,6 +528,7 @@ in with modules; [
   HTMLTagset
   HTTPDate
   HTTPMessage
+  HTTPTiny
   HTTPTinyish
   IOHTML
   IPCRun3
