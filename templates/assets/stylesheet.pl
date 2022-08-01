@@ -129,7 +129,7 @@ my @menu = (
   '#menu' => [
     marginBottom => '5em',
 
-    hr => [ marginBottom => '5em' ],
+    hr => [ marginBottom => '0.5em' ],
     p  => [ fontSize     => '0.75em' ],
 
     'p.kind' => [
@@ -250,6 +250,8 @@ my @cards = (
     ],
 
     ul => [
+      clear => 'left',
+
       li => [
         '&::before' => [
           width        => '3px',
