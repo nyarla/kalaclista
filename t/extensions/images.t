@@ -44,7 +44,7 @@ subtest origin => sub {
 
   $content->transform($transformer);
 
-  my $item = $content->dom->at('.entry__card--thumbnail');
+  my $item = $content->dom->at('.content__card--thumbnail');
 
   is(
     $item->getAttribute('href'),
@@ -72,7 +72,7 @@ subtest x1 => sub {
   my $transformer = transformter($path);
   $content->transform($transformer);
 
-  my $item = $content->dom->at('.entry__card--thumbnail');
+  my $item = $content->dom->at('.content__card--thumbnail');
 
   is(
     $item->getAttribute('href'),
@@ -103,7 +103,7 @@ subtest x2 => sub {
   my $transformer = transformter("notes/$path");
   $content->transform($transformer);
 
-  my $item = $content->dom->at('.entry__card--thumbnail');
+  my $item = $content->dom->at('.content__card--thumbnail');
 
   is(
     $item->getAttribute('href'),

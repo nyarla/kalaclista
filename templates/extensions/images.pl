@@ -59,7 +59,7 @@ my $extensions = sub {
 
           my $link = $dom->tree->createElement('a');
           $link->setAttribute( href => $item->getAttribute('src') );
-          $link->setAttribute( className(qw( entry card thumbnail )) );
+          $link->setAttribute( className(qw( content card thumbnail )) );
           $link->appendChild($img);
 
           $item->replace($link);
