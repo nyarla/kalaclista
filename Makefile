@@ -44,7 +44,7 @@ build: clean
 dev: clean
 	@$(MAKE) URL=http://nixos:1313 generate -j$(JOBS)
 
-test: clean build
+test:
 	prove -j$(JOBS) t/*/*.t
 
 .PHONY: shell serve
