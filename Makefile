@@ -1,30 +1,34 @@
 URL = https://the.kalaclista.com
-CWD = $(shell pwd)
-JOBS = $(shell cat /proc/cpuinfo | grep processor | tail -n1 | cut -d\  -f2)
+
+JOBS := $(shell nproc --all --ignore 1)
+CWD  := $(shell pwd)
+RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -t $(JOBS) -a
 
 .PHONY: clean build dev test
 
-_gen:
-	@echo action: $(ACTION)
-	@perl app/bin/kalaclista.pl -u $(URL) -a $(ACTION) -c $(CWD)/config.pl -t $(JOBS)
-
 _gen_split_content: clean
-	@$(MAKE) ACTION=split-content _gen
+	@echo split-contnet
+	@$(RUN) split-content
 
 _gen_resize_images: clean
-	@$(MAKE) ACTION=resize-images _gen
+	@echo resize-images
+	@$(RUN) resize-images
 
 _gen_sitemap_xml: _gen_split_content
-	@$(MAKE) ACTION=generate-sitemap-xml _gen
+	@echo generate-sitemap-xml
+	@$(RUN) generate-sitemap-xml
 
 _gen_archive: _gen_split_content
-	@$(MAKE) ACTION=generate-archive _gen
+	@echo generate-archive
+	@$(RUN) generate-archive
 
 _gen_permalink: _gen_split_content
-	@$(MAKE) ACTION=generate-permalink _gen
+	@echo generate-permalink
+	@$(RUN) generate-permalink
 
 _gen_assets: _gen_resize_images
-	@$(MAKE) ACTION=generate-assets _gen
+	@echo generate-assets
+	@$(RUN) generate-assets
 	@cp -R content/assets/* dist/
 	@cp -R templates/static/* dist/assets/
 
@@ -35,14 +39,14 @@ generate: \
 	_gen_permalink
 
 clean:
-	test ! -d dist || rm -rf dist
-	mkdir -p dist
+	@test ! -d dist || rm -rf dist
+	@mkdir -p dist
 
 build: clean
-	@$(MAKE) URL=https://the.kalaclista.com generate -j$(JOBS)
+	@$(MAKE) URL=https://the.kalaclista.com generate
 
 dev: clean
-	@$(MAKE) URL=http://nixos:1313 generate -j$(JOBS)
+	@$(MAKE) URL=http://nixos:1313 generate
 
 test:
 	prove -j$(JOBS) t/*/*.t
