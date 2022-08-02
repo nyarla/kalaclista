@@ -28,7 +28,7 @@ my $extension = load( $dirs->templates_dir->child('extensions/images.pl') );
 sub transformter {
   my $path = shift;
   my $meta = Kalaclista::Entry::Meta->load(
-    src  => $dirs->build_dir->child("${path}.yaml"),
+    src  => $dirs->build_dir->child("contents/${path}.yaml"),
     href => URI->new("https://the.kalaclista.com/${path}/"),
   );
 
@@ -38,7 +38,7 @@ sub transformter {
 subtest origin => sub {
   my $path    = 'posts/2022/03/09/184033';
   my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("${path}.md"), );
+    src => $dirs->build_dir->child("contents/${path}.md"), );
 
   my $transformer = transformter($path);
 
@@ -67,7 +67,7 @@ subtest origin => sub {
 subtest x1 => sub {
   my $path    = 'posts/2013/06/28/002453';
   my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("$path.md") );
+    src => $dirs->build_dir->child("contents/${path}.md") );
 
   my $transformer = transformter($path);
   $content->transform($transformer);
@@ -98,7 +98,7 @@ subtest x1 => sub {
 subtest x2 => sub {
   my $path    = '自作キーボード';
   my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("notes/$path.md") );
+    src => $dirs->build_dir->child("contents/notes/$path.md") );
 
   my $transformer = transformter("notes/$path");
   $content->transform($transformer);
