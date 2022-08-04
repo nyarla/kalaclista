@@ -9,7 +9,8 @@
       devShell.${system} = with pkgs;
         mkShell rec {
           name = "the.kalaclista.com-v5";
-          packages = [ perl gnumake curl coreutils imagemagick ] ++ cpanfile;
+          packages = [ perl gnumake curl coreutils imagemagick jhead optipng ]
+            ++ cpanfile;
         };
     };
 }
