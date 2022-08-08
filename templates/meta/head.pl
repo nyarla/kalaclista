@@ -60,11 +60,16 @@ my $publisher = {
 };
 
 my $head = sub {
-  my ( $info, $baseURI ) = @_;
-  my ( $title, $website, $description, $section, $kind, $home, $permalink,
-    $tree )
-    = @{$info}
-    {qw( title website description section kind home permalink tree )};
+  my ( $vars, $baseURI ) = @_;
+
+  my $title       = $vars->title;
+  my $website     = $vars->website;
+  my $description = $vars->description;
+  my $section     = $vars->section;
+  my $kind        = $vars->kind;
+  my $permalink   = $vars->href;
+  my $tree        = $vars->breadcrumb;
+
   my $parent = $tree->[ $tree->@* - 2 ]->{'href'};
   my $avatar = href( '/assets/avatar.png', $baseURI );
 

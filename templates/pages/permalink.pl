@@ -31,46 +31,12 @@ my $main = sub {
 
 my $template = sub {
   my ( $vars, $baseURI ) = @_;
-  my ( $section, $data, $content, $meta ) =
-    @{$vars}{qw( section data content meta )};
 
-  my %info;
-  @info{
-    qw( title website
-      description
-      section kind home permalink )
-    }
-    = (
-    $meta->title, $data->{'title'},
-    $content->dom->at('*:first-child')->textContent,
-    $meta->type, 'permalink', !!0, $meta->href->as_string,
-    );
-
-  my @tree = ();
-  push @tree,
-    +{
-    name => 'カラクリスタ',
-    href => href( '/', $baseURI ),
-    };
-
-  push @tree,
-    +{
-    name => $info{'website'},
-    href => href( "/@{[ $info{'section'} ]}/", $baseURI ),
-    };
-
-  push @tree,
-    +{
-    name => $info{'title'},
-    href => $info{'permalink'},
-    };
-
-  $info{'tree'} = \@tree;
-
-  my %data;
+  my $content = $vars->entries->[0]->[1];
+  my $meta    = $vars->entries->[0]->[0];
 
   return document(
-    expand( 'meta/head.pl', \%info, $baseURI ),
+    expand( 'meta/head.pl', $vars, $baseURI ),
     [
       expand( 'widgets/title.pl',   $baseURI ),
       expand( 'widgets/profile.pl', $baseURI ),

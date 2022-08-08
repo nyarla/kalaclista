@@ -5,11 +5,13 @@ use warnings;
 use utf8;
 
 use FindBin;
+use URI;
 use Path::Tiny;
 use URI::Escape qw(uri_unescape);
 
 use Kalaclista::Directory;
 use Kalaclista::Page;
+use Kalaclista::Variables;
 
 require Kalaclista::Template;
 
@@ -31,6 +33,8 @@ my $dirs = Kalaclista::Directory->instance(
   template => 'templates',
   build    => 'resources',
 );
+
+my $baseURL = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
 
 my $data = {
   pages => {
@@ -128,15 +132,41 @@ my $query = {
 
     my $path = uri_unescape( $meta->href->path );
 
+    my $description = $content->dom->at('*:first-child')->textContent . '……';
+
+    my $vars = Kalaclista::Variables->new(
+      title       => $meta->title,
+      website     => $data->{ $meta->type }->{'title'},
+      description => $description,
+      section     => $meta->type,
+      kind        => 'permalink',
+      data        => $data->{ $meta->type },
+      entries     => [ [ $meta, $content ], ],
+      href        => $meta->href->as_string,
+      breadcrumb  => [
+        {
+          name => 'カラクリスタ',
+          href => do { my $u = $baseURL->clone; $u->path('/'); $u->as_string },
+        },
+        {
+          name => $data->{ $meta->type }->{'title'},
+          href => do {
+            my $u = $baseURL->clone;
+            $u->path("/@{[ $meta->type ]}/");
+            $u->as_string;
+          },
+        },
+        {
+          name => $meta->title,
+          href => $meta->href->as_string,
+        }
+      ],
+    );
+
     my $page = Kalaclista::Page->new(
       dist     => $dirs->distdir->child("${path}/index.html"),
       template => $dirs->templates_dir->child('pages/permalink.pl')->stringify,
-      vars     => {
-        section => $meta->type,
-        data    => $data->{ $meta->type },
-        meta    => $meta,
-        content => $content,
-      },
+      vars     => $vars,
     );
 
     return $page;
@@ -152,54 +182,146 @@ my $query = {
     for my $year ( 2006 .. $current ) {
       for my $section (qw(posts echos)) {
         if ( $section eq q{posts} || $year >= 2018 ) {
+          my $title       = sprintf "%04d年の記事一覧", $year;
+          my $website     = $data->{$section}->{'title'};
+          my $description = "${website}の${title}です";
+
+          my $vars = Kalaclista::Variables->new(
+            title       => $title,
+            website     => $data->{$section}->{'title'},
+            description => $description,
+            section     => $section,
+            kind        => 'home',
+            data        => $data->{$section},
+            entries     => [
+              map  { [$_] }
+              grep { $_->date =~ m{^$year} && $_->type eq $section } @entries
+            ],
+            href => do {
+              my $u = $baseURL->clone;
+              $u->path("/$section/${year}/");
+              $u->as_string;
+            },
+          );
+
+          $vars->breadcrumb(
+            [
+              {
+                name => 'カラクリスタ',
+                href =>
+                  do { my $u = $baseURL->clone; $u->path("/"); $u->as_string }
+              },
+              {
+                name => $vars->website,
+                href => do {
+                  my $u = $baseURL->clone;
+                  $u->path("/${section}/");
+                  $u->as_string;
+                },
+              },
+              {
+                name => $vars->title,
+                href => $vars->href,
+              }
+            ]
+          );
+
           push @pages,
             Kalaclista::Page->new(
             dist     => $dirs->distdir->child("${section}/${year}/index.html"),
             template => $template,
-            vars     => {
-              home    => !!0,
-              section => $section,
-              kind    => 'archive',
-              year    => $year,
-              entries => [
-                grep { $_->date =~ m(^$year) && $_->type eq $section } @entries
-              ],
-              data => $data->{$section},
-            }
+            vars     => $vars,
             );
         }
 
         if ( $current eq $year ) {
+          my $vars = Kalaclista::Variables->new(
+            title       => $data->{$section}->{'title'},
+            website     => $data->{$section}->{'title'},
+            description => $data->{$section}->{'summary'},
+            section     => $section,
+            kind        => 'archive',
+            data        => $data->{$section},
+            entries     => [
+              map  { [$_] }
+              grep { $_->date =~ m{^$year} && $_->type eq $section } @entries
+            ],
+            href => do {
+              my $u = $baseURL->clone;
+              $u->path("/${section}/");
+              $u->as_string;
+            },
+          );
+
+          $vars->breadcrumb(
+            [
+              {
+                name => 'カラクリスタ',
+                href =>
+                  do { my $u = $baseURL->clone; $u->path("/"); $u->as_string }
+              },
+              {
+                name => $vars->website,
+                href => do {
+                  my $u = $baseURL->clone;
+                  $u->path("/${section}/");
+                  $u->as_string;
+                },
+              }
+            ]
+          );
+
           push @pages,
             Kalaclista::Page->new(
             dist     => $dirs->distdir->child("${section}/index.html"),
             template => $template,
-            vars     => {
-              home    => !!1,
-              section => $section,
-              kind    => 'archive',
-              year    => $year,
-              entries => [
-                grep { $_->date =~ m(^$year) && $_->type eq $section } @entries
-              ],
-              data => $data->{$section},
-            }
+            vars     => $vars,
             );
+
         }
       }
     }
+
+    my $vars = Kalaclista::Variables->new(
+      title       => $data->{'notes'}->{'title'},
+      website     => $data->{'notes'}->{'title'},
+      description => $data->{'notes'}->{'summary'},
+      section     => 'notes',
+      kind        => 'archive',
+      data        => $data->{'notes'},
+      entries     => [ map { [$_] } grep { $_->type eq 'notes' } @entries ],
+      href        => do {
+        my $u = $baseURL->clone;
+        $u->path('/notes/');
+        $u->as_string;
+      },
+      breadcrumb => do {
+        [
+          {
+            name => 'カラクリスタ',
+            href => do {
+              my $u = $baseURL->clone;
+              $u->path("/");
+              $u->as_string;
+            },
+          },
+          {
+            name => $data->{'notes'}->{'title'},
+            href => do {
+              my $u = $baseURL->clone;
+              $u->path("/notes/");
+              $u->as_string;
+            },
+          }
+        ];
+      },
+    );
 
     push @pages,
       Kalaclista::Page->new(
       dist     => $dirs->distdir->child("notes/index.html"),
       template => $template,
-      vars     => {
-        home    => !!1,
-        section => 'notes',
-        kind    => 'archive',
-        entries => [ grep { $_->type eq 'notes' } @entries ],
-        data    => $data->{'notes'},
-      },
+      vars     => $vars,
       );
 
     return @pages;
