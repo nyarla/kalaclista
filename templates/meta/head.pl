@@ -62,6 +62,7 @@ my $publisher = {
 my $head = sub {
   my ( $vars, $baseURI ) = @_;
 
+  my $meta        = $vars->entries->[0]->[0];
   my $title       = $vars->title;
   my $website     = $vars->website;
   my $description = $vars->description;
@@ -98,8 +99,14 @@ my $head = sub {
         rel  => 'stylesheet',
         href => href( '/assets/stylesheet.css', $baseURI )
       }
-    )
+    ),
   );
+
+  if ( exists $meta->{'addon'}->{'style'}
+    && ref $meta->{'addon'}->{'style'} eq 'ARRAY' )
+  {
+    push @css, style( raw( join q{ }, $meta->addon->{'style'}->@* ) );
+  }
 
   # document format
   my $charset   = meta( { charset => 'utf-8' } );
