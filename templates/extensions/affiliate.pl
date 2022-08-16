@@ -60,7 +60,7 @@ sub replace {
 
   $aside->innerHTML($html);
 
-  $el->replace($aside);
+  $el->parent->replace($aside);
 }
 
 use warnings 'redefine';
