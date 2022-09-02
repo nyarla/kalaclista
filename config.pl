@@ -67,9 +67,10 @@ my $data = {
 my @extensions = map {
   Kalaclista::Template::load( $dirs->templates_dir->child($_)->stringify )
   } qw(
+  extensions/website.pl
   extensions/affiliate.pl
-  extensions/highlight.pl
   extensions/images.pl
+  extensions/highlight.pl
   extensions/ruby.pl
   );
 

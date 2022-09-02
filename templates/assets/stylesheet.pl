@@ -180,7 +180,7 @@ my @entry = (
 my @cards = (
 
   # website
-  '.entry__card--website' => [
+  '.content__card--website' => [
     a => [
       display  => 'block',
       overflow => 'hidden',
@@ -201,13 +201,13 @@ my @cards = (
       ],
     ],
 
-    ".content__card--title" => [
+    "h1" => [
       fontSize     => "1.2em",
       marginBottom => 0,
       color        => $base00,
     ],
 
-    ".content__card--title + p" => [
+    "h1 + p" => [
       margin => 0,
     ],
 
