@@ -10,6 +10,7 @@ use Path::Tiny;
 use URI::Escape qw(uri_unescape);
 
 use Kalaclista::Directory;
+use Kalaclista::Entry::Content;
 use Kalaclista::Page;
 use Kalaclista::Variables;
 
@@ -180,6 +181,76 @@ my $query = {
     my $current  = (localtime)[5] + 1900;
 
     my @pages;
+
+    my $content = sub {
+      my $meta    = shift;
+      my $fn      = $meta->src->basename('.yaml');
+      my $file    = $meta->src->parent->child("${fn}.md");
+      my $content = Kalaclista::Entry::Content->load( src => $file );
+      $call->{'fixup'}->( $content, $meta );
+
+      return $content;
+    };
+
+    for my $section (qw(posts echos notes)) {
+      my $website     = $data->{$section}->{'title'};
+      my $description = "${website}の最近の記事";
+
+      my $idx  = 0;
+      my $vars = Kalaclista::Variables->new(
+        title       => $description,
+        website     => $website,
+        description => $description,
+        kind        => 'feed',
+        data        => $data->{$section},
+        entries     => [
+          map  { [ $_, $content->($_) ] }
+          grep { $_->type eq $section && $idx++ < 5 }
+          sort { $b->lastmod cmp $a->lastmod } @entries
+        ],
+        href => do {
+          my $u = $baseURL->clone;
+          $u->path("/${section}/");
+          $u->as_string;
+        },
+      );
+
+      for my $feed (qw(index.xml atom.xml jsonfeed.json)) {
+        push @pages,
+          Kalaclista::Page->new(
+          dist     => $dirs->distdir->child("${section}/${feed}"),
+          template =>
+            $dirs->templates_dir->child("feeds/${feed}.pl")->stringify,
+          vars => $vars,
+          );
+      }
+    }
+
+    for my $feed (qw(index.xml atom.xml jsonfeed.json)) {
+      my $website     = $data->{'pages'}->{'title'};
+      my $description = "${website}の最近の更新";
+      my $idx         = 0;
+      push @pages, Kalaclista::Page->new(
+        dist     => $dirs->distdir->child("${feed}"),
+        template => $dirs->templates_dir->child("feeds/${feed}.pl")->stringify,
+        vars     => Kalaclista::Variables->new(
+          title       => $description,
+          website     => $website,
+          description => $description,
+          kind        => 'feed',
+          data        => $data->{'pages'},
+          entries     => [
+            map { [ $_, $content->($_) ] }
+            grep { $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries
+          ],
+          href => do {
+            my $u = $baseURL->clone;
+            $u->path("/");
+            $u->as_string;
+          },
+        ),
+      );
+    }
 
     for my $year ( 2006 .. $current ) {
       for my $section (qw(posts echos)) {
