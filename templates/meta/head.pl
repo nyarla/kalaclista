@@ -1,5 +1,4 @@
-my $budoux    = 'https://cdn.skypack.dev/budoux';
-my $normalize = 'https://cdn.skypack.dev/normalize.css';
+my $budoux = 'https://cdn.skypack.dev/budoux';
 
 my $tables = {
   posts => [ 'Blog',    'BlogPosting' ],
@@ -79,28 +78,13 @@ my $head = sub {
     meta( { 'http-equiv' => 'x-dns-prefetch-control', content => 'on' } );
   my $prefetch =
     link_( { rel => 'dns-prefetch', href => 'https://cdn.skypack.dev/' } );
-  my @preloads = (
-    link_( { rel => 'preload', href => $budoux,    as => 'script' } ),
-    link_( { rel => 'preload', href => $normalize, as => 'style' } ),
-  );
+  my @preloads =
+    ( link_( { rel => 'preload', href => $budoux, as => 'script' } ), );
 
   my $script =
     script( { src => href( '/assets/script.js', $baseURI ), type => 'module' },
     "" );
-  my @css = (
-    link_(
-      {
-        rel  => 'stylesheet',
-        href => $normalize,
-      }
-    ),
-    link_(
-      {
-        rel  => 'stylesheet',
-        href => href( '/assets/stylesheet.css', $baseURI )
-      }
-    ),
-  );
+  my @css = ( style( raw( $vars->data->{'css'} ) ) );
 
   if ( exists $meta->{'addon'}->{'style'}
     && ref $meta->{'addon'}->{'style'} eq 'ARRAY' )

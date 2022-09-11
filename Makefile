@@ -28,15 +28,25 @@ _gen_archive: _gen_split_content
 	@echo generate archive
 	@$(RUN) generate-archive -t $(FULL)
 
-_gen_permalink: _gen_split_content _gen_resize_images
+_gen_permalink: _gen_split_content _gen_resize_images _gen_assets_css
 	@echo generate permalink
 	@$(RUN) generate-permalink -t $(FULL)
 
-_gen_assets: _gen_resize_images
-	@echo generate assets
+_gen_assets_by_app:
 	@$(RUN) generate-assets -t $(FULL)
+
+_gen_assets_css: _gen_assets_by_app
+	@echo generate css
+	@test -d resources/assets || mkdir -p resources/assets
+	@$(RUN) generate-assets -t $(FULL)
+	@cp -RH node_modules/normalize.css/normalize.css resources/assets/normalize.css
+	@esbuild --bundle --platform=browser --minify resources/assets/stylesheet.css >resources/assets/main.css
+
+_gen_assets: _gen_assets_css _gen_resize_images
+	@echo generate assets
 	@cp -R content/assets/* dist/
 	@cp -R templates/static/* dist/assets/
+	@esbuild --bundle --platform=browser --minify templates/assets/budoux.js --outdir=dist/assets
 
 _opti_png:
 	@find content/assets -type f -name '*.png' \

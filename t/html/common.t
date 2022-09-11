@@ -113,9 +113,6 @@ sub testing {
     "https://cdn.skypack.dev/budoux",
   );
 
-  is( $dom->at('link[rel="preload"][as="style"]')->getAttribute('href'),
-    "https://cdn.skypack.dev/normalize.css" );
-
   # style and script
   is(
     $dom->at('meta[name="viewport"]')->getAttribute('content'),
@@ -127,17 +124,7 @@ sub testing {
     "https://the.kalaclista.com/assets/script.js",
   );
 
-  is(
-    $dom->at('link[rel="stylesheet"][href^="https://cdn"]')
-      ->getAttribute('href'),
-    "https://cdn.skypack.dev/normalize.css",
-  );
-
-  is(
-    $dom->at('link[rel="stylesheet"][href^="https://the"]')
-      ->getAttribute('href'),
-    "https://the.kalaclista.com/assets/stylesheet.css",
-  );
+  ok( $dom->at('style')->textContent ne q{} );
 
   # jsonld
   my $jsonld = $dom->at('script[type="application/ld+json"]')->textContent;

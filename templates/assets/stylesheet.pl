@@ -396,7 +396,7 @@ my @content = (
     'p.img > a > img' => [
       borderRadius => '3px',
       border       => "1px solid ${base06}",
-      hight        => 'auto',
+      height       => 'auto',
       maxHeight    => '100%'
     ],
 
@@ -480,6 +480,8 @@ ${main}
 \@media screen and (max-width: 20em) {${small}}
 |;
 
-my $assets = sub { return $css };
+my $assets = sub {
+  return q{@import "./normalize.css"; } . $css;
+};
 
 $assets;

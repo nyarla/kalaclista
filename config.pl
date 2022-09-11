@@ -35,13 +35,16 @@ my $dirs = Kalaclista::Directory->instance(
   build    => 'resources',
 );
 
-my $baseURL = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
+my $baseURL    = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
+my $stylesheet = $dirs->build_dir->child('assets/main.css');
+my $css        = ( $stylesheet->is_file ) ? $stylesheet->slurp : q{};
 
 my $data = {
   pages => {
     label   => 'カラクリスタ',
     title   => 'カラクリスタ',
     summary => '『輝かしい青春』なんて失かった人の Web サイトです。',
+    css     => $css,
   },
 
   posts => {
@@ -49,6 +52,7 @@ my $data = {
     title   => 'カラクリスタ・ブログ',
     summary => '『輝かしい青春』なんて失かった人のブログです。',
     begin   => 2006,
+    css     => $css,
   },
 
   echos => {
@@ -56,12 +60,14 @@ my $data = {
     title   => 'カラクリスタ・エコーズ',
     summary => '『輝かしい青春』なんて失かった人の日記です。',
     begin   => 2018,
+    css     => $css,
   },
 
   notes => {
     label   => 'メモ帳',
     title   => 'カラクリスタ・ノート',
     summary => '『輝かしい青春』なんて失かった人のメモ帳です。',
+    css     => $css,
   },
 };
 

@@ -15,7 +15,6 @@ sub main {
     assets/avatar.png
     assets/avatar.svg
     assets/script.js
-    assets/stylesheet.css
     favicon.ico
     icon-192.png
     icon-512.png

@@ -1,0 +1,13 @@
+lockfileVersion: 5.4
+
+specifiers:
+  normalize.css: ^8.0.1
+
+dependencies:
+  normalize.css: 8.0.1
+
+packages:
+
+  /normalize.css/8.0.1:
+    resolution: {integrity: sha512-qizSNPO93t1YUuUhP22btGOo3chcvDFqFaj2TRybP0DMxkHOCTYwp3n34fel4a31ORXy4m1Xq0Gyqpb5m33qIg==}
+    dev: false
