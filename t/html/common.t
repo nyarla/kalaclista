@@ -101,18 +101,6 @@ sub testing {
     q<https://the.kalaclista.com/apple-touch-icon.png>
   );
 
-  # prelolad
-  is(
-    $dom->at('meta[http-equiv="x-dns-prefetch-control"]')
-      ->getAttribute('content'),
-    "on"
-  );
-
-  is(
-    $dom->at('link[rel="preload"][as="script"]')->getAttribute('href'),
-    "https://cdn.skypack.dev/budoux",
-  );
-
   # style and script
   is(
     $dom->at('meta[name="viewport"]')->getAttribute('content'),
@@ -120,8 +108,8 @@ sub testing {
   );
 
   is(
-    $dom->at('script[type="module"]')->getAttribute('src'),
-    "https://the.kalaclista.com/assets/script.js",
+    scalar( $dom->find('head > script:not([type="application/ld+json"])')->@* ),
+    2
   );
 
   ok( $dom->at('style')->textContent ne q{} );

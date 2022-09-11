@@ -24,16 +24,20 @@ _gen_sitemap_xml: _gen_split_content
 	@echo generate sitemap.xml
 	@$(RUN) generate-sitemap-xml -t 1
 
-_gen_archive: _gen_split_content
+_gen_archive: _gen_split_content _gen_assets
 	@echo generate archive
 	@$(RUN) generate-archive -t $(FULL)
 
-_gen_permalink: _gen_split_content _gen_resize_images _gen_assets_css
+_gen_permalink: _gen_split_content _gen_assets
 	@echo generate permalink
 	@$(RUN) generate-permalink -t $(FULL)
 
 _gen_assets_by_app:
 	@$(RUN) generate-assets -t $(FULL)
+
+_gen_assets_copy:
+	@echo copy assets
+	@cp -R content/assets/* dist/
 
 _gen_assets_css: _gen_assets_by_app
 	@echo generate css
@@ -42,23 +46,28 @@ _gen_assets_css: _gen_assets_by_app
 	@cp -RH node_modules/normalize.css/normalize.css resources/assets/normalize.css
 	@esbuild --bundle --platform=browser --minify resources/assets/stylesheet.css >resources/assets/main.css
 
-_gen_assets: _gen_assets_css _gen_resize_images
-	@echo generate assets
-	@cp -R content/assets/* dist/
-	@cp -R templates/static/* dist/assets/
-	@esbuild --bundle --platform=browser --minify templates/assets/budoux.js --outdir=dist/assets
+_gen_assets_script:
+	@echo generate scripts
+	@test -d resources/assets || mkdir -p resources/assets
+	@esbuild --bundle --platform=browser --minify templates/assets/budoux.js >resources/assets/main.js
+	@esbuild --bundle --platform=browser --minify templates/assets/ads.js >resources/assets/ads.js
 
 _opti_png:
 	@find content/assets -type f -name '*.png' \
 		| xargs -I{} -P$(FULL) -n1 optipng {} 2>/dev/null
 
-gen: \
-	_gen_split_content \
+_gen_assets: \
 	_gen_clean_exif \
 	_gen_resize_images \
+	_gen_assets_copy \
+	_gen_assets_css \
+	_gen_assets_script
+
+gen: \
+	_gen_split_content \
+	_gen_assets \
 	_gen_sitemap_xml \
 	_gen_archive \
-	_gen_assets \
 	_gen_permalink
 
 optimize: \
@@ -69,10 +78,10 @@ clean:
 	@mkdir -p dist
 
 build:
-	@$(MAKE) gen URL=https://the.kalaclista.com -j3
+	@$(MAKE) gen URL=https://the.kalaclista.com -j4
 
 dev:
-	@$(MAKE) gen URL=http://nixos:1313
+	@$(MAKE) gen URL=http://nixos:1313 -j4
 
 test:
 	prove -j$(FULL) t/*/*.t

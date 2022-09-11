@@ -14,7 +14,6 @@ sub main {
     apple-touch-icon.png
     assets/avatar.png
     assets/avatar.svg
-    assets/script.js
     favicon.ico
     icon-192.png
     icon-512.png

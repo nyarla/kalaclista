@@ -1,3 +1,44 @@
+my $ads = sub {
+  my ($position) = @_;
+  if ( $position eq q{top} ) {
+    return aside(
+      { class => 'ads', style => 'height: 140px' },
+      ins(
+        {
+          class => 'adsbygoogle',
+          style => 'display:block',
+          data  => {
+            'ad-format'     => 'fluid',
+            'ad-format-key' => '-gr-d+2d-6d+7k',
+            'ad-client'     => 'ca-pub-1273544194033160',
+            'ad-slot'       => '5004342069'
+          }
+        },
+        ""
+      ),
+      script( raw("(adsbygoogle = window.adsbygoogle || []).push({})") ),
+    );
+  }
+
+  if ( $position eq q{bottom} ) {
+    return aside(
+      { class => 'ads', style => 'height:360px' },
+      ins(
+        {
+          class => 'adsbygoogle',
+          style => 'display:block',
+          data  => {
+            'ad-format' => 'autorelaxed',
+            'ad-client' => 'ca-pub-1273544194033160',
+            'ad-slot'   => '2107661428'
+          },
+        },
+        ""
+      )
+    );
+  }
+};
+
 my $main = sub {
   my ( $content, $meta, $baseURI ) = @_;
 
@@ -12,6 +53,7 @@ my $main = sub {
   my $readtime = int( length($text) / 500 );
 
   return main(
+    $ads->('top'),
     article(
       { class => 'entry' },
       header(
@@ -25,7 +67,8 @@ my $main = sub {
         { className( 'entry', 'content' ) },
         raw( $content->dom->innerHTML ),
       ),
-    )
+    ),
+    $ads->('bottom'),
   );
 };
 

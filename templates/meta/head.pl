@@ -73,17 +73,15 @@ my $head = sub {
   my $parent = $tree->[ $tree->@* - 2 ]->{'href'};
   my $avatar = href( '/assets/avatar.png', $baseURI );
 
-  # prefetch and preload
-  my $dns =
-    meta( { 'http-equiv' => 'x-dns-prefetch-control', content => 'on' } );
-  my $prefetch =
-    link_( { rel => 'dns-prefetch', href => 'https://cdn.skypack.dev/' } );
-  my @preloads =
-    ( link_( { rel => 'preload', href => $budoux, as => 'script' } ), );
+  my @scripts = (
+    script( raw( $vars->data->{'js'} ) ),
+    (
+      $vars->data->{'loader'} ne q{}
+      ? script( raw( $vars->data->{'loader'} ) )
+      : q{}
+    )
+  );
 
-  my $script =
-    script( { src => href( '/assets/script.js', $baseURI ), type => 'module' },
-    "" );
   my @css = ( style( raw( $vars->data->{'css'} ) ) );
 
   if ( exists $meta->{'addon'}->{'style'}
@@ -163,9 +161,8 @@ my $head = sub {
 
   return head(
     $charset,
-    $dns, $prefetch, @preloads,
 
-    $script,    @css,
+    @scripts,   @css,
     $canonical, $viewport,
 
     $docname, $docdesc, @ogp, @twitter,
