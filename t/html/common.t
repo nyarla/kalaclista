@@ -10,6 +10,8 @@ use JSON::Tiny qw(decode_json);
 
 use Kalaclista::Directory;
 use Kalaclista::Sequential::Files;
+use Kalaclista::Files;
+use Path::Tiny;
 
 my $dist   = Kalaclista::Directory->new->rootdir->child("dist");
 my $parser = HTML5::DOM->new( { scripts => 1 } );
@@ -222,13 +224,19 @@ sub testing {
   );
 }
 
+sub files {
+  my $rootdir = shift;
+  return map { path($_) }
+    grep { $_ =~ m{\.html$} } Kalaclista::Files->find($rootdir);
+}
+
 sub main {
   my $runner = Kalaclista::Sequential::Files->new(
     handle => \&testing,
     result => sub { done_testing },
   );
 
-  $runner->run( $dist->stringify, '**', 'index.html' );
+  $runner->run( files( $dist->stringify ) );
 }
 
 main;

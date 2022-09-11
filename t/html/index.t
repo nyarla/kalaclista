@@ -10,6 +10,8 @@ use JSON::Tiny qw(decode_json);
 
 use Kalaclista::Directory;
 use Kalaclista::Sequential::Files;
+use Kalaclista::Files;
+use Path::Tiny;
 
 my $dist   = Kalaclista::Directory->new->rootdir->child("dist");
 my $parser = HTML5::DOM->new( { scripts => 1 } );
@@ -249,15 +251,24 @@ qr<https://the\.kalaclista\.com/(?:notes/[^/]+|(posts|echos)/\d{4}/\d{2}/\d{2}/\
   }
 }
 
+sub files {
+  my $rootdir = shift;
+  my @files   = Kalaclista::Files->find($rootdir);
+
+  return (
+    map { path($_) }
+      grep {
+      $_ =~ m{(?:(?:posts|echos)/\d{4}|(?:posts|echos|notes))/index\.html$}
+      } @files
+  );
+}
+
 sub main {
   my $runner = Kalaclista::Sequential::Files->new( handle => \&testing );
 
-  $runner->run( $dist->stringify, 'posts', '*', 'index.html' );
-  $runner->run( $dist->stringify, 'echos', '*', 'index.html' );
-
-  $runner->run( $dist->stringify, 'posts', 'index.html' );
-  $runner->run( $dist->stringify, 'notes', 'index.html' );
-  $runner->run( $dist->stringify, 'echos', 'index.html' );
+  $runner->run( files( $dist->child('posts')->stringify ) );
+  $runner->run( files( $dist->child('echos')->stringify ) );
+  $runner->run( files( $dist->child('notes')->stringify ) );
 
   done_testing;
 }

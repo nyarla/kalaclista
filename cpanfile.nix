@@ -373,23 +373,6 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
-    PathTinyGlob = buildPerlPackage {
-      pname = "Path-Tiny-Glob";
-      version = "0.2.0";
-      src = fetchurl {
-        url =
-          "mirror://cpan/authors/id/Y/YA/YANICK/Path-Tiny-Glob-0.2.0.tar.gz";
-        sha256 =
-          "f4caed0814efc4a6b481d6a1b57f9eccf2e49a25748c71eb4976785edd6e7265";
-      };
-      buildInputs = [ Test2Suite ];
-      propagatedBuildInputs = [ ExporterTiny ListLazy Moo PathTiny ];
-      meta = {
-        homepage = "https://github.com/yanick/Path-Tiny-Glob";
-        description = "File globbing utility";
-        license = with lib.licenses; [ artistic1 gpl1Plus ];
-      };
-    };
     ListLazy = buildPerlPackage {
       pname = "List-Lazy";
       version = "0.3.3";
@@ -496,17 +479,13 @@ let
   };
 in with modules; [
   Appwatcher
-  BCOW
-  BHooksOPCheck
   CaptureTiny
   Carp
   ClassAccessorLite
   ClassMethodModifiers
-  Clone
   CommonMark
   CwdGuard
   DataOptList
-  DataPerl
   DataValidator
   DevelCheckCompiler
   Encode
@@ -514,7 +493,6 @@ in with modules; [
   EncodeLocale
   ExporterTiny
   ExtUtilsConfig
-  ExtUtilsDepends
   ExtUtilsHelpers
   ExtUtilsInstallPaths
   FileCopyRecursiveReduced
@@ -538,7 +516,6 @@ in with modules; [
   JSON
   JSONTiny
   LWPMediaTypes
-  ListLazy
   ListMoreUtils
   ListMoreUtilsXS
   LogMinimal
@@ -549,34 +526,25 @@ in with modules; [
   ModuleBuildTiny
   ModuleCPANfile
   ModulePluggable
-  ModuleRuntime
-  Moo
-  MooXHandlesVia
-  MooXTypesMooseLike
   Mouse
   ParallelForkBossWorkerAsync
   ParallelPrefork
   ParallelScoreboard
   ParamsUtil
   PathTiny
-  PathTinyGlob
   Plack
   PlackMiddlewareDirIndex
   ProcWait3
   Proclet
-  RoleTiny
   ScopeGuard
   SetCrontab
   SignalMask
   StringShellQuote
   SubInfo
   SubInstall
-  SubQuote
   SubUplevel
   TermTable
   Test2Suite
-  TestDeep
-  TestException
   TestFatal
   TestLeakTrace
   TestNeeds
@@ -595,8 +563,4 @@ in with modules; [
   XMLLibXML
   YAMLLibYAML
   YAMLTiny
-  barewordfilehandles
-  indirect
-  multidimensional
-  strictures
 ]

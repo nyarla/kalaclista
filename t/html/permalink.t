@@ -12,6 +12,8 @@ use HTML::Escape qw(escape_html);
 use Kalaclista::HyperScript qw(text);
 use Kalaclista::Directory;
 use Kalaclista::Sequential::Files;
+use Kalaclista::Files;
+use Path::Tiny;
 
 my $dist   = Kalaclista::Directory->new->rootdir->child('dist');
 my $parser = HTML5::DOM->new( { script => 1 } );
@@ -65,13 +67,20 @@ qr<https://the\.kalaclista\.com/(?:(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})|(
   );
 }
 
+sub files {
+  my $rootdir = shift;
+  return map { path($_) }
+    grep     { $_ =~ m{\d{4}/\d{2}/\d{2}/\d{6}/index\.html$} }
+    Kalaclista::Files->find($rootdir);
+}
+
 sub main {
   my $runner = Kalaclista::Sequential::Files->new(
     handle => \&testing,
     result => sub { done_testing },
   );
 
-  $runner->run( $dist->stringify, '*/*/*/*/*/index.html' );
+  $runner->run( files( $dist->stringify ) );
 }
 
 main;
