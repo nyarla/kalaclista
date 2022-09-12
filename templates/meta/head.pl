@@ -104,6 +104,8 @@ my $head = sub {
   my $docname =
     title( ( $title eq $website ) ? $title : "${title} - ${website}" );
   my $docdesc = meta( { name => 'description', content => $description } );
+  my $hatena =
+    link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } );
 
   my @ogp = (
     property( 'og:title',       $title ),
@@ -165,7 +167,7 @@ my $head = sub {
     @scripts,   @css,
     $canonical, $viewport,
 
-    $docname, $docdesc, @ogp, @twitter,
+    $docname, $docdesc, $hatena, @ogp, @twitter,
     $jsonld,  @feeds,
 
     $webmanifest, $favicon, $svgicon, $apple,

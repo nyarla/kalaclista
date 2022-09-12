@@ -84,6 +84,10 @@ sub testing {
   like( $jsfeed->getAttribute('href'),
     qr"(?:/(posts|echos|notes))?/jsonfeed.json" );
 
+  # meta
+  is( $dom->at('link[rel="author"]')->getAttribute('href'),
+    'http://www.hatena.ne.jp/nyarla-net/' );
+
   # assets
   is(
     $dom->at('link[rel="manifest"]')->getAttribute('href'),
