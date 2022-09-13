@@ -187,7 +187,7 @@ my @cards = (
 
       backgroundColor => $base06,
       padding         => '0.25em 01em',
-      borderRadius    => '3pxi',
+      borderRadius    => '3px',
 
       transition     => 'border-color 0.125s',
       textDecoration => 'none',
@@ -443,6 +443,9 @@ my $main = css(
 
 my $middle = css(
   [
+    'body' => [
+      fontSize => '1.125em',
+    ],
     '#profile' => [
       figure => [
         p => [
