@@ -1,5 +1,10 @@
 my $ads = sub {
-  my ($position) = @_;
+  my ( $position, $uri ) = @_;
+
+  if ( $uri =~ m{/(?:nyarla|policies|licenses)/} ) {
+    return q{};
+  }
+
   if ( $position eq q{top} ) {
     return aside(
       { class => 'ads', style => 'height: 140px' },
@@ -34,7 +39,8 @@ my $ads = sub {
           },
         },
         ""
-      )
+      ),
+      script( raw("(adsbygoogle = window.adsbygoogle || []).push({})") ),
     );
   }
 };
@@ -53,7 +59,7 @@ my $main = sub {
   my $readtime = int( length($text) / 500 );
 
   return main(
-    $ads->('top'),
+    $ads->( 'top', $meta->href->as_string ),
     article(
       { class => 'entry' },
       header(
@@ -68,7 +74,7 @@ my $main = sub {
         raw( $content->dom->innerHTML ),
       ),
     ),
-    $ads->('bottom'),
+    $ads->( 'bottom', $meta->href->as_string ),
   );
 };
 

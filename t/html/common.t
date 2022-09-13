@@ -113,10 +113,15 @@ sub testing {
     "width=device-width,minimum-scale=1,initial-scale=1",
   );
 
-  is(
-    scalar( $dom->find('head > script:not([type="application/ld+json"])')->@* ),
-    2
-  );
+  my $link = $dom->at('link[rel="canonical"]')->getAttribute('href');
+  if ( $link =~ m{/\d{4}/\d{2}|notes/[^/]+/} ) {
+    is( scalar( $dom->find('script:not([type="application/ld+json"])')->@* ),
+      4 );
+  }
+  else {
+    is( scalar( $dom->find('script:not([type="application/ld+json"])')->@* ),
+      1 );
+  }
 
   ok( $dom->at('style')->textContent ne q{} );
 

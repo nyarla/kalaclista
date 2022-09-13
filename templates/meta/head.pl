@@ -76,7 +76,10 @@ my $head = sub {
   my @scripts = (
     script( raw( $vars->data->{'js'} ) ),
     (
-      $vars->data->{'loader'} ne q{}
+      (
+             $vars->data->{'loader'} ne q{}
+          && $vars->href =~ m{/\d{4}/\d{2}/|notes/[^/]+/}
+      )
       ? script( raw( $vars->data->{'loader'} ) )
       : q{}
     )
