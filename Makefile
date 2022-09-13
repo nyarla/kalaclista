@@ -42,7 +42,6 @@ _gen_assets_copy:
 _gen_assets_css: _gen_assets_by_app
 	@echo generate css
 	@test -d resources/assets || mkdir -p resources/assets
-	@$(RUN) generate-assets -t $(FULL)
 	@cp -RH node_modules/normalize.css/normalize.css resources/assets/normalize.css
 	@esbuild --bundle --platform=browser --minify resources/assets/stylesheet.css >resources/assets/main.css
 
