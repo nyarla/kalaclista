@@ -50,7 +50,7 @@ sub testing {
 
   # canonical
   like( $dom->at('link[rel="canonical"]')->getAttribute('href'),
-qr(https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}/|notes/[^/]+/))
+qr(https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}/|notes/[^/]+/|(?:nyarla|licenses|policies)/))
   );
 
   # Contents
@@ -63,15 +63,19 @@ qr(https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}/|note
   # entry title
   like(
     $dom->at('.entry header h1 a')->getAttribute('href'),
-qr<https://the\.kalaclista\.com/(?:(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})|(?:notes/[^/]+/))>,
+qr<https://the\.kalaclista\.com/(?:(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})|(?:notes/[^/]+/)|(?:nyarla|licenses|policies)/)>,
   );
 }
 
 sub files {
   my $rootdir = shift;
   return map { path($_) }
-    grep     { $_ =~ m{\d{4}/\d{2}/\d{2}/\d{6}/index\.html$} }
-    Kalaclista::Files->find($rootdir);
+    grep {
+         $_ =~ m{\.html$}
+      && $_ !~ m<(?:posts|echos)/\d{4}/index.html$>
+      && $_ !~ m<(?:posts|echos|notes)/index.html$>
+      && $_ !~ m<$rootdir/index.html$>
+    } Kalaclista::Files->find($rootdir);
 }
 
 sub main {
