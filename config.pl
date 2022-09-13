@@ -48,12 +48,17 @@ my $loader = ( $production && $ads->is_file ) ? $ads->slurp : q{};
 
 my $data = {
   pages => {
-    label   => 'カラクリスタ',
-    title   => 'カラクリスタ',
-    summary => '『輝かしい青春』なんて失かった人の Web サイトです。',
-    css     => $css,
-    js      => $js,
-    loader  => $loader,
+    label    => 'カラクリスタ',
+    title    => 'カラクリスタ',
+    summary  => '『輝かしい青春』なんて失かった人の Web サイトです。',
+    css      => $css,
+    js       => $js,
+    loader   => $loader,
+    sections => {
+      'posts' => 'ブログ',
+      'echos' => '日記',
+      'notes' => 'メモ帳',
+    },
   },
 
   posts => {
@@ -147,7 +152,7 @@ my $call = {
 
 my $query = {
   assets => sub {
-    return ( 'assets/stylesheet.css' => 'assets/stylesheet.pl', );
+    return ( '../resources/assets/stylesheet.css' => 'assets/stylesheet.pl', );
   },
 
   page => sub {
@@ -418,6 +423,38 @@ my $query = {
       vars     => $vars,
       );
 
+    my $idx = 0;
+    push @pages, Kalaclista::Page->new(
+      dist     => $dirs->distdir->child('index.html'),
+      template => $dirs->templates_dir->child('pages/index.pl')->stringify,
+      vars     => Kalaclista::Variables->new(
+        title       => $data->{'pages'}->{'title'},
+        website     => $data->{'pages'}->{'title'},
+        description => $data->{'pages'}->{'summary'},
+        section     => 'pages',
+        kind        => 'home',
+        data        => $data->{'pages'},
+        entries     => [
+          map  { [ $_, $content->($_) ] }
+          grep { $_->type =~ m{posts|echos|notes} && $idx++ < 20 }
+          sort { $b->lastmod cmp $a->lastmod } @entries
+        ],
+        href => do {
+          my $u = $baseURL->clone;
+          $u->path('/');
+          $u->as_string;
+        },
+        breadcrumb => do {
+          [
+            {
+              name => 'カラクリスタ',
+              href =>
+                do { my $u = $baseURL->clone; $u->path('/'); $u->as_string }
+            }
+          ]
+        }
+      ),
+    );
     return @pages;
   },
 };
