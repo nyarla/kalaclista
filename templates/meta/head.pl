@@ -58,20 +58,12 @@ my $publisher = {
   'name' => 'the.kalaclista.com',
 };
 
-my $head = sub {
+my $global = sub {
   my ( $vars, $baseURI ) = @_;
 
-  my $meta        = $vars->entries->[0]->[0];
   my $title       = $vars->title;
   my $website     = $vars->website;
   my $description = $vars->description;
-  my $section     = $vars->section;
-  my $kind        = $vars->kind;
-  my $permalink   = $vars->href;
-  my $tree        = $vars->breadcrumb;
-
-  my $parent = $tree->[ $tree->@* - 2 ]->{'href'};
-  my $avatar = href( '/assets/avatar.png', $baseURI );
 
   my @scripts = (
     script( raw( $vars->data->{'js'} ) ),
@@ -87,6 +79,56 @@ my $head = sub {
 
   my @css = ( style( raw( $vars->data->{'css'} ) ) );
 
+  my $charset  = meta( { charset => 'utf-8' } );
+  my $viewport = meta(
+    {
+      name    => 'viewport',
+      content => 'width=device-width,minimum-scale=1,initial-scale=1'
+    }
+  );
+
+  my $docname =
+    title( ( $title eq $website ) ? $title : "${title} - ${website}" );
+  my $docdesc = meta( { name => 'description', content => $description } );
+
+  my $hatena =
+    link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } );
+
+  my $webmanifest =
+    item( manifest => href( '/manifest.webmanifest', $baseURI ) );
+  my $favicon = item( icon => href( '/favicon.ico', $baseURI ) );
+  my $svgicon = item( icon => href( '/icon.svg', $baseURI ), 'image/svg+xml' );
+  my $apple =
+    item( 'apple-touch-icon', href( '/apple-touch-icon.png', $baseURI ) );
+
+  return (
+    $charset,
+
+    @scripts, @css,
+
+    $viewport,
+    $docname, $docdesc, $hatena,
+
+    $webmanifest, $favicon, $svgicon, $apple,
+  );
+};
+
+my $page = sub {
+  my ( $vars, $baseURI ) = @_;
+
+  my $meta        = $vars->entries->[0]->[0];
+  my $title       = $vars->title;
+  my $website     = $vars->website;
+  my $description = $vars->description;
+  my $section     = $vars->section;
+  my $kind        = $vars->kind;
+  my $permalink   = $vars->href;
+  my $tree        = $vars->breadcrumb;
+
+  my $parent = $tree->[ $tree->@* - 2 ]->{'href'};
+  my $avatar = href( '/assets/avatar.png', $baseURI );
+
+  my @css;
   if ( exists $meta->{'addon'}->{'style'}
     && ref $meta->{'addon'}->{'style'} eq 'ARRAY' )
   {
@@ -94,21 +136,9 @@ my $head = sub {
   }
 
   # document format
-  my $charset   = meta( { charset => 'utf-8' } );
   my $canonical = link_( { rel => 'canonical', href => $permalink } );
-  my $viewport  = meta(
-    {
-      name    => 'viewport',
-      content => 'width=device-width,minimum-scale=1,initial-scale=1'
-    }
-  );
 
   # document information
-  my $docname =
-    title( ( $title eq $website ) ? $title : "${title} - ${website}" );
-  my $docdesc = meta( { name => 'description', content => $description } );
-  my $hatena =
-    link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } );
 
   my @ogp = (
     property( 'og:title',       $title ),
@@ -157,24 +187,16 @@ my $head = sub {
     raw( jsonld( \%jsonld, $tree->@* ) ),
   );
 
-  my $webmanifest =
-    item( manifest => href( '/manifest.webmanifest', $baseURI ) );
-  my $favicon = item( icon => href( '/favicon.ico', $baseURI ) );
-  my $svgicon = item( icon => href( '/icon.svg', $baseURI ), 'image/svg+xml' );
-  my $apple =
-    item( 'apple-touch-icon', href( '/apple-touch-icon.png', $baseURI ) );
+  return $canonical, @ogp, @twitter, $jsonld, @feeds;
+};
 
-  return head(
-    $charset,
+my $head = sub {
+  my ( $vars, $baseURI ) = @_;
 
-    @scripts,   @css,
-    $canonical, $viewport,
+  my @meta = $global->( $vars, $baseURI );
+  push @meta, $page->( $vars, $baseURI ) if ( $vars->kind ne '404' );
 
-    $docname, $docdesc, $hatena, @ogp, @twitter,
-    $jsonld,  @feeds,
-
-    $webmanifest, $favicon, $svgicon, $apple,
-  );
+  return head(@meta);
 };
 
 $head;

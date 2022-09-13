@@ -75,14 +75,18 @@ sub testing {
   is( $dom->at('meta[charset]')->getAttribute('charset'), 'utf-8' );
 
   # feeds
-  my $rss20  = $dom->at('link[rel="alternate"][type="application/rss+xml"]');
-  my $atom   = $dom->at('link[rel="alternate"][type="application/atom+xml"]');
-  my $jsfeed = $dom->at('link[rel="alternate"][type="application/feed+json"]');
+  if ( $file->stringify !~ m{404\.html$} ) {
+    my $rss20 = $dom->at('link[rel="alternate"][type="application/rss+xml"]');
+    my $atom  = $dom->at('link[rel="alternate"][type="application/atom+xml"]');
+    my $jsfeed =
+      $dom->at('link[rel="alternate"][type="application/feed+json"]');
 
-  like( $rss20->getAttribute('href'), qr"(?:/(posts|echos|notes))?/index.xml" );
-  like( $atom->getAttribute('href'),  qr"(?:/(posts|echos|notes))?/atom.xml" );
-  like( $jsfeed->getAttribute('href'),
-    qr"(?:/(posts|echos|notes))?/jsonfeed.json" );
+    like( $rss20->getAttribute('href'),
+      qr"(?:/(posts|echos|notes))?/index.xml" );
+    like( $atom->getAttribute('href'), qr"(?:/(posts|echos|notes))?/atom.xml" );
+    like( $jsfeed->getAttribute('href'),
+      qr"(?:/(posts|echos|notes))?/jsonfeed.json" );
+  }
 
   # meta
   is( $dom->at('link[rel="author"]')->getAttribute('href'),
@@ -113,22 +117,24 @@ sub testing {
     "width=device-width,minimum-scale=1,initial-scale=1",
   );
 
-  my $link = $dom->at('link[rel="canonical"]')->getAttribute('href');
-  if ( $link =~ m{/\d{4}/\d{2}|notes/[^/]+/} ) {
-    is( scalar( $dom->find('script:not([type="application/ld+json"])')->@* ),
-      4 );
-  }
-  else {
-    is( scalar( $dom->find('script:not([type="application/ld+json"])')->@* ),
-      1 );
+  if ( $file->stringify !~ m{404\.html$} ) {
+    my $link = $dom->at('link[rel="canonical"]')->getAttribute('href');
+    if ( $link =~ m{/\d{4}/\d{2}|notes/[^/]+/} ) {
+      is( scalar( $dom->find('script:not([type])')->@* ), 4 ),;
+    }
+    else {
+      is( scalar( $dom->find('script:not([type])')->@* ), 1 );
+    }
   }
 
   ok( $dom->at('style')->textContent ne q{} );
 
   # jsonld
-  my $jsonld = $dom->at('script[type="application/ld+json"]')->textContent;
-  utf8::encode($jsonld);
-  testing_jsonld( decode_json($jsonld) );
+  if ( $file->stringify !~ m{404\.html$} ) {
+    my $jsonld = $dom->at('script[type="application/ld+json"]')->textContent;
+    utf8::encode($jsonld);
+    testing_jsonld( decode_json($jsonld) );
+  }
 
   # Contents
   # ========

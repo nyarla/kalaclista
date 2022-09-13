@@ -72,6 +72,7 @@ sub files {
   return map { path($_) }
     grep {
          $_ =~ m{\.html$}
+      && $_ !~ m{404\.html$}
       && $_ !~ m<(?:posts|echos)/\d{4}/index.html$>
       && $_ !~ m<(?:posts|echos|notes)/index.html$>
       && $_ !~ m<$rootdir/index.html$>
