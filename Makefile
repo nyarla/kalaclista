@@ -99,4 +99,12 @@ shell:
 	@pkill proclet || true
 
 serve:
-	proclet start --color	
+	proclet start --color
+
+.PHONY: posts echos
+
+posts:
+	@bash bin/new-entry.sh posts
+
+echos:
+	@bash bin/new-entry.sh echos
