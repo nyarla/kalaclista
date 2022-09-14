@@ -91,11 +91,20 @@ my @global = (
 );
 
 my @container = (
-  [ '#global', '#profile', '#menu', '#copyright', '.entry' ] => [
+  [ '#global', '#profile', '#menu', '#copyright', '.entry', '.ads' ] => [
     margin   => '0 auto',
     padding  => '0 1.5em',
     maxWidth => '35em',
   ],
+
+  'aside.ads:nth-child(1) > ins:nth-child(1)' => [
+    height => '140px',
+  ],
+
+  'aside.ads:nth-child(3) > ins:nth-child(1)' => [
+    height => '420px',
+  ],
+
 );
 
 my @widgets = (
