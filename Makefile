@@ -85,7 +85,12 @@ dev:
 test:
 	prove -j$(FULL) t/*/*.t
 
-.PHONY: shell serve
+.PHONY: shell serve up
+
+# temporary solution
+up: clean build
+	rsync -r --delete dist/ ../kalaclista/dist/
+	cd ../kalaclista && make up
 
 shell:
 	@cp app/cpanfile.nix cpanfile.nix
