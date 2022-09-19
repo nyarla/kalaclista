@@ -36,7 +36,7 @@ my $dirs = Kalaclista::Directory->instance(
 );
 
 my $baseURL    = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
-my $production = ( $ENV{'URL'}         // q{} ) eq 'https://the.kalaclista.com';
+my $production = $baseURL->as_string eq 'https://the.kalaclista.com';
 my $stylesheet = $dirs->build_dir->child('assets/main.css');
 my $css        = ( $stylesheet->is_file ) ? $stylesheet->slurp : q{};
 
