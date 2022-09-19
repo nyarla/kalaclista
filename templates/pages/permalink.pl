@@ -7,7 +7,7 @@ my $ads = sub {
 
   if ( $position eq q{top} ) {
     return aside(
-      { class => 'ads', style => 'height: 140px' },
+      { class => 'ads' },
       ins(
         {
           class => 'adsbygoogle',
@@ -27,7 +27,7 @@ my $ads = sub {
 
   if ( $position eq q{bottom} ) {
     return aside(
-      { class => 'ads', style => 'height:360px' },
+      { class => 'ads' },
       ins(
         {
           class => 'adsbygoogle',

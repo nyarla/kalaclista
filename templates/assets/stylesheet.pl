@@ -97,14 +97,9 @@ my @container = (
     maxWidth => '35em',
   ],
 
-  'aside.ads:nth-child(1) > ins:nth-child(1)' => [
-    height => '140px',
+  'aside.ads:nth-child(1) > ins.adsbygoogle' => [
+    height => '140px !important',
   ],
-
-  'aside.ads:nth-child(3) > ins:nth-child(1)' => [
-    height => '420px',
-  ],
-
 );
 
 my @widgets = (
@@ -187,6 +182,18 @@ my @entry = (
 );
 
 my @cards = (
+
+  # thumbnail
+  '.content__card--thumbnail' => [
+    display => 'block',
+    width   => '100%',
+
+    '& img' => [
+      borderRadius => '3px',
+      height       => 'auto',
+      width        => '100%',
+    ],
+  ],
 
   # website
   '.content__card--website' => [
