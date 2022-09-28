@@ -323,6 +323,19 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    CpanelJSONXS = buildPerlPackage {
+      pname = "Cpanel-JSON-XS";
+      version = "4.32";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/R/RU/RURBAN/Cpanel-JSON-XS-4.32.tar.gz";
+        sha256 =
+          "ece9d35914175e6c47b62fd936244278365ebce0905fe92b037e484e6d501895";
+      };
+      meta = {
+        description = "CPanel fork of JSON::XS, fast and correct serializing";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     ModuleBuildPluggablePPPort = buildPerlModule {
       pname = "Module-Build-Pluggable-PPPort";
       version = "0.04";
@@ -491,16 +504,20 @@ let
     };
   };
 in with modules; [
+  AlgorithmDiff
+  AlienBuild
   Appwatcher
   CaptureTiny
   Carp
   ClassAccessorLite
   ClassMethodModifiers
   CommonMark
+  CpanelJSONXS
   CwdGuard
   DataOptList
   DataValidator
   DevelCheckCompiler
+  DevelNYTProf
   Encode
   EncodeDetect
   EncodeLocale
@@ -527,6 +544,7 @@ in with modules; [
   ImageScale
   Importer
   JSON
+  JSONMaybeXS
   JSONTiny
   LWPMediaTypes
   ListMoreUtils
@@ -559,6 +577,7 @@ in with modules; [
   SubUplevel
   TermTable
   Test2Suite
+  TestDifferences
   TestFatal
   TestLeakTrace
   TestNeeds
@@ -568,6 +587,7 @@ in with modules; [
   TestSharedFork
   TestWarn
   TextAligner
+  TextDiff
   TextTable
   TimeCrontab
   TimeMoment
