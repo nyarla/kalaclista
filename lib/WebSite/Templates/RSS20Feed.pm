@@ -1,11 +1,16 @@
+package WebSite::Templates::RSS20Feed;
+
+use strict;
+use warnings;
+use utf8;
+
+use Kalaclista::HyperScript qw(h);
 use Time::Moment;
 
-my $template = sub {
-  my ( $vars, $baseURI ) = @_;
+my $format = '%a %m %b %Y %T %z';
 
-  my @entries =
-    sort { $b->[0]->lastmod cmp $a->[0]->lastmod } $vars->entries->@*;
-  my $format = '%a %m %b %Y %T %z';
+sub render {
+  my ( $vars, $baseURI ) = @_;
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     'rss',
@@ -21,7 +26,7 @@ my $template = sub {
       h( copyright      => '(c) 2006-2022 OKAMURA Naoki' ),
       h(
         lastBuildDate =>
-          Time::Moment->from_string( $entries[0]->[0]->lastmod )
+          Time::Moment->from_string( $vars->entries->[0]->[0]->lastmod )
           ->strftime($format)
       ),
       (
@@ -38,10 +43,10 @@ my $template = sub {
               h( description => $_->[1]->dom->innerHTML ),
             ]
           )
-        } @entries
+        } $vars->entries->@*
       ),
     )
   );
-};
+}
 
-$template;
+1;

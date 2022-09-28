@@ -1,12 +1,15 @@
+package WebSite::Templates::JSONFeed;
+
+use strict;
+use warnings;
+use utf8;
+
 use JSON::Tiny qw(encode_json);
 
-my $template = sub {
+sub render {
   my ( $vars, $baseURI ) = @_;
 
-  my @entries =
-    sort { $b->[0]->lastmod cmp $a->[0]->lastmod } $vars->entries->@*;
-
-  my $jsonfeed = {
+  my $data = {
     version     => 'https://jsonfeed.org/version/1.1',
     title       => $vars->website,
     description => $vars->description,
@@ -40,14 +43,14 @@ my $template = sub {
           ],
           language => 'ja_JP',
         }
-      } @entries
+      } $vars->entries->@*
     ],
   };
 
-  my $json = encode_json($jsonfeed);
+  my $json = encode_json($data);
   utf8::decode($json);
 
   return $json;
-};
+}
 
-$template;
+1;

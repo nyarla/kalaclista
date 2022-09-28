@@ -1,8 +1,13 @@
-my $template = sub {
-  my ( $vars, $baseURI ) = @_;
+package WebSite::Templates::AtomFeed;
 
-  my @entries =
-    sort { $b->[0]->lastmod cmp $a->[0]->lastmod } $vars->entries->@*;
+use strict;
+use warnings;
+use utf8;
+
+use Kalaclista::HyperScript qw(h);
+
+sub render {
+  my ( $vars, $baseURI ) = @_;
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     feed => { xmlns => 'http://www.w3.org/2005/Atom' } => [
@@ -21,7 +26,7 @@ my $template = sub {
           h( 'uri',   'https://the.kalaclista.com/nyarla/' )
         ]
       ),
-      h( 'updated', $entries[0]->[0]->lastmod ),
+      h( 'updated', $vars->entries->[0]->[0]->lastmod ),
 
       (
         map {
@@ -43,10 +48,10 @@ my $template = sub {
               h( 'content', { type => 'html' }, $_->[1]->dom->innerHTML )
             ]
           )
-        } @entries
+        } $vars->entries->@*
       ),
     ]
   );
-};
+}
 
-$template;
+1;

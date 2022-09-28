@@ -95,7 +95,7 @@ up: clean build
 shell:
 	@cp app/cpanfile.nix cpanfile.nix
 	@cp app/flake.lock flake.lock
-	@nix develop -c env SHELL=zsh sh -c 'env PERL5LIB=$(shell pwd)/app/lib:$$PERL5LIB zsh'
+	@nix develop -c env SHELL=zsh sh -c 'env PERL5LIB=$(shell pwd)/app/lib:$(shell pwd)/lib:$$PERL5LIB zsh'
 	@pkill proclet || true
 
 serve:

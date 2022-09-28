@@ -244,42 +244,68 @@ my $query = {
         },
       );
 
-      for my $feed (qw(index.xml atom.xml jsonfeed.json)) {
-        push @pages,
-          Kalaclista::Page->new(
-          dist     => $dirs->distdir->child("${section}/${feed}"),
-          template =>
-            $dirs->templates_dir->child("feeds/${feed}.pl")->stringify,
-          vars => $vars,
-          );
-      }
+      push @pages,
+        Kalaclista::Page->new(
+        dist     => $dirs->distdir->child("${section}/index.xml"),
+        template => 'WebSite::Templates::RSS20Feed',
+        vars     => $vars,
+        );
+
+      push @pages,
+        Kalaclista::Page->new(
+        dist     => $dirs->distdir->child("${section}/atom.xml"),
+        template => 'WebSite::Templates::AtomFeed',
+        vars     => $vars,
+        );
+
+      push @pages,
+        Kalaclista::Page->new(
+        dist     => $dirs->distdir->child("${section}/jsonfeed.json"),
+        template => 'WebSite::Templates::JSONFeed',
+        vars     => $vars,
+        );
     }
 
-    for my $feed (qw(index.xml atom.xml jsonfeed.json)) {
-      my $website     = $data->{'pages'}->{'title'};
-      my $description = "${website}の最近の更新";
-      my $idx         = 0;
-      push @pages, Kalaclista::Page->new(
-        dist     => $dirs->distdir->child("${feed}"),
-        template => $dirs->templates_dir->child("feeds/${feed}.pl")->stringify,
-        vars     => Kalaclista::Variables->new(
-          title       => $description,
-          website     => $website,
-          description => $description,
-          kind        => 'feed',
-          data        => $data->{'pages'},
-          entries     => [
-            map { [ $_, $content->($_) ] }
-            grep { $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries
-          ],
-          href => do {
-            my $u = $baseURL->clone;
-            $u->path("/");
-            $u->as_string;
-          },
-        ),
+    my $website     = $data->{'pages'}->{'title'};
+    my $description = "${website}の最近の更新";
+    my $idx         = 0;
+    my $vars        = Kalaclista::Variables->new(
+      title       => $description,
+      website     => $website,
+      description => $description,
+      kind        => 'feed',
+      data        => $data->{'pages'},
+      entries     => [
+        map { [ $_, $content->($_) ] }
+        grep { $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries
+      ],
+      href => do {
+        my $u = $baseURL->clone;
+        $u->path("/");
+        $u->as_string;
+      },
+    );
+
+    push @pages,
+      Kalaclista::Page->new(
+      dist     => $dirs->distdir->child("index.xml"),
+      template => 'WebSite::Templates::RSS20Feed',
+      vars     => $vars,
       );
-    }
+
+    push @pages,
+      Kalaclista::Page->new(
+      dist     => $dirs->distdir->child("atom.xml"),
+      template => 'WebSite::Templates::AtomFeed',
+      vars     => $vars,
+      );
+
+    push @pages,
+      Kalaclista::Page->new(
+      dist     => $dirs->distdir->child("jsonfeed.json"),
+      template => 'WebSite::Templates::JSONFeed',
+      vars     => $vars,
+      );
 
     for my $year ( 2006 .. $current ) {
       for my $section (qw(posts echos)) {
@@ -384,7 +410,7 @@ my $query = {
       }
     }
 
-    my $vars = Kalaclista::Variables->new(
+    $vars = Kalaclista::Variables->new(
       title       => $data->{'notes'}->{'title'},
       website     => $data->{'notes'}->{'title'},
       description => $data->{'notes'}->{'summary'},
@@ -426,7 +452,7 @@ my $query = {
       vars     => $vars,
       );
 
-    my $idx = 0;
+    $idx = 0;
     push @pages, Kalaclista::Page->new(
       dist     => $dirs->distdir->child('index.html'),
       template => $dirs->templates_dir->child('pages/index.pl')->stringify,
