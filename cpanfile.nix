@@ -73,6 +73,23 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    ModuleBuildXSUtil = buildPerlModule {
+      pname = "Module-Build-XSUtil";
+      version = "0.19";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/H/HI/HIDEAKIO/Module-Build-XSUtil-0.19.tar.gz";
+        sha256 =
+          "9063b3c346edeb422807ffe49ffb23038c4f900d4a77b845ce4b53d97bf29400";
+      };
+      buildInputs = [ CaptureTiny CwdGuard FileCopyRecursiveReduced ];
+      propagatedBuildInputs = [ DevelCheckCompiler ];
+      meta = {
+        homepage = "https://github.com/hideo55/Module-Build-XSUtil";
+        description = "A Module::Build class for building XS modules";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     MooXTypesMooseLike = buildPerlPackage {
       pname = "MooX-Types-MooseLike";
       version = "0.29";
@@ -134,6 +151,29 @@ let
       meta = {
         homepage = "https://github.com/gfx/p5-Data-Validator";
         description = "Rule based validator on type constraint system";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    HTTPEntityParser = buildPerlModule {
+      pname = "HTTP-Entity-Parser";
+      version = "0.25";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/K/KA/KAZEBURO/HTTP-Entity-Parser-0.25.tar.gz";
+        sha256 =
+          "3a8cd0d8cba3d17cd8c04ee82d7341dfaa247dbdd94a49eb94b53f69e483ec3a";
+      };
+      buildInputs = [ HTTPMessage ModuleBuildTiny ];
+      propagatedBuildInputs = [
+        HTTPMultiPartParser
+        HashMultiValue
+        JSONMaybeXS
+        StreamBuffered
+        WWWFormUrlEncoded
+      ];
+      meta = {
+        homepage = "https://github.com/kazeburo/HTTP-Entity-Parser";
+        description = "PSGI compliant HTTP Entity Parser";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -215,6 +255,27 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    ApacheLogFormatCompiler = buildPerlModule {
+      pname = "Apache-LogFormat-Compiler";
+      version = "0.36";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/K/KA/KAZEBURO/Apache-LogFormat-Compiler-0.36.tar.gz";
+        sha256 =
+          "94509503ee74ea820183d070c11630ee5bc0fd8c12cb74fae953ed62e4a1ac17";
+      };
+      buildInputs =
+        [ HTTPMessage ModuleBuildTiny TestMockTime TestRequires TryTiny URI ];
+      propagatedBuildInputs = [ POSIXstrftimeCompiler ];
+      preCheck = ''
+        rm t/04_tz.t
+      '';
+      meta = {
+        homepage = "https://github.com/kazeburo/Apache-LogFormat-Compiler";
+        description = "Compile a log format string to perl-code";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     FilesysNotifySimple = buildPerlPackage {
       pname = "Filesys-Notify-Simple";
       version = "0.14";
@@ -228,6 +289,22 @@ let
       meta = {
         homepage = "https://github.com/miyagawa/Filesys-Notify-Simple";
         description = "Simple and dumb file system watcher";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    WWWFormUrlEncoded = buildPerlModule {
+      pname = "WWW-Form-UrlEncoded";
+      version = "0.26";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/K/KA/KAZEBURO/WWW-Form-UrlEncoded-0.26.tar.gz";
+        sha256 =
+          "c0480b5f1f15b71163ec327b8e7842298f0cb3ace97e63d7034af1e94a2d90f4";
+      };
+      meta = {
+        homepage = "https://github.com/kazeburo/WWW-Form-UrlEncoded";
+        description =
+          "Parser and builder for application/x-www-form-urlencoded";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -306,6 +383,23 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    HTTPHeadersFast = buildPerlModule {
+      pname = "HTTP-Headers-Fast";
+      version = "0.22";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/T/TO/TOKUHIROM/HTTP-Headers-Fast-0.22.tar.gz";
+        sha256 =
+          "cc431db68496dd884db4bc0c0b7112c1f4a4f1dc68c4f5a3caa757a1e7481b48";
+      };
+      buildInputs = [ ModuleBuildTiny TestRequires ];
+      propagatedBuildInputs = [ HTTPDate ];
+      meta = {
+        homepage = "https://github.com/tokuhirom/HTTP-Headers-Fast";
+        description = "Faster implementation of HTTP::Headers";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     barewordfilehandles = buildPerlPackage {
       pname = "bareword-filehandles";
       version = "0.007";
@@ -320,6 +414,22 @@ let
       meta = {
         homepage = "https://github.com/ilmari/bareword-filehandles";
         description = "Disables bareword filehandles";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    DevelStackTraceAsHTML = buildPerlPackage {
+      pname = "Devel-StackTrace-AsHTML";
+      version = "0.15";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/M/MI/MIYAGAWA/Devel-StackTrace-AsHTML-0.15.tar.gz";
+        sha256 =
+          "6283dbe2197e2f20009cc4b449997742169cdd951bfc44cbc6e62c2a962d3147";
+      };
+      propagatedBuildInputs = [ DevelStackTrace ];
+      meta = {
+        homepage = "https://github.com/miyagawa/Devel-StackTrace-AsHTML";
+        description = "Displays stack trace in HTML";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -377,6 +487,22 @@ let
       };
       meta = {
         description = "A minimalistic variant of Class::Accessor";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    FileShareDirInstall = buildPerlPackage {
+      pname = "File-ShareDir-Install";
+      version = "0.14";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/E/ET/ETHER/File-ShareDir-Install-0.14.tar.gz";
+        sha256 =
+          "8f9533b198f2d4a9a5288cbc7d224f7679ad05a7a8573745599789428bc5aea0";
+      };
+      meta = {
+        homepage =
+          "https://github.com/Perl-Toolchain-Gang/File-ShareDir-Install";
+        description = "Install shared files";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -439,6 +565,40 @@ let
       meta = {
         homepage = "https://github.com/tokuhirom/App-watcher";
         description = "Watch the file updates";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    TextHyperScript = buildPerlModule {
+      pname = "Text-HyperScript";
+      version = "0.05";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/N/NY/NYARLA/Text-HyperScript-0.05.tar.gz";
+        sha256 =
+          "e0a68f90decdd513f604752f6078fdf1fe254395fba9f39d539dbc10dc264820";
+      };
+      buildInputs = [ ModuleBuildTiny Test2Suite ];
+      propagatedBuildInputs = [ ExporterLite ];
+      meta = {
+        homepage = "https://github.com/nyarla/p5-Text-HyperScript";
+        description = "The HyperScript like library for Perl";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    POSIXstrftimeCompiler = buildPerlModule {
+      pname = "POSIX-strftime-Compiler";
+      version = "0.44";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/K/KA/KAZEBURO/POSIX-strftime-Compiler-0.44.tar.gz";
+        sha256 =
+          "dfd3c97398dcfe51c8236b85e3dc28035667b76531f7aa0a6535f3aa5405b35a";
+      };
+      buildInputs = [ ModuleBuildTiny ];
+      meta = {
+        homepage = "https://github.com/kazeburo/POSIX-strftime-Compiler";
+        description =
+          "GNU C library compatible strftime for loggers and servers";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -506,27 +666,37 @@ let
 in with modules; [
   AlgorithmDiff
   AlienBuild
+  ApacheLogFormatCompiler
   Appwatcher
   CaptureTiny
   Carp
   ClassAccessorLite
+  ClassInspector
   ClassMethodModifiers
   CommonMark
+  CookieBaker
   CpanelJSONXS
   CwdGuard
   DataOptList
   DataValidator
   DevelCheckCompiler
   DevelNYTProf
+  DevelStackTrace
+  DevelStackTraceAsHTML
   Encode
   EncodeDetect
   EncodeLocale
+  ExporterLite
   ExporterTiny
   ExtUtilsConfig
   ExtUtilsHelpers
   ExtUtilsInstallPaths
+  FFICheckLib
   FileCopyRecursiveReduced
+  FileShareDir
+  FileShareDirInstall
   FileWhich
+  Filechdir
   Filepushd
   FilesysNotifySimple
   GetoptCompactWithCmd
@@ -535,9 +705,13 @@ in with modules; [
   HTMLParser
   HTMLTagset
   HTTPDate
+  HTTPEntityParser
+  HTTPHeadersFast
   HTTPMessage
+  HTTPMultiPartParser
   HTTPTiny
   HTTPTinyish
+  HashMultiValue
   IOHTML
   IPCRun3
   IPCSignal
@@ -555,10 +729,12 @@ in with modules; [
   ModuleBuildPluggable
   ModuleBuildPluggablePPPort
   ModuleBuildTiny
+  ModuleBuildXSUtil
   ModuleCPANfile
   ModuleLoad
   ModulePluggable
   Mouse
+  POSIXstrftimeCompiler
   ParallelForkBossWorkerAsync
   ParallelPrefork
   ParallelScoreboard
@@ -571,29 +747,37 @@ in with modules; [
   ScopeGuard
   SetCrontab
   SignalMask
+  StreamBuffered
   StringShellQuote
   SubInfo
   SubInstall
   SubUplevel
   TermTable
   Test2Suite
+  TestDeep
   TestDifferences
+  TestException
   TestFatal
   TestLeakTrace
+  TestMockTime
   TestNeeds
   TestNumberDelta
   TestOutput
   TestRequires
   TestSharedFork
+  TestTCP
+  TestTime
   TestWarn
   TextAligner
   TextDiff
+  TextHyperScript
   TextTable
   TimeCrontab
   TimeMoment
   TimeDate
   TryTiny
   URI
+  WWWFormUrlEncoded
   XMLLibXML
   YAMLLibYAML
   YAMLTiny

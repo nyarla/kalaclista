@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::HyperScript qw(h);
+use Text::HyperScript qw(h);
 
 sub render {
   my ( $vars, $baseURI ) = @_;

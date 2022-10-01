@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::HyperScript qw(h);
+use Text::HyperScript qw(h);
 use Time::Moment;
 
 my $format = '%a %m %b %Y %T %z';
