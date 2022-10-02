@@ -1,3 +1,8 @@
+use WebSite::Widgets::Info;
+use WebSite::Widgets::Menu;
+use WebSite::Widgets::Profile;
+use WebSite::Widgets::Title;
+
 my $ads = sub {
   my ( $position, $uri ) = @_;
 
@@ -87,11 +92,11 @@ my $template = sub {
   return document(
     expand( 'meta/head.pl', $vars, $baseURI ),
     [
-      expand( 'widgets/title.pl',   $baseURI ),
-      expand( 'widgets/profile.pl', $baseURI ),
-      expand( 'widgets/menu.pl',    $baseURI ),
+      banner($baseURI),
+      profile($baseURI),
+      sitemenu($baseURI),
       $main->( $content, $meta, $baseURI ),
-      expand( 'widgets/info.pl', $baseURI )
+      siteinfo($baseURI),
     ]
   );
 };

@@ -1,3 +1,8 @@
+use WebSite::Widgets::Info;
+use WebSite::Widgets::Menu;
+use WebSite::Widgets::Profile;
+use WebSite::Widgets::Title;
+
 my $content = sub {
   my ( $vars, $baseURI ) = @_;
 
@@ -13,11 +18,11 @@ my $content = sub {
     for my $meta ( sort { $b->lastmod cmp $a->lastmod } $entries->@* ) {
       my $date = date( $meta->date );
       push @archives,
-        li(
-        time_( { datetime => $date } ),
-        "${date}：",
-        a( { href => $meta->href->as_string, class => 'title' }, $meta->title )
-        );
+          li(
+            time_( { datetime => $date } ),
+            "${date}：",
+            a( { href => $meta->href->as_string, class => 'title' }, $meta->title )
+          );
     }
 
     @contents = ul( { class => 'archives' }, @archives );
@@ -28,16 +33,14 @@ my $content = sub {
       my $date = date( $meta->date );
 
       push @archives,
-        li(
-        time_( { datetime => $date }, "${date}：" ),
-        a( { href => $meta->href->as_string, class => 'title' }, $meta->title )
-        );
+          li(
+            time_( { datetime => $date }, "${date}：" ),
+            a( { href => $meta->href->as_string, class => 'title' }, $meta->title )
+          );
     }
 
     my @years;
-    for my $yr ( sort { $b <=> $a }
-      $data->{'begin'} .. ( (localtime)[5] + 1900 ) )
-    {
+    for my $yr ( sort { $b <=> $a } $data->{'begin'} .. ( (localtime)[5] + 1900 ) ) {
       if ( $yr == $year ) {
         push @years, strong($year);
         next;
@@ -54,14 +57,8 @@ my $content = sub {
 
   return main(
     article(
-      {
-        class => [qw(entry entry__archives)]
-      },
-      header(
-        h1(
-          a( { href => href( "/${section}/", $baseURI ) }, $data->{'title'} )
-        )
-      ),
+      { class => [qw(entry entry__archives)] },
+      header( h1( a( { href => href( "/${section}/", $baseURI ) }, $data->{'title'} ) ) ),
       section(
         { className( 'entry', 'content' ) }, p( $data->{'summary'} ),
         hr(),                                @contents,
@@ -76,11 +73,11 @@ my $template = sub {
   return document(
     expand( 'meta/head.pl', $vars, $baseURI ),
     [
-      expand( 'widgets/title.pl',   $baseURI ),
-      expand( 'widgets/profile.pl', $baseURI ),
-      expand( 'widgets/menu.pl',    $baseURI ),
+      banner($baseURI),
+      profile($baseURI),
+      sitemenu($baseURI),
       $content->( $vars, $baseURI ),
-      expand( 'widgets/info.pl', $baseURI )
+      siteinfo($baseURI),
     ]
   );
 };

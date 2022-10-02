@@ -76,21 +76,26 @@ sub testing {
 
   # feeds
   if ( $file->stringify !~ m{404\.html$} ) {
-    my $rss20 = $dom->at('link[rel="alternate"][type="application/rss+xml"]');
-    my $atom  = $dom->at('link[rel="alternate"][type="application/atom+xml"]');
-    my $jsfeed =
-      $dom->at('link[rel="alternate"][type="application/feed+json"]');
+    my $rss20  = $dom->at('link[rel="alternate"][type="application/rss+xml"]');
+    my $atom   = $dom->at('link[rel="alternate"][type="application/atom+xml"]');
+    my $jsfeed = $dom->at('link[rel="alternate"][type="application/feed+json"]');
 
-    like( $rss20->getAttribute('href'),
-      qr"(?:/(posts|echos|notes))?/index.xml" );
+    like(
+      $rss20->getAttribute('href'),
+      qr"(?:/(posts|echos|notes))?/index.xml"
+    );
     like( $atom->getAttribute('href'), qr"(?:/(posts|echos|notes))?/atom.xml" );
-    like( $jsfeed->getAttribute('href'),
-      qr"(?:/(posts|echos|notes))?/jsonfeed.json" );
+    like(
+      $jsfeed->getAttribute('href'),
+      qr"(?:/(posts|echos|notes))?/jsonfeed.json"
+    );
   }
 
   # meta
-  is( $dom->at('link[rel="author"]')->getAttribute('href'),
-    'http://www.hatena.ne.jp/nyarla-net/' );
+  is(
+    $dom->at('link[rel="author"]')->getAttribute('href'),
+    'http://www.hatena.ne.jp/nyarla-net/'
+  );
 
   # assets
   is(
@@ -103,8 +108,10 @@ sub testing {
     q<https://the.kalaclista.com/favicon.ico>,
   );
 
-  is( $dom->at('link[rel="icon"][type="image/svg+xml"]')->getAttribute('href'),
-    q<https://the.kalaclista.com/icon.svg> );
+  is(
+    $dom->at('link[rel="icon"][type="image/svg+xml"]')->getAttribute('href'),
+    q<https://the.kalaclista.com/icon.svg>
+  );
 
   is(
     $dom->at('link[rel="apple-touch-icon"]')->getAttribute('href'),
@@ -145,20 +152,26 @@ sub testing {
   # title
   is( $dom->at('#global p a')->textContent, 'カラクリスタ', );
 
-  is( $dom->at('#global p a')->getAttribute('href'),
-    'https://the.kalaclista.com/' );
+  is(
+    $dom->at('#global p a')->getAttribute('href'),
+    'https://the.kalaclista.com/'
+  );
 
   # profile
-  is( $dom->at('#profile figure p a')->getAttribute('href'),
-    'https://the.kalaclista.com/nyarla/' );
+  is(
+    $dom->at('#profile figure p a')->getAttribute('href'),
+    'https://the.kalaclista.com/nyarla/'
+  );
 
   is(
     $dom->at('#profile figure p a img')->getAttribute('src'),
     'https://the.kalaclista.com/assets/avatar.svg'
   );
 
-  is( $dom->at('#profile figcaption a')->getAttribute('href'),
-    'https://the.kalaclista.com/nyarla/' );
+  is(
+    $dom->at('#profile figcaption a')->getAttribute('href'),
+    'https://the.kalaclista.com/nyarla/'
+  );
 
   is( $dom->at('#profile figcaption a')->textContent, 'にゃるら（カラクリスタ）' );
 
@@ -166,62 +179,71 @@ sub testing {
     $dom->at('#profile nav p a[href^="https://github"]')->getAttribute('href'),
     'https://github.com/nyarla/'
   );
-  is( $dom->at('#profile nav p a[href^="https://github"]')->textContent,
-    'GitHub' );
-
-  is( $dom->at('#profile nav p a[href^="https://zenn"]')->getAttribute('href'),
-    'https://zenn.dev/nyarla' );
-  is( $dom->at('#profile nav p a[href^="https://zenn"]')->textContent,
-    'Zenn.dev' );
+  is(
+    $dom->at('#profile nav p a[href^="https://github"]')->textContent,
+    'GitHub'
+  );
 
   is(
-    $dom->at('#profile nav p a[href^="https://lapras"]')->getAttribute('href'),
-    'https://lapras.com/public/nyarla'
+    $dom->at('#profile nav p a[href^="https://zenn"]')->getAttribute('href'),
+    'https://zenn.dev/nyarla'
   );
-  is( $dom->at('#profile nav p a[href^="https://lapras"]')->textContent,
-    'Lapras' );
-
-  is( $dom->at('#profile nav p a[href^="https://note"]')->getAttribute('href'),
-    'https://note.com/kalaclista/' );
-  is( $dom->at('#profile nav p a[href^="https://note"]')->textContent, 'note' );
+  is(
+    $dom->at('#profile nav p a[href^="https://zenn"]')->textContent,
+    'Zenn'
+  );
 
   is(
     $dom->at('#profile nav p a[href^="https://twitter"]')->getAttribute('href'),
     'https://twitter.com/kalaclista'
   );
-  is( $dom->at('#profile nav p a[href^="https://twitter"]')->textContent,
-    'Twitter' );
+  is(
+    $dom->at('#profile nav p a[href^="https://twitter"]')->textContent,
+    'Twitter'
+  );
 
   is(
-    $dom->at('#profile nav p a[href^="https://user.topia"]')
-      ->getAttribute('href'),
+    $dom->at('#profile nav p a[href^="https://user.topia"]')->getAttribute('href'),
     'https://user.topia.tv/5R9Y'
   );
-  is( $dom->at('#profile nav p a[href^="https://user.topia"]')->textContent,
-    'トピア' );
+  is(
+    $dom->at('#profile nav p a[href^="https://user.topia"]')->textContent,
+    'トピア'
+  );
 
   # navigation
-  is( $dom->at('#menu .kind a:nth-child(1)')->getAttribute('href'),
-    'https://the.kalaclista.com/posts/' );
+  is(
+    $dom->at('#menu .kind a:nth-child(1)')->getAttribute('href'),
+    'https://the.kalaclista.com/posts/'
+  );
   is( $dom->at('#menu .kind a:nth-child(1)')->textContent, 'ブログ' );
 
-  is( $dom->at('#menu .kind a:nth-child(2)')->getAttribute('href'),
-    'https://the.kalaclista.com/echos/' );
+  is(
+    $dom->at('#menu .kind a:nth-child(2)')->getAttribute('href'),
+    'https://the.kalaclista.com/echos/'
+  );
   is( $dom->at('#menu .kind a:nth-child(2)')->textContent, '日記' );
 
-  is( $dom->at('#menu .kind a:nth-child(3)')->getAttribute('href'),
-    'https://the.kalaclista.com/notes/' );
+  is(
+    $dom->at('#menu .kind a:nth-child(3)')->getAttribute('href'),
+    'https://the.kalaclista.com/notes/'
+  );
   is( $dom->at('#menu .kind a:nth-child(3)')->textContent, 'メモ帳' );
 
-  is( $dom->at('#menu .links a:nth-child(1)')->getAttribute('href'),
-    "https://the.kalaclista.com/policies/" );
+  is(
+    $dom->at('#menu .links a:nth-child(1)')->getAttribute('href'),
+    "https://the.kalaclista.com/policies/"
+  );
   is( $dom->at('#menu .links a:nth-child(1)')->textContent, "運営方針" );
 
-  is( $dom->at('#menu .links a:nth-child(2)')->getAttribute('href'),
-    "https://the.kalaclista.com/licenses/" );
+  is(
+    $dom->at('#menu .links a:nth-child(2)')->getAttribute('href'),
+    "https://the.kalaclista.com/licenses/"
+  );
   is( $dom->at('#menu .links a:nth-child(2)')->textContent, "権利情報" );
 
-  is( $dom->at('#menu .links a:nth-child(3)')->getAttribute('href'),
+  is(
+    $dom->at('#menu .links a:nth-child(3)')->getAttribute('href'),
     "https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0"
   );
   is( $dom->at('#menu .links a:nth-child(3)')->textContent, "検索" );
@@ -230,8 +252,10 @@ sub testing {
   # ------
 
   # copyright
-  is( $dom->at('#copyright p a')->getAttribute('href'),
-    'https://the.kalaclista.com/nyarla/' );
+  is(
+    $dom->at('#copyright p a')->getAttribute('href'),
+    'https://the.kalaclista.com/nyarla/'
+  );
 
   is(
     $dom->at('#copyright p')->textContent,
@@ -242,7 +266,7 @@ sub testing {
 sub files {
   my $rootdir = shift;
   return map { path($_) }
-    grep { $_ =~ m{\.html$} } Kalaclista::Files->find($rootdir);
+      grep { $_ =~ m{\.html$} } Kalaclista::Files->find($rootdir);
 }
 
 sub main {

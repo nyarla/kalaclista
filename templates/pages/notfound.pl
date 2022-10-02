@@ -1,3 +1,8 @@
+use WebSite::Widgets::Info;
+use WebSite::Widgets::Menu;
+use WebSite::Widgets::Profile;
+use WebSite::Widgets::Title;
+
 use Kalaclista::Directory;
 use Kalaclista::Variables;
 use URI;
@@ -10,8 +15,7 @@ my $css        = ( $stylesheet->is_file ) ? $stylesheet->slurp : q{};
 my $script = $dirs->build_dir->child('assets/main.js');
 my $js     = ( $script->is_file ) ? $script->slurp : q{};
 
-my $search =
-  'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
+my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
 my $baseURI = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
 my $vars    = Kalaclista::Variables->new(
@@ -53,11 +57,11 @@ my $template = sub {
   return document(
     expand( 'meta/head.pl', $vars, $baseURI ),
     [
-      expand( 'widgets/title.pl',   $baseURI ),
-      expand( 'widgets/profile.pl', $baseURI ),
-      expand( 'widgets/menu.pl',    $baseURI ),
+      banner($baseURI),
+      profile($baseURI),
+      sitemenu($baseURI),
       $main->(),
-      expand( 'widgets/info.pl', $baseURI )
+      siteinfo($baseURI),
     ]
   );
 };
