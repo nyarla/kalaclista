@@ -62,13 +62,9 @@ sub linkColor {
       transition => 'color 0.125s',
     ],
 
-    [qw( &:link &:visited )] => [
-      color => $from
-    ],
+    [qw( &:link &:visited )] => [ color => $from ],
 
-    [qw( &:link:hover &:visited:hover &:link:active &:visited:active )] => [
-      color => $to
-    ],
+    [qw( &:link:hover &:visited:hover &:link:active &:visited:active )] => [ color => $to ],
   );
 }
 

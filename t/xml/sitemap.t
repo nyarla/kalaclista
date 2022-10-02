@@ -10,19 +10,20 @@ use Kalaclista::Directory;
 my $dist = Kalaclista::Directory->new->rootdir->child("dist");
 
 sub main {
-  my $xml =
-    XML::LibXML->load_xml( string => $dist->child('sitemap.xml')->slurp );
+  my $xml = XML::LibXML->load_xml( string => $dist->child('sitemap.xml')->slurp );
 
   my $xc = XML::LibXML::XPathContext->new($xml);
   $xc->registerNs( 's', 'http://www.sitemaps.org/schemas/sitemap/0.9' );
 
   for my $node ( $xc->findnodes('//s:url')->get_nodelist ) {
-    my $loc = URI->new( $xc->findnodes( 's:loc', $node )->pop->textContent );
+    my $loc     = URI->new( $xc->findnodes( 's:loc', $node )->pop->textContent );
     my $lastmod = $xc->findnodes( 's:lastmod', $node )->pop->textContent;
 
     # DateTime test
-    like( $lastmod,
-      qr<^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[-+]\d{2}:\d{2}|Z)$> );
+    like(
+      $lastmod,
+      qr<^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[-+]\d{2}:\d{2}|Z)$>
+    );
 
     # URL tests
     is( $loc->scheme, 'https' );
@@ -32,8 +33,7 @@ sub main {
 
     if ( $paths[1] eq 'nyarla'
       || $paths[1] eq 'licenses'
-      || $paths[1] eq 'policies' )
-    {
+      || $paths[1] eq 'policies' ) {
       like( $paths[1], qr{nyarla|licenses|policies} );
       is( scalar(@paths), 2 );
       next;

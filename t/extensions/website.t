@@ -25,8 +25,7 @@ sub main {
     href => URI->new("https://the.kalaclista.com/${path}/"),
   );
 
-  my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("contents/${path}.md"), );
+  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md"), );
 
   my $transformer = $extension->($meta);
   $content->transform($transformer);

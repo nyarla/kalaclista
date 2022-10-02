@@ -32,8 +32,10 @@ sub main {
     my $at   = at( $xml->documentElement );
 
     is( $at->('*[name()="title"]'), $data->{$section}->{'title'} );
-    is( $at->('*[name()="subtitle"]'),
-      $data->{$section}->{'title'} . "の最近の記事" );
+    is(
+      $at->('*[name()="subtitle"]'),
+      $data->{$section}->{'title'} . "の最近の記事"
+    );
 
     is(
       $at->('*[name()="link" and not(@rel)]/@href'),
@@ -45,23 +47,33 @@ sub main {
       "https://the.kalaclista.com/${section}/atom.xml"
     );
 
-    is( $at->('*[name()="id"]'),
-      "https://the.kalaclista.com/${section}/atom.xml" );
+    is(
+      $at->('*[name()="id"]'),
+      "https://the.kalaclista.com/${section}/atom.xml"
+    );
 
-    is( $at->('*[name()="icon"]'),
-      "https://the.kalaclista.com/assets/avatar.png" );
+    is(
+      $at->('*[name()="icon"]'),
+      "https://the.kalaclista.com/assets/avatar.png"
+    );
 
-    is( $at->('*[name()="author"]/*[name()="name"]'),
-      'OKAMURA Naoki aka nyarla' );
-    is( $at->('*[name()="author"]/*[name()="email"]'),
-      'nyarla@kalaclista.com' );
+    is(
+      $at->('*[name()="author"]/*[name()="name"]'),
+      'OKAMURA Naoki aka nyarla'
+    );
+    is(
+      $at->('*[name()="author"]/*[name()="email"]'),
+      'nyarla@kalaclista.com'
+    );
     is(
       $at->('*[name()="author"]/*[name()="uri"]'),
       'https://the.kalaclista.com/nyarla/'
     );
 
-    like( $at->('*[name()="updated"]'),
-      qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)> );
+    like(
+      $at->('*[name()="updated"]'),
+      qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)>
+    );
 
     my @entries = $xml->findnodes('//*[name()="entry"]');
     is( scalar(@entries), 5 );
@@ -70,25 +82,33 @@ sub main {
       my $item = at($entry);
 
       ok( $item->('*[name()="title"]') ne q{} );
-      like( $item->('*[name()="id"]'),
-qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
+      like(
+        $item->('*[name()="id"]'),
+        qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
       );
 
-      like( $item->('*[name()="link"]/@href'),
-qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
+      like(
+        $item->('*[name()="link"]/@href'),
+        qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
       );
 
-      is( $item->('*[name()="author"]/*[name()="name"]'),
-        'OKAMURA Naoki aka nyarla' );
-      is( $item->('*[name()="author"]/*[name()="email"]'),
-        'nyarla@kalaclista.com' );
+      is(
+        $item->('*[name()="author"]/*[name()="name"]'),
+        'OKAMURA Naoki aka nyarla'
+      );
+      is(
+        $item->('*[name()="author"]/*[name()="email"]'),
+        'nyarla@kalaclista.com'
+      );
       is(
         $item->('*[name()="author"]/*[name()="uri"]'),
         'https://the.kalaclista.com/nyarla/'
       );
 
-      like( $item->('*[name()="updated"]'),
-        qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)> );
+      like(
+        $item->('*[name()="updated"]'),
+        qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)>
+      );
 
       ok( $item->('*[name()="content"]') ne q{} );
       is( $item->('*[name()="content"]/@type'), q{html} );
@@ -102,27 +122,37 @@ qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
   is( $at->('*[name()="title"]'),    $data->{'pages'}->{'title'} );
   is( $at->('*[name()="subtitle"]'), $data->{'pages'}->{'title'} . "の最近の更新" );
 
-  is( $at->('*[name()="link" and not(@rel)]/@href'),
-    "https://the.kalaclista.com/" );
+  is(
+    $at->('*[name()="link" and not(@rel)]/@href'),
+    "https://the.kalaclista.com/"
+  );
 
-  is( $at->('*[name()="link" and contains(@rel, "self")]/@href'),
-    "https://the.kalaclista.com/atom.xml" );
+  is(
+    $at->('*[name()="link" and contains(@rel, "self")]/@href'),
+    "https://the.kalaclista.com/atom.xml"
+  );
 
   is( $at->('*[name()="id"]'), "https://the.kalaclista.com/atom.xml" );
 
-  is( $at->('*[name()="icon"]'),
-    "https://the.kalaclista.com/assets/avatar.png" );
+  is(
+    $at->('*[name()="icon"]'),
+    "https://the.kalaclista.com/assets/avatar.png"
+  );
 
-  is( $at->('*[name()="author"]/*[name()="name"]'),
-    'OKAMURA Naoki aka nyarla' );
+  is(
+    $at->('*[name()="author"]/*[name()="name"]'),
+    'OKAMURA Naoki aka nyarla'
+  );
   is( $at->('*[name()="author"]/*[name()="email"]'), 'nyarla@kalaclista.com' );
   is(
     $at->('*[name()="author"]/*[name()="uri"]'),
     'https://the.kalaclista.com/nyarla/'
   );
 
-  like( $at->('*[name()="updated"]'),
-    qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)> );
+  like(
+    $at->('*[name()="updated"]'),
+    qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)>
+  );
 
   my @entries = $xml->findnodes('//*[name()="entry"]');
   is( scalar(@entries), 5 );
@@ -131,25 +161,33 @@ qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
     my $item = at($entry);
 
     ok( $item->('*[name()="title"]') ne q{} );
-    like( $item->('*[name()="id"]'),
-qr<https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}|notes/[^/]+)/>
+    like(
+      $item->('*[name()="id"]'),
+      qr<https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}|notes/[^/]+)/>
     );
 
-    like( $item->('*[name()="link"]/@href'),
-qr<https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}|notes/[^/]+)/>
+    like(
+      $item->('*[name()="link"]/@href'),
+      qr<https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}|notes/[^/]+)/>
     );
 
-    is( $item->('*[name()="author"]/*[name()="name"]'),
-      'OKAMURA Naoki aka nyarla' );
-    is( $item->('*[name()="author"]/*[name()="email"]'),
-      'nyarla@kalaclista.com' );
+    is(
+      $item->('*[name()="author"]/*[name()="name"]'),
+      'OKAMURA Naoki aka nyarla'
+    );
+    is(
+      $item->('*[name()="author"]/*[name()="email"]'),
+      'nyarla@kalaclista.com'
+    );
     is(
       $item->('*[name()="author"]/*[name()="uri"]'),
       'https://the.kalaclista.com/nyarla/'
     );
 
-    like( $item->('*[name()="updated"]'),
-      qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)> );
+    like(
+      $item->('*[name()="updated"]'),
+      qr<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)>
+    );
 
     ok( $item->('*[name()="content"]') ne q{} );
     is( $item->('*[name()="content"]/@type'), q{html} );

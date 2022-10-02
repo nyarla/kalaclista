@@ -9,8 +9,7 @@ no warnings 'redefine';
 sub key {
   my ($name) = @_;
 
-  $name =~
-s{[^\p{InHiragana}\p{InKatakana}\p{InCJKUnifiedIdeographs}a-zA-Z0-9\-_]}{_}g;
+  $name =~ s{[^\p{InHiragana}\p{InKatakana}\p{InCJKUnifiedIdeographs}a-zA-Z0-9\-_]}{_}g;
   $name =~ s{_+}{_}g;
 
   return "${name}.yaml";
@@ -28,8 +27,10 @@ sub linkify {
   }
 
   if ( ref $shop eq 'Kalaclista::Shop::Rakuten' ) {
-    return li( { class => 'rakuten' },
-      a( { href => $shop->link, class => 'rakuten' }, '楽天で探す' ) );
+    return li(
+      { class => 'rakuten' },
+      a( { href => $shop->link, class => 'rakuten' }, '楽天で探す' )
+    );
   }
 
   return q{};
@@ -74,8 +75,7 @@ my $extension = sub {
 
     for my $item ( $dom->find('p > a:only-child')->@* ) {
       if ( !$item->parent->firstChild->isSameNode($item)
-        || !$item->parent->lastChild->isSameNode($item) )
-      {
+        || !$item->parent->lastChild->isSameNode($item) ) {
         next;
       }
 
@@ -94,31 +94,31 @@ my $extension = sub {
       for my $shop ( $info->{'data'}->@* ) {
         if ( $shop->{'provider'} eq 'amazon' ) {
           push @shops,
-            Kalaclista::Shop::Amazon->new(
-            label  => $title,
-            asin   => $shop->{'asin'},
-            width  => ( split qr{x}, $shop->{'size'} )[0],
-            height => ( split qr{x}, $shop->{'size'} )[1],
-            tag    => $shop->{'tag'},
-            );
+              Kalaclista::Shop::Amazon->new(
+                label  => $title,
+                asin   => $shop->{'asin'},
+                width  => ( split qr{x}, $shop->{'size'} )[0],
+                height => ( split qr{x}, $shop->{'size'} )[1],
+                tag    => $shop->{'tag'},
+              );
           next;
         }
 
         if ( $shop->{'provider'} eq 'rakuten' ) {
           if ( exists $shop->{'shop'} && $shop->{'shop'} ne q{} ) {
             push @shops,
-              Kalaclista::Shop::Rakuten->new(
-              label  => $title,
-              search => $shop->{'search'},
-              width  => ( split qr{x}, $shop->{'size'} )[0],
-              height => ( split qr{x}, $shop->{'size'} )[1],
-              image  => $shop->{'image'},
-              shop   => $shop->{'shop'},
-              );
+                Kalaclista::Shop::Rakuten->new(
+                  label  => $title,
+                  search => $shop->{'search'},
+                  width  => ( split qr{x}, $shop->{'size'} )[0],
+                  height => ( split qr{x}, $shop->{'size'} )[1],
+                  image  => $shop->{'image'},
+                  shop   => $shop->{'shop'},
+                );
           }
           else {
             push @shops,
-              Kalaclista::Shop::Rakuten->new( search => $shop->{'search'} );
+                Kalaclista::Shop::Rakuten->new( search => $shop->{'search'} );
           }
 
           next;

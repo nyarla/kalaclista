@@ -16,9 +16,7 @@ my $profile = sub {
           )
         )
       ),
-      figcaption(
-        a( { href => href( '/nyarla/', $baseURI ) }, 'にゃるら（カラクリスタ）' )
-      )
+      figcaption( a( { href => href( '/nyarla/', $baseURI ) }, 'にゃるら（カラクリスタ）' ) )
     ),
     section(
       { class => 'entry__content' }, p('『輝かしい青春』なんて失かった人。うつ病を抱えつつアルバイト中。'),

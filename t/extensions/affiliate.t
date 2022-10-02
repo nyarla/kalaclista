@@ -32,8 +32,7 @@ sub transformer {
 
 sub main {
   my $path    = 'posts/2022/07/24/121254';
-  my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("contents/${path}.md"), );
+  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md"), );
 
   my $tansformer = transformer($path);
 

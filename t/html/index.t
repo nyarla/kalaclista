@@ -26,8 +26,10 @@ sub testing_jsonld {
   is( $self->{'@id'}, $dom->at('link[rel="canonical"]')->getAttribute('href') );
 
   # title (headline)
-  is( $self->{'headline'},
-    $dom->at('meta[property="og:title"]')->getAttribute('content') );
+  is(
+    $self->{'headline'},
+    $dom->at('meta[property="og:title"]')->getAttribute('content')
+  );
 
   # @type
   if ( $section eq q{posts} ) {
@@ -42,22 +44,25 @@ sub testing_jsonld {
 
   # mainEntryOfPage
   if ($index) {
-    is( $self->{'mainEntryOfPage'},
-      { '@id' => 'https://the.kalaclista.com/' } );
+    is(
+      $self->{'mainEntryOfPage'},
+      { '@id' => 'https://the.kalaclista.com/' }
+    );
   }
   else {
-    is( $self->{'mainEntryOfPage'},
-      { '@id' => "https://the.kalaclista.com/${section}/" } );
+    is(
+      $self->{'mainEntryOfPage'},
+      { '@id' => "https://the.kalaclista.com/${section}/" }
+    );
   }
 
   # $tree->@*
   is(
     $tree->[1],
     {
-      '@type' => 'ListItem',
-      'item'  => "https://the.kalaclista.com/${section}/",
-      'name'  =>
-        $dom->at('meta[property="og:site_name"]')->getAttribute('content'),
+      '@type'    => 'ListItem',
+      'item'     => "https://the.kalaclista.com/${section}/",
+      'name'     => $dom->at('meta[property="og:site_name"]')->getAttribute('content'),
       'position' => 2,
     }
   );
@@ -66,10 +71,9 @@ sub testing_jsonld {
     is(
       $tree->[2],
       {
-        '@type' => 'ListItem',
-        'item'  => $dom->at('link[rel="canonical"]')->getAttribute('href'),
-        'name'  =>
-          $dom->at('meta[property="og:title"]')->getAttribute('content'),
+        '@type'    => 'ListItem',
+        'item'     => $dom->at('link[rel="canonical"]')->getAttribute('href'),
+        'name'     => $dom->at('meta[property="og:title"]')->getAttribute('content'),
         'position' => 3,
       }
     );
@@ -80,26 +84,29 @@ sub testing {
   my $file = shift;
   my $dom  = $parser->parse( $file->slurp_utf8 );
 
-  my $section =
-    ( $dom->at('meta[property="og:url"]')->getAttribute('content') =~
-      m{\.com/([^/]+)/} )[0];
-  my $index = $dom->at('link[rel="canonical"]')->getAttribute('href') =~
-    m{/(posts|echos|notes)/$};
+  my $section = ( $dom->at('meta[property="og:url"]')->getAttribute('content') =~ m{\.com/([^/]+)/} )[0];
+  my $index   = $dom->at('link[rel="canonical"]')->getAttribute('href') =~ m{/(posts|echos|notes)/$};
 
   # Headers
   # =======
 
   # title
   if ($index) {
-    is( $dom->at('title')->textContent,
-      $dom->at('meta[property="og:site_name"]')->getAttribute('content') );
+    is(
+      $dom->at('title')->textContent,
+      $dom->at('meta[property="og:site_name"]')->getAttribute('content')
+    );
 
-    is( $dom->at('title')->textContent,
-      $dom->at('meta[property="og:title"]')->getAttribute('content') );
+    is(
+      $dom->at('title')->textContent,
+      $dom->at('meta[property="og:title"]')->getAttribute('content')
+    );
   }
   else {
-    like( $dom->at('title')->textContent,
-      qr<(?:\d{4}年|メモ帳)の記事一覧 - カラクリスタ・(ブログ|エコーズ|ノート)> );
+    like(
+      $dom->at('title')->textContent,
+      qr<(?:\d{4}年|メモ帳)の記事一覧 - カラクリスタ・(ブログ|エコーズ|ノート)>
+    );
 
   }
 
@@ -133,17 +140,23 @@ sub testing {
 
   # og:title
   if ( $index || $section eq q{notes} ) {
-    like( $dom->at('meta[property="og:title"]')->getAttribute('content'),
-      qr<カラクリスタ・(ブログ|エコーズ|ノート)> );
+    like(
+      $dom->at('meta[property="og:title"]')->getAttribute('content'),
+      qr<カラクリスタ・(ブログ|エコーズ|ノート)>
+    );
   }
   else {
-    like( $dom->at('meta[property="og:title"]')->getAttribute('content'),
-      qr<\d{4}年の記事一覧> );
+    like(
+      $dom->at('meta[property="og:title"]')->getAttribute('content'),
+      qr<\d{4}年の記事一覧>
+    );
   }
 
   # og:site_name
-  like( $dom->at('meta[property="og:site_name"]')->getAttribute('content'),
-    qr<カラクリスタ・(ブログ|エコーズ|ノート)> );
+  like(
+    $dom->at('meta[property="og:site_name"]')->getAttribute('content'),
+    qr<カラクリスタ・(ブログ|エコーズ|ノート)>
+  );
 
   # og:url
   is(
@@ -167,12 +180,16 @@ sub testing {
 
   # twitter:title
   if ( $index || $section eq q{notes} ) {
-    like( $dom->at('meta[name="twitter:title"]')->getAttribute('content'),
-      qr<カラクリスタ・(ブログ|エコー|ノート)> );
+    like(
+      $dom->at('meta[name="twitter:title"]')->getAttribute('content'),
+      qr<カラクリスタ・(ブログ|エコー|ノート)>
+    );
   }
   else {
-    like( $dom->at('meta[name="twitter:title"]')->getAttribute('content'),
-      qr<(?:\d{4}年|メモ帳)の記事一覧> );
+    like(
+      $dom->at('meta[name="twitter:title"]')->getAttribute('content'),
+      qr<(?:\d{4}年|メモ帳)の記事一覧>
+    );
   }
 
   # twitter:description
@@ -182,24 +199,34 @@ sub testing {
   );
 
   # og:image
-  is( $dom->at('meta[property="og:image"]')->getAttribute('content'),
-    "https://the.kalaclista.com/assets/avatar.png" );
+  is(
+    $dom->at('meta[property="og:image"]')->getAttribute('content'),
+    "https://the.kalaclista.com/assets/avatar.png"
+  );
 
   # og:type
-  is( $dom->at('meta[property="og:type"]')->getAttribute('content'),
-    "website" );
+  is(
+    $dom->at('meta[property="og:type"]')->getAttribute('content'),
+    "website"
+  );
 
   # twitter:card
-  is( $dom->at('meta[name="twitter:card"]')->getAttribute('content'),
-    "summary" );
+  is(
+    $dom->at('meta[name="twitter:card"]')->getAttribute('content'),
+    "summary"
+  );
 
   # twitter:site
-  is( $dom->at('meta[name="twitter:site"]')->getAttribute('content'),
-    '@kalaclista' );
+  is(
+    $dom->at('meta[name="twitter:site"]')->getAttribute('content'),
+    '@kalaclista'
+  );
 
   # twitter:image
-  is( $dom->at('meta[name="twitter:image"]')->getAttribute('content'),
-    "https://the.kalaclista.com/assets/avatar.png" );
+  is(
+    $dom->at('meta[name="twitter:image"]')->getAttribute('content'),
+    "https://the.kalaclista.com/assets/avatar.png"
+  );
 
   # jsonld
   my $jsonld = $dom->at('script[type="application/ld+json"]')->textContent;
@@ -215,37 +242,39 @@ sub testing {
     qr{^https://the\.kalaclista\.com/(posts|echos|notes)/}
   );
 
-  like( $dom->at('.entry__archives header h1 a')->textContent,
-    qr{カラクリスタ・(ブログ|エコーズ|ノート)} );
+  like(
+    $dom->at('.entry__archives header h1 a')->textContent,
+    qr{カラクリスタ・(ブログ|エコーズ|ノート)}
+  );
 
   # list of contents
   if ( $section ne q{notes} ) {
-    like( $dom->at('.entry__archives .entry__content strong')->textContent,
-      qr(\d{4}年：) );
+    like(
+      $dom->at('.entry__archives .entry__content strong')->textContent,
+      qr(\d{4}年：)
+    );
   }
 
-  for
-    my $item ( $dom->find('.entry__archives .entry__content .archives li')->@* )
-  {
+  for my $item ( $dom->find('.entry__archives .entry__content .archives li')->@* ) {
     like( $item->at('time')->getAttribute('datetime'), qr(\d{4}-\d{2}-\d{2}) );
     like( $item->at('time')->textContent,              qr(\d{4}-\d{2}-\d{2}：) );
 
-    like( $item->at('a.title')->getAttribute('href'),
-qr<https://the\.kalaclista\.com/(?:notes/[^/]+|(posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})/>
+    like(
+      $item->at('a.title')->getAttribute('href'),
+      qr<https://the\.kalaclista\.com/(?:notes/[^/]+|(posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})/>
     );
   }
 
   # list of archives
   if ( $section ne q{notes} ) {
-    for my $item (
-      $dom->find('.entry__archives .entry__content .archives + hr + p > *')
-      ->@* )
-    {
+    for my $item ( $dom->find('.entry__archives .entry__content .archives + hr + p > *')->@* ) {
       like( $item->textContent, qr<\d{4}> );
 
       if ( $item->tag eq 'a' ) {
-        like( $item->getAttribute('href'),
-          qr<https://the\.kalaclista\.com/(posts|echos)/\d{4}/> );
+        like(
+          $item->getAttribute('href'),
+          qr<https://the\.kalaclista\.com/(posts|echos)/\d{4}/>
+        );
       }
     }
   }
@@ -256,10 +285,8 @@ sub files {
   my @files   = Kalaclista::Files->find($rootdir);
 
   return (
-    map { path($_) }
-      grep {
-      $_ =~ m{(?:(?:posts|echos)/\d{4}|(?:posts|echos|notes))/index\.html$}
-      } @files
+    map  { path($_) }
+    grep { $_ =~ m{(?:(?:posts|echos)/\d{4}|(?:posts|echos|notes))/index\.html$} } @files
   );
 }
 

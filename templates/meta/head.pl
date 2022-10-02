@@ -13,8 +13,7 @@ sub types {
   my ( $kind, $section ) = @_;
 
   if ( $kind eq 'permalink' ) {
-    if ( $section eq q{posts} || $section eq q{echos} || $section eq q{notes} )
-    {
+    if ( $section eq q{posts} || $section eq q{echos} || $section eq q{notes} ) {
       return $tables->{$section}->[1];
     }
 
@@ -68,10 +67,7 @@ my $global = sub {
   my @scripts = (
     script( raw( $vars->data->{'js'} ) ),
     (
-      (
-             $vars->data->{'loader'} ne q{}
-          && $vars->href =~ m{/\d{4}/\d{2}/|notes/[^/]+/}
-      )
+      ( $vars->data->{'loader'} ne q{} && $vars->href =~ m{/\d{4}/\d{2}/|notes/[^/]+/} )
       ? script( raw( $vars->data->{'loader'} ) )
       : q{}
     )
@@ -87,19 +83,15 @@ my $global = sub {
     }
   );
 
-  my $docname =
-    title( ( $title eq $website ) ? $title : "${title} - ${website}" );
+  my $docname = title( ( $title eq $website ) ? $title : "${title} - ${website}" );
   my $docdesc = meta( { name => 'description', content => $description } );
 
-  my $hatena =
-    link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } );
+  my $hatena = link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } );
 
-  my $webmanifest =
-    item( manifest => href( '/manifest.webmanifest', $baseURI ) );
-  my $favicon = item( icon => href( '/favicon.ico', $baseURI ) );
-  my $svgicon = item( icon => href( '/icon.svg', $baseURI ), 'image/svg+xml' );
-  my $apple =
-    item( 'apple-touch-icon', href( '/apple-touch-icon.png', $baseURI ) );
+  my $webmanifest = item( manifest => href( '/manifest.webmanifest', $baseURI ) );
+  my $favicon     = item( icon     => href( '/favicon.ico',          $baseURI ) );
+  my $svgicon     = item( icon => href( '/icon.svg', $baseURI ), 'image/svg+xml' );
+  my $apple       = item( 'apple-touch-icon', href( '/apple-touch-icon.png', $baseURI ) );
 
   return (
     $charset,
@@ -130,8 +122,7 @@ my $page = sub {
 
   my @css;
   if ( exists $meta->{'addon'}->{'style'}
-    && ref $meta->{'addon'}->{'style'} eq 'ARRAY' )
-  {
+    && ref $meta->{'addon'}->{'style'} eq 'ARRAY' ) {
     push @css, style( raw( join q{ }, $meta->addon->{'style'}->@* ) );
   }
 

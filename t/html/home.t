@@ -45,8 +45,10 @@ sub main {
   );
 
   # description
-  is( $dom->at('meta[name="description"]')->getAttribute('content'),
-    '『輝かしい青春』なんて失かった人の Web サイトです。' );
+  is(
+    $dom->at('meta[name="description"]')->getAttribute('content'),
+    '『輝かしい青春』なんて失かった人の Web サイトです。'
+  );
 
   is(
     $dom->at('meta[name="description"]')->getAttribute('content'),
@@ -59,8 +61,10 @@ sub main {
   );
 
   # permalink
-  is( $dom->at('link[rel="canonical"]')->getAttribute('href'),
-    'https://the.kalaclista.com/', );
+  is(
+    $dom->at('link[rel="canonical"]')->getAttribute('href'),
+    'https://the.kalaclista.com/',
+  );
 
   is(
     $dom->at('meta[property="og:url"]')->getAttribute('content'),
@@ -68,21 +72,31 @@ sub main {
   );
 
   # metadata
-  is( $dom->at('meta[property="og:type"]')->getAttribute('content'),
-    "website" );
+  is(
+    $dom->at('meta[property="og:type"]')->getAttribute('content'),
+    "website"
+  );
 
-  is( $dom->at('meta[name="twitter:card"]')->getAttribute('content'),
-    "summary" );
+  is(
+    $dom->at('meta[name="twitter:card"]')->getAttribute('content'),
+    "summary"
+  );
 
-  is( $dom->at('meta[name="twitter:site"]')->getAttribute('content'),
-    '@kalaclista' );
+  is(
+    $dom->at('meta[name="twitter:site"]')->getAttribute('content'),
+    '@kalaclista'
+  );
 
   # image
-  is( $dom->at('meta[property="og:image"]')->getAttribute('content'),
-    "https://the.kalaclista.com/assets/avatar.png" );
+  is(
+    $dom->at('meta[property="og:image"]')->getAttribute('content'),
+    "https://the.kalaclista.com/assets/avatar.png"
+  );
 
-  is( $dom->at('meta[name="twitter:image"]')->getAttribute('content'),
-    "https://the.kalaclista.com/assets/avatar.png" );
+  is(
+    $dom->at('meta[name="twitter:image"]')->getAttribute('content'),
+    "https://the.kalaclista.com/assets/avatar.png"
+  );
 
   my $jsonld = $dom->at('script[type="application/ld+json"]')->textContent;
   utf8::encode($jsonld);
@@ -90,8 +104,7 @@ sub main {
 
   # contents
   is(
-    $dom->at('.entry__home .entry__content p:first-child a')
-      ->getAttribute('href'),
+    $dom->at('.entry__home .entry__content p:first-child a')->getAttribute('href'),
     'https://the.kalaclista.com/nyarla/'
   );
 
@@ -112,8 +125,7 @@ sub main {
     'https://the.kalaclista.com/notes/',
   );
 
-  my $feeds =
-    $dom->at('.entry__home .entry__content h1:nth-child(4) ~ ul ~ ul');
+  my $feeds = $dom->at('.entry__home .entry__content h1:nth-child(4) ~ ul ~ ul');
 
   is(
     $feeds->at('li:nth-child(1) a:nth-child(1)')->getAttribute('href'),
@@ -188,18 +200,23 @@ sub main {
 
     like( $item->at('li a:not(.title)')->textContent, qr<ブログ|日記|メモ帳> );
 
-    like( $item->at('li a.title')->getAttribute('href'),
-qr<https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}|notes/[^/]+)/>
+    like(
+      $item->at('li a.title')->getAttribute('href'),
+      qr<https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}|notes/[^/]+)/>
     );
   }
 
   my $contact = $dom->at('.entry__home .entry__content ul.archives ~ ul');
 
-  is( $contact->at('li:nth-child(1) a')->getAttribute('href'),
-    'mailto:nyarla@kalaclista.com' );
+  is(
+    $contact->at('li:nth-child(1) a')->getAttribute('href'),
+    'mailto:nyarla@kalaclista.com'
+  );
 
-  is( $contact->at('li:nth-child(2) a')->getAttribute('href'),
-    'https://twitter.com/kalaclista/' );
+  is(
+    $contact->at('li:nth-child(2) a')->getAttribute('href'),
+    'https://twitter.com/kalaclista/'
+  );
 
   done_testing;
 }

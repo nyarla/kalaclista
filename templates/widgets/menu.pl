@@ -1,5 +1,4 @@
-my $search =
-  'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
+my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
 my $menu = sub {
   my $baseURI = shift;

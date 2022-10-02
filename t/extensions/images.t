@@ -37,8 +37,7 @@ sub transformter {
 
 subtest origin => sub {
   my $path    = 'posts/2022/03/09/184033';
-  my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("contents/${path}.md"), );
+  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md"), );
 
   my $transformer = transformter($path);
 
@@ -66,8 +65,7 @@ subtest origin => sub {
 
 subtest x1 => sub {
   my $path    = 'posts/2013/06/28/002453';
-  my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("contents/${path}.md") );
+  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md") );
 
   my $transformer = transformter($path);
   $content->transform($transformer);
@@ -89,7 +87,7 @@ subtest x1 => sub {
 
   is(
     $item->at('img')->getAttribute('srcset'),
-'https://the.kalaclista.com/images/posts/2013/06/28/002453/1_thumb_1x.png 1x',
+    'https://the.kalaclista.com/images/posts/2013/06/28/002453/1_thumb_1x.png 1x',
   );
 
   done_testing;
@@ -97,8 +95,7 @@ subtest x1 => sub {
 
 subtest x2 => sub {
   my $path    = '自作キーボード';
-  my $content = Kalaclista::Entry::Content->load(
-    src => $dirs->build_dir->child("contents/notes/$path.md") );
+  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/notes/$path.md") );
 
   my $transformer = transformter("notes/$path");
   $content->transform($transformer);
@@ -107,7 +104,7 @@ subtest x2 => sub {
 
   is(
     $item->getAttribute('href'),
-"https://the.kalaclista.com/images/notes/@{[ uri_escape_utf8($path) ]}/1.jpg",
+    "https://the.kalaclista.com/images/notes/@{[ uri_escape_utf8($path) ]}/1.jpg",
   );
 
   is( $item->at('img')->getAttribute('height'), 315 );
@@ -118,8 +115,9 @@ subtest x2 => sub {
     "https://the.kalaclista.com/images/notes/$path/1_thumb_1x.png",
   );
 
-  is( $item->at('img')->getAttribute('srcset'),
-qq{https://the.kalaclista.com/images/notes/$path/1_thumb_2x.png 2x, https://the.kalaclista.com/images/notes/$path/1_thumb_1x.png 1x}
+  is(
+    $item->at('img')->getAttribute('srcset'),
+    qq{https://the.kalaclista.com/images/notes/$path/1_thumb_2x.png 2x, https://the.kalaclista.com/images/notes/$path/1_thumb_1x.png 1x}
   );
 
   done_testing;

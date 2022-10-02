@@ -30,10 +30,10 @@ my $website = sub {
         my $data = YAML::Tiny::LoadFile( $file->stringify );
 
         $title = $data->{'title'}
-          if ( exists $data->{'title'} && $data->{'title'} ne q{} );
+            if ( exists $data->{'title'} && $data->{'title'} ne q{} );
 
         $summary = $data->{'summary'}
-          if ( exists $data->{'summary'} && $data->{'summary'} ne q{} );
+            if ( exists $data->{'summary'} && $data->{'summary'} ne q{} );
       }
 
       $title //= $text // $summary // $link;

@@ -39,16 +39,22 @@ sub main {
 
     is( $at->('atom:link[@type]/@type'), 'application/rss+xml' );
 
-    is( $at->('atom:link[@rel]/@href'),
-      "https://the.kalaclista.com/${section}/index.xml" );
+    is(
+      $at->('atom:link[@rel]/@href'),
+      "https://the.kalaclista.com/${section}/index.xml"
+    );
 
     is( $at->('atom:link[@rel]/@rel'), 'self' );
 
     is( $at->('description'), $data->{$section}->{'title'} . 'の最近の記事' );
-    is( $at->('managingEditor'),
-      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
-    is( $at->('webMaster'),
-      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
+    is(
+      $at->('managingEditor'),
+      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)'
+    );
+    is(
+      $at->('webMaster'),
+      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)'
+    );
 
     is( $at->('copyright'), '(c) 2006-2022 OKAMURA Naoki' );
 
@@ -75,8 +81,10 @@ sub main {
   is( $at->('atom:link[@rel]/@href'),  "https://the.kalaclista.com/index.xml" );
   is( $at->('atom:link[@rel]/@rel'),   'self' );
   is( $at->('description'),            $data->{'pages'}->{'title'} . 'の最近の更新' );
-  is( $at->('managingEditor'),
-    'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
+  is(
+    $at->('managingEditor'),
+    'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)'
+  );
   is( $at->('webMaster'), 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
   is( $at->('copyright'), '(c) 2006-2022 OKAMURA Naoki' );
 

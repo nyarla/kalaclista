@@ -17,10 +17,13 @@ sub main {
   my $dom  = $parser->parse($page);
 
   is( $dom->at('title')->textContent, '404 not found - カラクリスタ' );
-  is( $dom->at('meta[name="description"]')->getAttribute('content'),
-    'ページが見つかりません' );
+  is(
+    $dom->at('meta[name="description"]')->getAttribute('content'),
+    'ページが見つかりません'
+  );
 
-  is( $dom->at('.entry__notfound a')->getAttribute('href'),
+  is(
+    $dom->at('.entry__notfound a')->getAttribute('href'),
     "https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0"
   );
 

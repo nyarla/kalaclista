@@ -27,11 +27,10 @@ sub testing {
   # =======
 
   # title
-  my $title = $dom->at('meta[property="og:title"]')->getAttribute('content');
-  my $website =
-    $dom->at('meta[property="og:site_name"]')->getAttribute('content');
+  my $title   = $dom->at('meta[property="og:title"]')->getAttribute('content');
+  my $website = $dom->at('meta[property="og:site_name"]')->getAttribute('content');
 
-  is( $dom->at('title')->textContent, "${title} - ${website}" );
+  is( $dom->at('title')->textContent,                                  "${title} - ${website}" );
   is( $dom->at('meta[name="twitter:title"]')->getAttribute('content'), $title );
 
   # description
@@ -49,8 +48,9 @@ sub testing {
   );
 
   # canonical
-  like( $dom->at('link[rel="canonical"]')->getAttribute('href'),
-qr(https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}/|notes/[^/]+/|(?:nyarla|licenses|policies)/))
+  like(
+    $dom->at('link[rel="canonical"]')->getAttribute('href'),
+    qr(https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}/|notes/[^/]+/|(?:nyarla|licenses|policies)/))
   );
 
   # Contents
@@ -63,20 +63,20 @@ qr(https://the\.kalaclista\.com/(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6}/|note
   # entry title
   like(
     $dom->at('.entry header h1 a')->getAttribute('href'),
-qr<https://the\.kalaclista\.com/(?:(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})|(?:notes/[^/]+/)|(?:nyarla|licenses|policies)/)>,
+    qr<https://the\.kalaclista\.com/(?:(?:(?:posts|echos)/\d{4}/\d{2}/\d{2}/\d{6})|(?:notes/[^/]+/)|(?:nyarla|licenses|policies)/)>,
   );
 }
 
 sub files {
   my $rootdir = shift;
   return map { path($_) }
-    grep {
-         $_ =~ m{\.html$}
-      && $_ !~ m{404\.html$}
-      && $_ !~ m<(?:posts|echos)/\d{4}/index.html$>
-      && $_ !~ m<(?:posts|echos|notes)/index.html$>
-      && $_ !~ m<$rootdir/index.html$>
-    } Kalaclista::Files->find($rootdir);
+      grep {
+           $_ =~ m{\.html$}
+        && $_ !~ m{404\.html$}
+        && $_ !~ m<(?:posts|echos)/\d{4}/index.html$>
+        && $_ !~ m<(?:posts|echos|notes)/index.html$>
+        && $_ !~ m<$rootdir/index.html$>
+      } Kalaclista::Files->find($rootdir);
 }
 
 sub main {
