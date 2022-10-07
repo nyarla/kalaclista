@@ -5,16 +5,18 @@ use warnings;
 
 use HTML5::DOM;
 use Path::Tiny qw(tempdir);
-use YAML::Tiny;
+use URI::Fast;
+use URI::Escape qw(uri_unescape);
+use YAML::XS;
 
 use Kalaclista::Directory;
-use Kalaclista::Entry::Content;
-use Kalaclista::Sequential::Files;
+use Kalaclista::Entry;
+use Kalaclista::Entries;
 use Kalaclista::Utils qw(make_fn);
 
-my $dirs = Kalaclista::Directory->instance( build => 'resources' );
+my $dirs = Kalaclista::Directory->instance;
 my $dist = $dirs->content_dir->child('data/highlight');
-my $src  = $dirs->build_dir->child('contents');
+my $src  = $dirs->content_dir->child('entries');
 
 my $parser = HTML5::DOM->new;
 
@@ -150,14 +152,12 @@ sub css {
 }
 
 sub handle {
-  my $file = shift;
-  my $path = make_fn $file->stringify, $src->stringify;
-
-  my $content =
-    Kalaclista::Entry::Content->load( src => $src->child("${path}.md") );
+  my $entry = shift;
+  my $path  = $entry->href->path;
+  $path = uri_unescape($path);
 
   my $idx = 1;
-  for my $code ( $content->dom->find('pre > code')->@* ) {
+  for my $code ( $entry->dom->find('pre > code')->@* ) {
     my $src  = $code->textContent;
     my $attr = $code->getAttribute('class');
     my $fn   = ftname($attr);
@@ -182,8 +182,7 @@ sub handle {
 
       my $emit = $dist->child("${path}/${idx}.yaml");
       $emit->parent->mkpath;
-      $emit->spew_utf8(
-        YAML::Tiny::Dump( { style => css($style), code => $code } ) );
+      $emit->spew( YAML::XS::Dump( { style => css($style), code => $code } ) );
     }
 
     $idx++;
@@ -193,18 +192,12 @@ sub handle {
 }
 
 sub main {
-  my $runner = Kalaclista::Sequential::Files->new(
-    handle  => \&handle,
-    threads => $ENV{'JOBS'} // (
-      do {
-        my $proc = `nproc --all --ignore 1`;
-        chomp($proc);
-        $proc;
-      }
-    ),
+  my $entries = Kalaclista::Entries->new(
+    $src->stringify,
+    URI::Fast->new("https://the.kalaclista.com"),
   );
 
-  $runner->run( $src->stringify, "**", "*.md" );
+  handle($_) for $entries->entries->@*;
 }
 
 main;
