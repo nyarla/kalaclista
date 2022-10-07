@@ -5,7 +5,7 @@ use WebSite::Widgets::Title;
 
 use Kalaclista::Directory;
 use Kalaclista::Variables;
-use URI;
+use URI::Fast;
 
 my $dirs = Kalaclista::Directory->instance;
 
@@ -17,7 +17,7 @@ my $js     = ( $script->is_file ) ? $script->slurp : q{};
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
-my $baseURI = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
+my $baseURI = URI::Fast->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
 my $vars    = Kalaclista::Variables->new(
   title       => '404 not found',
   website     => 'カラクリスタ',

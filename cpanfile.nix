@@ -276,6 +276,22 @@ let
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
+    URIFast = buildPerlPackage {
+      pname = "URI-Fast";
+      version = "0.55";
+      src = fetchurl {
+        url = "mirror://cpan/authors/id/J/JE/JEFFOBER/URI-Fast-0.55.tar.gz";
+        sha256 =
+          "427afaa0f4d2225a7d0bd78d890e226e7598f82d761fcc2d2d368575386eb7a9";
+      };
+      buildInputs =
+        [ Test2Suite TestLeakTrace URI URIEncodeXS UnicodeLineBreak ];
+      meta = {
+        homepage = "https://github.com/sysread/URI-Fast";
+        description = "A fast(er) URI parser";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
     FilesysNotifySimple = buildPerlPackage {
       pname = "Filesys-Notify-Simple";
       version = "0.14";
@@ -320,6 +336,20 @@ let
       meta = {
         description =
           "Perl extension for creating asynchronous forking queue processing applications";
+      };
+    };
+    URIEncodeXS = buildPerlPackage {
+      pname = "URI-Encode-XS";
+      version = "0.11";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/D/DF/DFARRELL/URI-Encode-XS-0.11.tar.gz";
+        sha256 =
+          "2bc20e4d7c8163e82a865bcbb60918621ccf09c9c74b7b0aaa30efa1b103013f";
+      };
+      meta = {
+        description = "A Perl URI encoder/decoder using C";
+        license = lib.licenses.bsd2;
       };
     };
     SetCrontab = buildPerlPackage {
@@ -672,12 +702,10 @@ in with modules; [
   Carp
   ClassAccessorLite
   ClassInspector
-  ClassMethodModifiers
   CommonMark
   CookieBaker
   CpanelJSONXS
   CwdGuard
-  DataOptList
   DataValidator
   DevelCheckCompiler
   DevelNYTProf
@@ -701,7 +729,6 @@ in with modules; [
   FilesysNotifySimple
   GetoptCompactWithCmd
   HTML5DOM
-  HTMLEscape
   HTMLParser
   HTMLTagset
   HTTPDate
@@ -724,10 +751,9 @@ in with modules; [
   ListMoreUtils
   ListMoreUtilsXS
   LogMinimal
+  MIMECharset
   MockConfig
   ModuleBuild
-  ModuleBuildPluggable
-  ModuleBuildPluggablePPPort
   ModuleBuildTiny
   ModuleBuildXSUtil
   ModuleCPANfile
@@ -738,10 +764,10 @@ in with modules; [
   ParallelForkBossWorkerAsync
   ParallelPrefork
   ParallelScoreboard
-  ParamsUtil
   PathTiny
   Plack
   PlackMiddlewareDirIndex
+  PodParser
   ProcWait3
   Proclet
   ScopeGuard
@@ -750,7 +776,6 @@ in with modules; [
   StreamBuffered
   StringShellQuote
   SubInfo
-  SubInstall
   SubUplevel
   TermTable
   Test2Suite
@@ -777,6 +802,9 @@ in with modules; [
   TimeDate
   TryTiny
   URI
+  URIEncodeXS
+  URIFast
+  UnicodeLineBreak
   WWWFormUrlEncoded
   XMLLibXML
   YAMLLibYAML

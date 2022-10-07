@@ -1,4 +1,4 @@
-use URI;
+use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS ();
 
@@ -17,7 +17,7 @@ my $website = sub {
 
     next if ( $href !~ m{^https?} );
 
-    my $path = make_path( URI->new($href) );
+    my $path = make_path( URI::Fast->new($href) );
     my $file = $dir->child("webdata/${path}.yaml");
 
     my $link = uri_unescape($href);

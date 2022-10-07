@@ -7,7 +7,6 @@ use utf8;
 use Test2::V0;
 use HTML5::DOM;
 use JSON::XS qw(decode_json);
-use HTML::Escape qw(escape_html);
 use Text::HyperScript qw(text);
 
 use Kalaclista::Directory;

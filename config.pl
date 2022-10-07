@@ -5,7 +5,7 @@ use warnings;
 use utf8;
 
 use FindBin;
-use URI;
+use URI::Fast;
 use Path::Tiny;
 use URI::Escape qw(uri_unescape);
 
@@ -35,7 +35,7 @@ my $dirs = Kalaclista::Directory->instance(
   build    => 'resources',
 );
 
-my $baseURL    = URI->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
+my $baseURL    = URI::Fast->new( $ENV{'URL'} // q{https://the.kalaclista.com} );
 my $production = $baseURL->as_string eq 'https://the.kalaclista.com';
 my $stylesheet = $dirs->build_dir->child('assets/main.css');
 my $css        = ( $stylesheet->is_file ) ? $stylesheet->slurp : q{};
@@ -102,7 +102,8 @@ my @extensions = map { Kalaclista::Template::load( $dirs->templates_dir->child($
 my $call = {
   fixup => sub {
     my $entry = shift;
-    my $path  = $entry->href->path;
+
+    my $path = $entry->href->path;
 
     if ( $entry->slug ne q{} ) {
       my $slug = $entry->slug;
@@ -117,7 +118,7 @@ my $call = {
 
     $entry->href->path($path);
 
-    if ( $path =~ m{^/(posts|notes|echos)/} ) {
+    if ( $path =~ m{^/?(posts|notes|echos)/} ) {
       $entry->type($1);
     }
     else {
@@ -142,7 +143,9 @@ my $query = {
 
   page => sub {
     my $entry = shift;
-    my $path  = uri_unescape( $entry->href->path );
+
+    my $path = $entry->href->path;
+    $path = uri_unescape($path);
 
     my $description = $entry->dom->at('*:first-child')->textContent . '……';
 
@@ -185,7 +188,8 @@ my $query = {
   },
 
   archives => sub {
-    my @entries  = @_;
+    my @entries = @_;
+
     my $template = $dirs->templates_dir->child('pages/archives.pl')->stringify;
     my $current  = (localtime)[5] + 1900;
 
