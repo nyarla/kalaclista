@@ -51,10 +51,10 @@ my $ads = sub {
 };
 
 my $main = sub {
-  my ( $content, $meta, $baseURI ) = @_;
+  my ( $entry, $baseURI ) = @_;
 
-  my $date = date( $meta->date );
-  my $text = $content->dom->innerHTML;
+  my $date = date( $entry->date );
+  my $text = $entry->dom->innerHTML;
 
   $text =~ s{<pre[\s\S]+?/pre>}{}g;
   $text =~ s{<blockquote[\s\S]+?/blockquote>}{}g;
@@ -64,7 +64,7 @@ my $main = sub {
   my $readtime = int( length($text) / 500 );
 
   return main(
-    $ads->( 'top', $meta->href->as_string ),
+    $ads->( 'top', $entry->href->as_string ),
     article(
       { class => 'entry' },
       header(
@@ -72,22 +72,21 @@ my $main = sub {
           time_( { datetime => $date }, "${date}：" ),
           span("読了まで：約${readtime}分")
         ),
-        h1( a( { href => $meta->href->as_string }, $meta->title ) ),
+        h1( a( { href => $entry->href->as_string }, $entry->title ) ),
       ),
       section(
         { className( 'entry', 'content' ) },
-        raw( $content->dom->innerHTML ),
+        raw( $entry->dom->innerHTML ),
       ),
     ),
-    $ads->( 'bottom', $meta->href->as_string ),
+    $ads->( 'bottom', $entry->href->as_string ),
   );
 };
 
 my $template = sub {
   my ( $vars, $baseURI ) = @_;
 
-  my $content = $vars->entries->[0]->[1];
-  my $meta    = $vars->entries->[0]->[0];
+  my $entry = $vars->entries->[0];
 
   return document(
     expand( 'meta/head.pl', $vars, $baseURI ),
@@ -95,7 +94,7 @@ my $template = sub {
       banner($baseURI),
       profile($baseURI),
       sitemenu($baseURI),
-      $main->( $content, $meta, $baseURI ),
+      $main->( $entry, $baseURI ),
       siteinfo($baseURI),
     ]
   );

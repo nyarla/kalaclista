@@ -28,12 +28,12 @@ sub render {
     items         => [
       map {
         +{
-          id             => $_->[0]->href,
-          url            => $_->[0]->href,
-          title          => $_->[0]->title,
-          content_html   => $_->[1]->dom->innerHTML,
-          date_published => $_->[0]->date,
-          date_modified  => $_->[0]->lastmod,
+          id             => $_->href,
+          url            => $_->href,
+          title          => $_->title,
+          content_html   => $_->dom->innerHTML,
+          date_published => $_->date,
+          date_modified  => $_->lastmod,
           authors        => [
             {
               name   => 'OKAMURA Naoki aka nyarla',

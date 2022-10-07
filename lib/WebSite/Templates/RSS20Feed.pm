@@ -23,17 +23,17 @@ sub render {
       h( description    => $vars->description ),
       h( managingEditor => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( webMaster      => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
-      h( copyright      => '(c) 2006-2022 OKAMURA Naoki' ),
-      h( lastBuildDate  => Time::Moment->from_string( $vars->entries->[0]->[0]->lastmod )->strftime($format) ),
+      h( copyright      => '(c) 2006-' . ( (localtime)[5] + 1900 ) . ' OKAMURA Naoki' ),
+      h( lastBuildDate  => Time::Moment->from_string( $vars->entries->[0]->lastmod )->strftime($format) ),
       (
         map {
           h(
             item => [
-              h( title       => $_->[0]->title ),
-              h( link        => $_->[0]->href ),
-              h( pubDate     => Time::Moment->from_string( $_->[0]->lastmod )->strftime($format) ),
-              h( guid        => $_->[0]->href ),
-              h( description => $_->[1]->dom->innerHTML ),
+              h( title       => $_->title ),
+              h( link        => $_->href ),
+              h( pubDate     => Time::Moment->from_string( $_->lastmod )->strftime($format) ),
+              h( guid        => $_->href ),
+              h( description => $_->dom->innerHTML ),
             ]
           )
         } $vars->entries->@*

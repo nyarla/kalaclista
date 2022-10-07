@@ -26,16 +26,16 @@ sub render {
           h( 'uri',   'https://the.kalaclista.com/nyarla/' )
         ]
       ),
-      h( 'updated', $vars->entries->[0]->[0]->lastmod ),
+      h( 'updated', $vars->entries->[0]->lastmod ),
 
       (
         map {
           h(
             'entry',
             [
-              h( 'title', $_->[0]->title ),
-              h( 'id',    $_->[0]->href ),
-              h( 'link',  { href => $_->[0]->href } ),
+              h( 'title', $_->title ),
+              h( 'id',    $_->href ),
+              h( 'link',  { href => $_->href } ),
               h(
                 'author',
                 [
@@ -44,8 +44,8 @@ sub render {
                   h( 'uri',   'https://the.kalaclista.com/nyarla/' )
                 ]
               ),
-              h( 'updated', $_->[0]->lastmod ),
-              h( 'content', { type => 'html' }, $_->[1]->dom->innerHTML )
+              h( 'updated', $_->lastmod ),
+              h( 'content', { type => 'html' }, $_->dom->innerHTML )
             ]
           )
         } $vars->entries->@*

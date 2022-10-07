@@ -101,16 +101,16 @@ my $main = sub {
           map {
             li(
               time_(
-                { datetime => date( $_->[0]->date ) },
-                date( $_->[0]->date )
+                { datetime => date( $_->date ) },
+                date( $_->date )
               ),
               '（',
               a(
-                { href => href( "/@{[ $_->[0]->type ]}/", $baseURI ) },
-                $vars->data->{'sections'}->{ $_->[0]->type }
+                { href => href( "/@{[ $_->type ]}/", $baseURI ) },
+                $vars->data->{'sections'}->{ $_->type }
               ),
               '）',
-              a( { href => $_->[0]->href, class => 'title' }, $_->[0]->title )
+              a( { href => $_->href, class => 'title' }, $_->title )
             )
           } $vars->entries->@*
         )

@@ -24,17 +24,13 @@ sub ruby {
 use warnings 'redefine';
 
 my $extension = sub {
-  my $meta = shift;
-  return sub {
-    my $dom = shift;
+  my ( $entry, $dom ) = @_;
+  for my $node ( $dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
+    my $html = $node->innerHTML;
+    $html =~ s<[{]([^}]+)[}]><ruby($1)>eg;
 
-    for my $node ( $dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
-      my $html = $node->innerHTML;
-      $html =~ s<[{]([^}]+)[}]><ruby($1)>eg;
-
-      $node->innerHTML($html);
-    }
-  };
+    $node->innerHTML($html);
+  }
 };
 
 $extension;

@@ -108,7 +108,7 @@ my $global = sub {
 my $page = sub {
   my ( $vars, $baseURI ) = @_;
 
-  my $meta        = $vars->entries->[0]->[0];
+  my $meta        = $vars->entries->[0];
   my $title       = $vars->title;
   my $website     = $vars->website;
   my $description = $vars->description;

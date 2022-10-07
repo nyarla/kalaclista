@@ -7,10 +7,6 @@ RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -a
 
 .PHONY: clean build dev test
 
-_gen_split_content:
-	@echo split contnet
-	@$(RUN) split-content -t $(FULL)
-
 _gen_clean_exif:
 	@echo clean exif
 	@find content/assets/images -type f -name '*.jpg' \
@@ -20,17 +16,21 @@ _gen_resize_images: _gen_clean_exif
 	@echo resize images
 	@$(RUN) resize-images -t $(FULL)
 
-_gen_sitemap_xml: _gen_split_content
+_gen_sitemap_xml:
 	@echo generate sitemap.xml
 	@$(RUN) generate-sitemap-xml -t 1
 
-_gen_archive: _gen_split_content _gen_assets
-	@echo generate archive
-	@$(RUN) generate-archive -t $(FULL)
+_gen_pages: _gen_assets
+	@echo generate pages
+	@$(RUN) generate -t $(FULL)
 
-_gen_permalink: _gen_split_content _gen_assets
-	@echo generate permalink
-	@$(RUN) generate-permalink -t $(FULL)
+_gen_index: _gen_assets
+	@echo generate index
+	@$(RUN) generate-index -t $(FULL)
+
+_gen_entries: _gen_assets
+	@echo generate entries
+	@$(RUN) generate-entries -t $(FULL)
 
 _gen_assets_by_app:
 	@$(RUN) generate-assets -t $(FULL)
@@ -63,11 +63,10 @@ _gen_assets: \
 	_gen_assets_script
 
 gen: \
-	_gen_split_content \
 	_gen_assets \
 	_gen_sitemap_xml \
-	_gen_archive \
-	_gen_permalink
+	_gen_index \
+	_gen_entries
 
 optimize: \
 	_opti_png
@@ -77,10 +76,10 @@ clean:
 	@mkdir -p dist
 
 build:
-	@$(MAKE) gen URL=https://the.kalaclista.com -j4
+	@$(MAKE) gen URL=https://the.kalaclista.com -j$(FULL)
 
 dev:
-	@$(MAKE) gen URL=http://nixos:1313 -j4
+	@$(MAKE) gen URL=http://nixos:1313 -j$(FULL)
 
 test:
 	prove -j$(FULL) t/*/*.t

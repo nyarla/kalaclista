@@ -69,76 +69,73 @@ use warnings 'redefine';
 my $dirs = Kalaclista::Directory->instance;
 
 my $extension = sub {
-  my $meta = shift;
-  return sub {
-    my $dom = shift;
+  my ( $entry, $dom ) = @_;
 
-    for my $item ( $dom->find('p > a:only-child')->@* ) {
-      if ( !$item->parent->firstChild->isSameNode($item)
-        || !$item->parent->lastChild->isSameNode($item) ) {
+  for my $item ( $dom->find('p > a:only-child')->@* ) {
+    if ( !$item->parent->firstChild->isSameNode($item)
+      || !$item->parent->lastChild->isSameNode($item) ) {
+      next;
+    }
+
+    my $key  = $item->textContent;
+    my $yaml = $dirs->datadir->child('items')->child( key($key) );
+
+    if ( !$yaml->is_file ) {
+      next;
+    }
+
+    my $info = YAML::Tiny::Load( $yaml->slurp_utf8 );
+
+    my $title = $info->{'name'};
+    my @shops;
+
+    for my $shop ( $info->{'data'}->@* ) {
+      if ( $shop->{'provider'} eq 'amazon' ) {
+        push @shops,
+            Kalaclista::Shop::Amazon->new(
+              label  => $title,
+              asin   => $shop->{'asin'},
+              width  => ( split qr{x}, $shop->{'size'} )[0],
+              height => ( split qr{x}, $shop->{'size'} )[1],
+              tag    => $shop->{'tag'},
+            );
         next;
       }
 
-      my $key  = $item->textContent;
-      my $yaml = $dirs->datadir->child('items')->child( key($key) );
-
-      if ( !$yaml->is_file ) {
-        next;
-      }
-
-      my $info = YAML::Tiny::Load( $yaml->slurp_utf8 );
-
-      my $title = $info->{'name'};
-      my @shops;
-
-      for my $shop ( $info->{'data'}->@* ) {
-        if ( $shop->{'provider'} eq 'amazon' ) {
+      if ( $shop->{'provider'} eq 'rakuten' ) {
+        if ( exists $shop->{'shop'} && $shop->{'shop'} ne q{} ) {
           push @shops,
-              Kalaclista::Shop::Amazon->new(
+              Kalaclista::Shop::Rakuten->new(
                 label  => $title,
-                asin   => $shop->{'asin'},
+                search => $shop->{'search'},
                 width  => ( split qr{x}, $shop->{'size'} )[0],
                 height => ( split qr{x}, $shop->{'size'} )[1],
-                tag    => $shop->{'tag'},
+                image  => $shop->{'image'},
+                shop   => $shop->{'shop'},
               );
-          next;
+        }
+        else {
+          push @shops,
+              Kalaclista::Shop::Rakuten->new( search => $shop->{'search'} );
         }
 
-        if ( $shop->{'provider'} eq 'rakuten' ) {
-          if ( exists $shop->{'shop'} && $shop->{'shop'} ne q{} ) {
-            push @shops,
-                Kalaclista::Shop::Rakuten->new(
-                  label  => $title,
-                  search => $shop->{'search'},
-                  width  => ( split qr{x}, $shop->{'size'} )[0],
-                  height => ( split qr{x}, $shop->{'size'} )[1],
-                  image  => $shop->{'image'},
-                  shop   => $shop->{'shop'},
-                );
-          }
-          else {
-            push @shops,
-                Kalaclista::Shop::Rakuten->new( search => $shop->{'search'} );
-          }
-
-          next;
-        }
+        next;
       }
-
-      my $first = $shops[0];
-      my %data  = (
-        title     => $first->label,
-        href      => $first->link,
-        beacon    => ( $first->can('beacon') ? $first->beacon : '' ),
-        thumbnail => $first->image,
-        width     => $first->width,
-        height    => $first->height,
-        links     => \@shops,
-      );
-
-      replace( $item, \%data );
     }
-  };
+
+    my $first = $shops[0];
+    my %data  = (
+      title     => $first->label,
+      href      => $first->link,
+      beacon    => ( $first->can('beacon') ? $first->beacon : '' ),
+      thumbnail => $first->image,
+      width     => $first->width,
+      height    => $first->height,
+      links     => \@shops,
+    );
+
+    replace( $item, \%data );
+  }
 };
 
 $extension;

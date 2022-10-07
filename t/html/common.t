@@ -127,7 +127,7 @@ sub testing {
   if ( $file->stringify !~ m{404\.html$} ) {
     my $link = $dom->at('link[rel="canonical"]')->getAttribute('href');
     if ( $link =~ m{/\d{4}/\d{2}|notes/[^/]+/} ) {
-      is( scalar( $dom->find('script:not([type])')->@* ), 4 ),;
+      is( scalar( $dom->find('script:not([type])')->@* ), 4 );
     }
     else {
       is( scalar( $dom->find('script:not([type])')->@* ), 1 );

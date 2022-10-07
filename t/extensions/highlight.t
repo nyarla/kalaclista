@@ -9,8 +9,7 @@ use URI;
 
 use Kalaclista::Directory;
 use Kalaclista::Template;
-use Kalaclista::Entry::Meta;
-use Kalaclista::Entry::Content;
+use Kalaclista::Entry;
 
 my $parser = HTML5::DOM->new( { script => 1 } );
 my $dirs   = Kalaclista::Directory->instance(
@@ -21,20 +20,16 @@ my $dirs   = Kalaclista::Directory->instance(
 my $extension = load( $dirs->templates_dir->child('extensions/highlight.pl') );
 
 sub main {
-  my $path = 'posts/2021/11/01/121434';
-  my $meta = Kalaclista::Entry::Meta->load(
-    src  => $dirs->build_dir->child("contents/${path}.yaml"),
-    href => URI->new("https://the.kalaclista.com/${path}/"),
-  );
-  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md"), );
+  my $path  = 'posts/2021/11/01/121434';
+  my $entry = Kalaclista::Entry->new( $dirs->content_dir->child("entries/${path}.md"), URI->new("https://the.kalaclista.com/${path}/") );
 
-  my $transformer = $extension->($meta);
-  $content->transform($transformer);
+  $entry->register($extension);
+  $entry->transform;
 
-  my $item = $content->dom->at('pre > code');
+  my $item = $entry->dom->at('pre > code');
 
   ok( $item->at('span.Statement') );
-  is( ref $meta->addon->{'style'}, 'ARRAY' );
+  is( ref $entry->addon('style'), 'ARRAY' );
 
   done_testing;
 }

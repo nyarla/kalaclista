@@ -11,8 +11,7 @@ use URI::Escape qw(uri_escape_utf8);
 
 use Kalaclista::Directory;
 use Kalaclista::Template;
-use Kalaclista::Entry::Meta;
-use Kalaclista::Entry::Content;
+use Kalaclista::Entry;
 
 my $parser = HTML5::DOM->new( { script => 1 } );
 my $dirs   = Kalaclista::Directory->instance(
@@ -25,25 +24,14 @@ $ENV{'URL'} = 'https://the.kalaclista.com';
 
 my $extension = load( $dirs->templates_dir->child('extensions/images.pl') );
 
-sub transformter {
-  my $path = shift;
-  my $meta = Kalaclista::Entry::Meta->load(
-    src  => $dirs->build_dir->child("contents/${path}.yaml"),
-    href => URI->new("https://the.kalaclista.com/${path}/"),
-  );
-
-  return $extension->($meta);
-}
-
 subtest origin => sub {
-  my $path    = 'posts/2022/03/09/184033';
-  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md"), );
+  my $path = 'posts/2022/03/09/184033';
+  my $entry =
+      Kalaclista::Entry->new( $dirs->content_dir->child("entries/${path}.md"), URI->new("https://the.kalaclista.com/${path}/") );
+  $entry->register($extension);
+  $entry->transform;
 
-  my $transformer = transformter($path);
-
-  $content->transform($transformer);
-
-  my $item = $content->dom->at('.content__card--thumbnail');
+  my $item = $entry->dom->at('.content__card--thumbnail');
 
   is(
     $item->getAttribute('href'),
@@ -64,13 +52,13 @@ subtest origin => sub {
 };
 
 subtest x1 => sub {
-  my $path    = 'posts/2013/06/28/002453';
-  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/${path}.md") );
+  my $path = 'posts/2013/06/28/002453';
+  my $entry =
+      Kalaclista::Entry->new( $dirs->content_dir->child("entries/${path}.md"), URI->new("https://the.kalaclista.com/${path}/") );
+  $entry->register($extension);
+  $entry->transform;
 
-  my $transformer = transformter($path);
-  $content->transform($transformer);
-
-  my $item = $content->dom->at('.content__card--thumbnail');
+  my $item = $entry->dom->at('.content__card--thumbnail');
 
   is(
     $item->getAttribute('href'),
@@ -94,13 +82,13 @@ subtest x1 => sub {
 };
 
 subtest x2 => sub {
-  my $path    = '自作キーボード';
-  my $content = Kalaclista::Entry::Content->load( src => $dirs->build_dir->child("contents/notes/$path.md") );
+  my $path = '自作キーボード';
+  my $entry =
+      Kalaclista::Entry->new( $dirs->content_dir->child("entries/notes/${path}.md"), URI->new("https://the.kalaclista.com/${path}/") );
+  $entry->register($extension);
+  $entry->transform;
 
-  my $transformer = transformter("notes/$path");
-  $content->transform($transformer);
-
-  my $item = $content->dom->at('.content__card--thumbnail');
+  my $item = $entry->dom->at('.content__card--thumbnail');
 
   is(
     $item->getAttribute('href'),

@@ -7,7 +7,7 @@ my $content = sub {
   my ( $vars, $baseURI ) = @_;
 
   my $data    = $vars->data;
-  my $entries = [ map { $_->[0] } $vars->entries->@* ];
+  my $entries = $vars->entries;
   my $year    = ( split qr{-}, date( $entries->[0]->date ) )[0];
   my $section = $vars->section;
 

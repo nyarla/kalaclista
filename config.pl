@@ -91,62 +91,44 @@ my $data = {
   },
 };
 
-my @extensions = map {
-  Kalaclista::Template::load( $dirs->templates_dir->child($_)->stringify )
-  } qw(
+my @extensions = map { Kalaclista::Template::load( $dirs->templates_dir->child($_)->stringify ) } qw(
   extensions/website.pl
   extensions/affiliate.pl
   extensions/images.pl
   extensions/highlight.pl
   extensions/ruby.pl
-  );
+);
 
-my $fixup = {
-  'Kalaclista::Entry::Meta' => sub {
-    my $meta = shift;
-    my $path = $meta->href->path;
+my $call = {
+  fixup => sub {
+    my $entry = shift;
+    my $path  = $entry->href->path;
 
-    # fix path
-    if ( $meta->slug ne q{} ) {
-      my $slug = $meta->slug;
+    if ( $entry->slug ne q{} ) {
+      my $slug = $entry->slug;
       utf8::decode($slug);
       $slug =~ s{ }{-}g;
       $path = qq(/notes/${slug}/);
     }
 
     if ( $path =~ m{/index} ) {
-      $path =~ s{/index$}{/};
+      $path =~ s{/index}{/};
     }
 
-    $meta->href->path($path);
+    $entry->href->path($path);
 
     if ( $path =~ m{^/(posts|notes|echos)/} ) {
-      $meta->type($1);
+      $entry->type($1);
     }
     else {
-      $meta->type('pages');
+      $entry->type('pages');
     }
-  },
-
-  'Kalaclista::Entry::Content' => sub {
-    my $content = shift;
-    my $meta    = shift;
 
     for my $extension (@extensions) {
-      my $transformer = $extension->($meta);
-      $content->transform($transformer);
+      $entry->register($extension);
     }
-  },
-};
 
-my $call = {
-  fixup => sub {
-    my $object = shift;
-    my @args   = @_;
-    my $class  = ref $object;
-    if ( exists $fixup->{$class} ) {
-      $fixup->{$class}->( $object, @args );
-    }
+    return $entry;
   },
 };
 
@@ -159,38 +141,36 @@ my $query = {
   },
 
   page => sub {
-    my $content = shift;
-    my $meta    = shift;
+    my $entry = shift;
+    my $path  = uri_unescape( $entry->href->path );
 
-    my $path = uri_unescape( $meta->href->path );
-
-    my $description = $content->dom->at('*:first-child')->textContent . '……';
+    my $description = $entry->dom->at('*:first-child')->textContent . '……';
 
     my $vars = Kalaclista::Variables->new(
-      title       => $meta->title,
-      website     => $data->{ $meta->type }->{'title'},
+      title       => $entry->title,
+      website     => $data->{ $entry->type }->{'title'},
       description => $description,
-      section     => $meta->type,
+      section     => $entry->type,
       kind        => 'permalink',
-      data        => $data->{ $meta->type },
-      entries     => [ [ $meta, $content ], ],
-      href        => $meta->href->as_string,
+      data        => $data->{ $entry->type },
+      entries     => [$entry],
+      href        => $entry->href->as_string,
       breadcrumb  => [
         {
           name => 'カラクリスタ',
           href => do { my $u = $baseURL->clone; $u->path('/'); $u->as_string },
         },
         {
-          name => $data->{ $meta->type }->{'title'},
+          name => $data->{ $entry->type }->{'title'},
           href => do {
             my $u = $baseURL->clone;
-            $u->path("/@{[ $meta->type ]}/");
+            $u->path("/@{[ $entry->type ]}/");
             $u->as_string;
           },
         },
         {
-          name => $meta->title,
-          href => $meta->href->as_string,
+          name => $entry->title,
+          href => $entry->href->as_string,
         }
       ],
     );
@@ -211,16 +191,6 @@ my $query = {
 
     my @pages;
 
-    my $content = sub {
-      my $meta    = shift;
-      my $fn      = $meta->src->basename('.yaml');
-      my $file    = $meta->src->parent->child("${fn}.md");
-      my $content = Kalaclista::Entry::Content->load( src => $file );
-      $call->{'fixup'}->( $content, $meta );
-
-      return $content;
-    };
-
     for my $section (qw(posts echos notes)) {
       my $website     = $data->{$section}->{'title'};
       my $description = "${website}の最近の記事";
@@ -233,7 +203,6 @@ my $query = {
         kind        => 'feed',
         data        => $data->{$section},
         entries     => [
-          map  { [ $_, $content->($_) ] }
           grep { $_->type eq $section && $idx++ < 5 }
           sort { $b->lastmod cmp $a->lastmod } @entries
         ],
@@ -245,25 +214,25 @@ my $query = {
       );
 
       push @pages,
-        Kalaclista::Page->new(
-        dist     => $dirs->distdir->child("${section}/index.xml"),
-        template => 'WebSite::Templates::RSS20Feed',
-        vars     => $vars,
-        );
+          Kalaclista::Page->new(
+            dist     => $dirs->distdir->child("${section}/index.xml"),
+            template => 'WebSite::Templates::RSS20Feed',
+            vars     => $vars,
+          );
 
       push @pages,
-        Kalaclista::Page->new(
-        dist     => $dirs->distdir->child("${section}/atom.xml"),
-        template => 'WebSite::Templates::AtomFeed',
-        vars     => $vars,
-        );
+          Kalaclista::Page->new(
+            dist     => $dirs->distdir->child("${section}/atom.xml"),
+            template => 'WebSite::Templates::AtomFeed',
+            vars     => $vars,
+          );
 
       push @pages,
-        Kalaclista::Page->new(
-        dist     => $dirs->distdir->child("${section}/jsonfeed.json"),
-        template => 'WebSite::Templates::JSONFeed',
-        vars     => $vars,
-        );
+          Kalaclista::Page->new(
+            dist     => $dirs->distdir->child("${section}/jsonfeed.json"),
+            template => 'WebSite::Templates::JSONFeed',
+            vars     => $vars,
+          );
     }
 
     my $website     = $data->{'pages'}->{'title'};
@@ -275,11 +244,8 @@ my $query = {
       description => $description,
       kind        => 'feed',
       data        => $data->{'pages'},
-      entries     => [
-        map { [ $_, $content->($_) ] }
-        grep { $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries
-      ],
-      href => do {
+      entries     => [ grep { $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries ],
+      href        => do {
         my $u = $baseURL->clone;
         $u->path("/");
         $u->as_string;
@@ -287,25 +253,25 @@ my $query = {
     );
 
     push @pages,
-      Kalaclista::Page->new(
-      dist     => $dirs->distdir->child("index.xml"),
-      template => 'WebSite::Templates::RSS20Feed',
-      vars     => $vars,
-      );
+        Kalaclista::Page->new(
+          dist     => $dirs->distdir->child("index.xml"),
+          template => 'WebSite::Templates::RSS20Feed',
+          vars     => $vars,
+        );
 
     push @pages,
-      Kalaclista::Page->new(
-      dist     => $dirs->distdir->child("atom.xml"),
-      template => 'WebSite::Templates::AtomFeed',
-      vars     => $vars,
-      );
+        Kalaclista::Page->new(
+          dist     => $dirs->distdir->child("atom.xml"),
+          template => 'WebSite::Templates::AtomFeed',
+          vars     => $vars,
+        );
 
     push @pages,
-      Kalaclista::Page->new(
-      dist     => $dirs->distdir->child("jsonfeed.json"),
-      template => 'WebSite::Templates::JSONFeed',
-      vars     => $vars,
-      );
+        Kalaclista::Page->new(
+          dist     => $dirs->distdir->child("jsonfeed.json"),
+          template => 'WebSite::Templates::JSONFeed',
+          vars     => $vars,
+        );
 
     for my $year ( 2006 .. $current ) {
       for my $section (qw(posts echos)) {
@@ -321,11 +287,8 @@ my $query = {
             section     => $section,
             kind        => 'home',
             data        => $data->{$section},
-            entries     => [
-              map  { [$_] }
-              grep { $_->date =~ m{^$year} && $_->type eq $section } @entries
-            ],
-            href => do {
+            entries     => [ grep { $_->date =~ m{^$year} && $_->type eq $section } @entries ],
+            href        => do {
               my $u = $baseURL->clone;
               $u->path("/$section/${year}/");
               $u->as_string;
@@ -336,8 +299,7 @@ my $query = {
             [
               {
                 name => 'カラクリスタ',
-                href =>
-                  do { my $u = $baseURL->clone; $u->path("/"); $u->as_string }
+                href => do { my $u = $baseURL->clone; $u->path("/"); $u->as_string }
               },
               {
                 name => $vars->website,
@@ -355,11 +317,11 @@ my $query = {
           );
 
           push @pages,
-            Kalaclista::Page->new(
-            dist     => $dirs->distdir->child("${section}/${year}/index.html"),
-            template => $template,
-            vars     => $vars,
-            );
+              Kalaclista::Page->new(
+                dist     => $dirs->distdir->child("${section}/${year}/index.html"),
+                template => $template,
+                vars     => $vars,
+              );
         }
 
         if ( $current eq $year ) {
@@ -370,11 +332,8 @@ my $query = {
             section     => $section,
             kind        => 'archive',
             data        => $data->{$section},
-            entries     => [
-              map  { [$_] }
-              grep { $_->date =~ m{^$year} && $_->type eq $section } @entries
-            ],
-            href => do {
+            entries     => [ grep { $_->date =~ m{^$year} && $_->type eq $section } @entries ],
+            href        => do {
               my $u = $baseURL->clone;
               $u->path("/${section}/");
               $u->as_string;
@@ -385,8 +344,7 @@ my $query = {
             [
               {
                 name => 'カラクリスタ',
-                href =>
-                  do { my $u = $baseURL->clone; $u->path("/"); $u->as_string }
+                href => do { my $u = $baseURL->clone; $u->path("/"); $u->as_string }
               },
               {
                 name => $vars->website,
@@ -400,11 +358,11 @@ my $query = {
           );
 
           push @pages,
-            Kalaclista::Page->new(
-            dist     => $dirs->distdir->child("${section}/index.html"),
-            template => $template,
-            vars     => $vars,
-            );
+              Kalaclista::Page->new(
+                dist     => $dirs->distdir->child("${section}/index.html"),
+                template => $template,
+                vars     => $vars,
+              );
 
         }
       }
@@ -417,7 +375,7 @@ my $query = {
       section     => 'notes',
       kind        => 'archive',
       data        => $data->{'notes'},
-      entries     => [ map { [$_] } grep { $_->type eq 'notes' } @entries ],
+      entries     => [ grep { $_->type eq 'notes' } @entries ],
       href        => do {
         my $u = $baseURL->clone;
         $u->path('/notes/');
@@ -446,11 +404,11 @@ my $query = {
     );
 
     push @pages,
-      Kalaclista::Page->new(
-      dist     => $dirs->distdir->child("notes/index.html"),
-      template => $template,
-      vars     => $vars,
-      );
+        Kalaclista::Page->new(
+          dist     => $dirs->distdir->child("notes/index.html"),
+          template => $template,
+          vars     => $vars,
+        );
 
     $idx = 0;
     push @pages, Kalaclista::Page->new(
@@ -464,7 +422,6 @@ my $query = {
         kind        => 'home',
         data        => $data->{'pages'},
         entries     => [
-          map  { [ $_, $content->($_) ] }
           grep { $_->type =~ m{posts|echos|notes} && $idx++ < 20 }
           sort { $b->lastmod cmp $a->lastmod } @entries
         ],
@@ -477,8 +434,7 @@ my $query = {
           [
             {
               name => 'カラクリスタ',
-              href =>
-                do { my $u = $baseURL->clone; $u->path('/'); $u->as_string }
+              href => do { my $u = $baseURL->clone; $u->path('/'); $u->as_string }
             }
           ]
         }
