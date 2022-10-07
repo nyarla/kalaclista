@@ -9,10 +9,10 @@ use URI;
 
 use Kalaclista::Directory;
 use Kalaclista::Template;
-use Kalaclista::Entry
+use Kalaclista::Entry;
 
-    my $parser = HTML5::DOM->new( { script => 1 } );
-my $dirs = Kalaclista::Directory->instance(
+my $parser = HTML5::DOM->new( { script => 1 } );
+my $dirs   = Kalaclista::Directory->instance(
   build => 'resources',
   data  => 'content/data',
 );

@@ -1,4 +1,4 @@
-use YAML::Tiny;
+use YAML::XS;
 
 use Kalaclista::Directory;
 use Kalaclista::Shop::Amazon;
@@ -84,7 +84,7 @@ my $extension = sub {
       next;
     }
 
-    my $info = YAML::Tiny::Load( $yaml->slurp_utf8 );
+    my $info = YAML::XS::Load( $yaml->slurp );
 
     my $title = $info->{'name'};
     my @shops;

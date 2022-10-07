@@ -7,7 +7,7 @@ use utf8;
 use Kalaclista::Directory;
 
 use Test2::V0;
-use JSON::Tiny qw(decode_json);
+use JSON::XS qw(decode_json);
 
 my $dirs = Kalaclista::Directory->instance;
 my $dist = $dirs->rootdir->child("dist");

@@ -1,6 +1,6 @@
 use URI;
 use URI::Escape qw(uri_unescape);
-use YAML::Tiny ();
+use YAML::XS ();
 
 use Kalaclista::Directory;
 use Kalaclista::Utils qw(make_path);
@@ -25,7 +25,7 @@ my $website = sub {
     my $summary;
 
     if ( $file->is_file ) {
-      my $data = YAML::Tiny::LoadFile( $file->stringify );
+      my $data = YAML::XS::Load( $file->slurp );
 
       $title = $data->{'title'}
           if ( exists $data->{'title'} && $data->{'title'} ne q{} );

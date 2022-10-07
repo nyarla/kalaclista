@@ -1,5 +1,5 @@
 use Kalaclista::Directory;
-use YAML::Tiny;
+use YAML::XS;
 use URI::Escape;
 
 my $datadir = Kalaclista::Directory->instance->datadir;
@@ -22,7 +22,7 @@ my $extensions = sub {
       my $yaml = $datadir->child("images/${path}.yaml");
 
       if ( $yaml->is_file ) {
-        my $data = YAML::Tiny::Load( $yaml->slurp_utf8 );
+        my $data = YAML::XS::Load( $yaml->slurp );
 
         my $img = $item->tree->createElement('img');
         $img->setAttribute( alt   => $item->getAttribute('alt') );

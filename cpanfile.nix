@@ -719,7 +719,7 @@ in with modules; [
   Importer
   JSON
   JSONMaybeXS
-  JSONTiny
+  JSONXS
   LWPMediaTypes
   ListMoreUtils
   ListMoreUtilsXS
@@ -780,5 +780,4 @@ in with modules; [
   WWWFormUrlEncoded
   XMLLibXML
   YAMLLibYAML
-  YAMLTiny
 ]

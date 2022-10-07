@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use JSON::Tiny qw(encode_json);
+use JSON::XS qw(encode_json);
 
 sub render {
   my ( $vars, $baseURI ) = @_;
@@ -28,8 +28,8 @@ sub render {
     items         => [
       map {
         +{
-          id             => $_->href,
-          url            => $_->href,
+          id             => $_->href . '',
+          url            => $_->href . '',
           title          => $_->title,
           content_html   => $_->dom->innerHTML,
           date_published => $_->date,
