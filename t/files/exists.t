@@ -6,7 +6,7 @@ use warnings;
 use Test2::V0;
 use Kalaclista::Directory;
 
-my $dist = Kalaclista::Directory->new->rootdir->child("dist");
+my $dist = Kalaclista::Directory->new->rootdir->child("dist/public");
 
 sub main {
   my @files = qw(

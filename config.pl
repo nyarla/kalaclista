@@ -27,7 +27,7 @@ NEXT:
 
 my $dirs = Kalaclista::Directory->instance(
   root     => $root,
-  dist     => 'dist',
+  dist     => 'dist/public',
   data     => 'content/data',
   assets   => 'content/assets',
   content  => 'content/entries',
@@ -136,8 +136,8 @@ my $call = {
 my $query = {
   assets => sub {
     return (
-      '../resources/assets/stylesheet.css' => 'assets/stylesheet.pl',
-      '404.html'                           => 'pages/notfound.pl',
+      '../../resources/assets/stylesheet.css' => 'assets/stylesheet.pl',
+      '404.html'                              => 'pages/notfound.pl',
     );
   },
 

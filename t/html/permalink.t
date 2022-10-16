@@ -14,7 +14,7 @@ use Kalaclista::Sequential::Files;
 use Kalaclista::Files;
 use Path::Tiny;
 
-my $dist   = Kalaclista::Directory->new->rootdir->child('dist');
+my $dist   = Kalaclista::Directory->new->rootdir->child('dist/public');
 my $parser = HTML5::DOM->new( { script => 1 } );
 
 sub testing {

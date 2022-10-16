@@ -7,7 +7,7 @@ use URI;
 
 use Kalaclista::Directory;
 
-my $dist = Kalaclista::Directory->new->rootdir->child("dist");
+my $dist = Kalaclista::Directory->new->rootdir->child("dist/public");
 
 sub main {
   my $xml = XML::LibXML->load_xml( string => $dist->child('sitemap.xml')->slurp );

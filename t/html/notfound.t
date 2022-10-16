@@ -13,7 +13,7 @@ my $dirs   = Kalaclista::Directory->instance;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $page = $dirs->distdir->child('404.html')->slurp_utf8;
+  my $page = $dirs->rootdir->child('dist/public/404.html')->slurp_utf8;
   my $dom  = $parser->parse($page);
 
   is( $dom->at('title')->textContent, '404 not found - カラクリスタ' );

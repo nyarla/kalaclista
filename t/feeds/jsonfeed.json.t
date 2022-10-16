@@ -10,7 +10,7 @@ use Test2::V0;
 use JSON::XS qw(decode_json);
 
 my $dirs = Kalaclista::Directory->instance;
-my $dist = $dirs->rootdir->child("dist");
+my $dist = $dirs->rootdir->child("dist/public");
 
 my $config = do $dirs->rootdir->child('config.pl')->stringify;
 my $data   = $config->{'data'};

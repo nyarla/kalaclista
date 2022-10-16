@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+min=$((   60 ))
+hour=$((  $min  * 60 ))
+day=$((   $hour * 24 ))
+month=$(( $day  * 28  ))
+year=$((  $day  * 365 ))
+
+expire() {
+  echo "'public, max-age=${1}'"
+  return 0
+}
+
+main() {
+  case "$1" in
+    *.txt | *.png | *.ico | *.svg | *.webmanifest | assets/* )
+      expire $month
+      ;;
+
+    licenses/* | nyarla/* | policies/* | 404.html )
+      expire $hour
+      ;;
+
+    index.html | *.xml | *.json | */$(date +%Y)/*.* )
+      expire $(($min * 5))
+      ;;
+
+    */*/*/*/*/*.html | */*/*.html | */*.html )
+      expire $(($min * 5))
+      ;;
+      
+    *)
+      expire $day
+      ;;
+  esac
+
+  return 0
+}
+
+main "${@}"

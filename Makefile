@@ -37,7 +37,7 @@ _gen_assets_by_app:
 
 _gen_assets_copy:
 	@echo copy assets
-	@cp -R content/assets/* dist/
+	@cp -R content/assets/* dist/public
 
 _gen_assets_css: _gen_assets_by_app
 	@echo generate css
@@ -72,8 +72,8 @@ optimize: \
 	_opti_png
 
 clean:
-	@test ! -d dist || rm -rf dist
-	@mkdir -p dist
+	@test ! -d dist/public || rm -rf dist/public
+	@mkdir -p dist/public
 
 build:
 	@$(MAKE) gen URL=https://the.kalaclista.com -j$(FULL)
@@ -88,8 +88,7 @@ test:
 
 # temporary solution
 up: clean build
-	rsync -r --delete dist/ ../kalaclista/dist/
-	cd ../kalaclista && make up
+	@dist/bin/push
 
 shell:
 	@cp app/cpanfile.nix cpanfile.nix

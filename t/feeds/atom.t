@@ -11,7 +11,7 @@ use Test2::V0;
 use XML::LibXML;
 
 my $dirs = Kalaclista::Directory->instance;
-my $dist = $dirs->rootdir->child("dist");
+my $dist = $dirs->rootdir->child("dist/public");
 
 my $config = do $dirs->rootdir->child('config.pl')->stringify;
 my $data   = $config->{'data'};

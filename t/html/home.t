@@ -10,7 +10,7 @@ use JSON::XS qw(decode_json);
 
 use Kalaclista::Directory;
 
-my $dist   = Kalaclista::Directory->instance->distdir;
+my $dist   = Kalaclista::Directory->instance->rootdir->child('dist/public');
 my $parser = HTML5::DOM->new( { script => 1 } );
 
 sub jsonld {
