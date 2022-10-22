@@ -5,6 +5,7 @@ set -euo pipefail
 export PATH=$(dirname "$(pwd)/${0}"):$PATH
 
 export AWS_PROFILE=kalaclista
+export AWS_REGION=us-east-1
 export S3_BUCKET=kalaclista
 
 cd "$(dirname "${0}")/../"
@@ -27,7 +28,7 @@ main() {
       | grep -i failed \
       | cut -d: -f1 \
       | xargs -I{} -P$(nproc --all --ignore 1) \
-      bash -c "(test -e '{}' && echo cp --cache-control $(cache-control '{}') '{}' 's3://${S3_BUCKET}/{}') || echo rm 's3://${S3_BUCKET}/{}'" >latest/upload.txt || true
+      bash -c "(test -e '{}' && echo \"cp --cache-control $(cache-control '{}') '{}' 's3://${S3_BUCKET}/{}'\") || echo rm 's3://${S3_BUCKET}/{}'" >>latest/upload.txt || true
   fi
 
   if test ! -z "$(cat latest/upload.txt)"; then
