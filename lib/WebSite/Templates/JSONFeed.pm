@@ -4,7 +4,9 @@ use strict;
 use warnings;
 use utf8;
 
-use JSON::XS qw(encode_json);
+use JSON::XS;
+
+my $jsonify = JSON::XS->new->utf8->canonical(1);
 
 sub render {
   my ( $vars, $baseURI ) = @_;
@@ -47,7 +49,7 @@ sub render {
     ],
   };
 
-  my $json = encode_json($data);
+  my $json = $jsonify->encode($data);
   utf8::decode($json);
 
   return $json;
