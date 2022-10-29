@@ -8,6 +8,9 @@ export AWS_PROFILE=kalaclista
 export AWS_REGION=us-east-1
 export S3_BUCKET=kalaclista
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 cd "$(dirname "${0}")/../"
 
 main() {
@@ -24,16 +27,23 @@ main() {
 
   else
     test ! -e latest/upload.txt || rm latest/upload.txt
+
+    cat latest/sha256sum.txt | sed 's! \+!\t!' | cut -d "	" -f2 | sort >latest/old.txt
+    find public -type f | sort >latest/new.txt
+    comm -3 latest/old.txt latest/new.txt \
+      | sed 's!\t!0000000000000000000000000000000000000000000000000000000000000000  !' >>latest/sha256sum.txt
+
     sha256sum -c latest/sha256sum.txt \
       | grep -i failed \
       | cut -d: -f1 \
+      | sed 's!public/!!' \
       | xargs -I{} -P$(nproc --all --ignore 1) \
-      bash -c "(test -e '{}' && echo \"cp --cache-control $(cache-control '{}') '{}' 's3://${S3_BUCKET}/{}'\") || echo rm 's3://${S3_BUCKET}/{}'" >>latest/upload.txt || true
+      bash -c "(test -e 'public/{}' && echo \"cp --cache-control $(cache-control '{}') 'public/{}' 's3://${S3_BUCKET}/{}'\") || echo rm 's3://${S3_BUCKET}/{}'" >>latest/upload.txt || true
   fi
 
   if test ! -z "$(cat latest/upload.txt)"; then
     s5cmd run latest/upload.txt 
-    find public -type f | xargs -I{} -P$(nproc --all --ignore 1) sha256sum '{}' >latest/sha256sum.txt
+    find public -type f | xargs -I{} -P$(nproc --all --ignore 1) sha256sum '{}' | sort >latest/sha256sum.txt
   fi
 }
 
