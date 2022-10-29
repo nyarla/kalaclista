@@ -38,7 +38,7 @@ main() {
       | cut -d: -f1 \
       | sed 's!public/!!' \
       | xargs -I{} -P$(nproc --all --ignore 1) \
-      bash -c "(test -e 'public/{}' && echo \"cp --cache-control $(cache-control '{}') 'public/{}' 's3://${S3_BUCKET}/{}'\") || echo rm 's3://${S3_BUCKET}/{}'" >>latest/upload.txt || true
+      bash -c "(test -e 'public/{}' && echo \"cp --cache-control \$(cache-control '{}') 'public/{}' 's3://${S3_BUCKET}/{}'\") || echo rm 's3://${S3_BUCKET}/{}'" >>latest/upload.txt || true
   fi
 
   if test ! -z "$(cat latest/upload.txt)"; then
