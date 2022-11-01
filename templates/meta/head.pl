@@ -1,4 +1,6 @@
-my $budoux = 'https://cdn.skypack.dev/budoux';
+use strict;
+use warnings;
+use utf8;
 
 my $tables = {
   posts => [ 'Blog',    'BlogPosting' ],
@@ -6,8 +8,6 @@ my $tables = {
   notes => [ 'WebSite', 'Article' ],
   pages => [ 'WebSite', 'WebPage' ],
 };
-
-no warnings 'redefine';
 
 sub types {
   my ( $kind, $section ) = @_;
@@ -37,8 +37,6 @@ sub item {
   return link_( \%attr );
 }
 
-use warnings 'redefine';
-
 my $author = {
   '@type' => 'Person',
   'email' => 'nyarla@kalaclista.com',
@@ -57,6 +55,14 @@ my $publisher = {
   'name' => 'the.kalaclista.com',
 };
 
+my $charset  = meta( { charset => 'utf-8' } );
+my $viewport = meta(
+  {
+    name    => 'viewport',
+    content => 'width=device-width,minimum-scale=1,initial-scale=1'
+  }
+);
+
 my $global = sub {
   my ( $vars, $baseURI ) = @_;
 
@@ -74,14 +80,6 @@ my $global = sub {
   );
 
   my @css = ( style( raw( $vars->data->{'css'} ) ) );
-
-  my $charset  = meta( { charset => 'utf-8' } );
-  my $viewport = meta(
-    {
-      name    => 'viewport',
-      content => 'width=device-width,minimum-scale=1,initial-scale=1'
-    }
-  );
 
   my $docname = title( ( $title eq $website ) ? $title : "${title} - ${website}" );
   my $docdesc = meta( { name => 'description', content => $description } );
@@ -136,9 +134,20 @@ my $page = sub {
     property( 'og:site_name',   $website ),
     property( 'og:image',       $avatar ),
     property( 'og:url',         $permalink ),
-    property( 'og:type',        'website' ),
     property( 'og:description', $description ),
   );
+
+  if ( $kind eq 'permalink' ) {
+    push @ogp, (
+      property( 'og:type',           'article' ),
+      property( 'og:published_time', $meta->date ),
+      property( 'og:modified_time',  $meta->lastmod ),
+      property( 'og:section',        $section ),
+    );
+  }
+  else {
+    push @ogp, property( 'og:type', 'website' ),;
+  }
 
   my @twitter = (
     data_( 'twitter:card',        'summary' ),

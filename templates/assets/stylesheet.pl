@@ -1,3 +1,7 @@
+use strict;
+use warnings;
+use utf8;
+
 my $base00 = '#000000';
 my $base01 = '#333333';
 my $base02 = '#666666';

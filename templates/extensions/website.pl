@@ -1,3 +1,7 @@
+use strict;
+use warnings;
+use utf8;
+
 use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS ();

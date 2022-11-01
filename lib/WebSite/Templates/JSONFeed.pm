@@ -29,6 +29,7 @@ sub render {
     feed_url      => $vars->href . 'jsonfeed.json',
     items         => [
       map {
+        $_->transform;
         +{
           id             => $_->href . '',
           url            => $_->href . '',

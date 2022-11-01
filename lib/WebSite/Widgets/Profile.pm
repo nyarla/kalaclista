@@ -4,17 +4,18 @@ use strict;
 use warnings;
 use utf8;
 
-use Text::HyperScript::HTML5;
-use Exporter::Lite;
+use feature qw(state);
 
-use WebSite::Helper::Hyperlink qw(href hyperlink);
+use Exporter::Lite;
 
 our @EXPORT = qw(profile);
 
+use Text::HyperScript::HTML5;
+use WebSite::Helper::Hyperlink qw(href hyperlink);
+
 sub profile {
   my $baseURI = shift;
-
-  return section(
+  state $result ||= section(
     { id => 'profile' },
 
     figure(
@@ -48,6 +49,8 @@ sub profile {
       )
     )
   );
+
+  return $result;
 }
 
 1;

@@ -1,10 +1,12 @@
+use strict;
+use warnings;
+use utf8;
+
 use YAML::XS;
 
 use Kalaclista::Directory;
 use Kalaclista::Shop::Amazon;
 use Kalaclista::Shop::Rakuten;
-
-no warnings 'redefine';
 
 sub key {
   my ($name) = @_;
@@ -63,8 +65,6 @@ sub replace {
 
   $el->parent->replace($aside);
 }
-
-use warnings 'redefine';
 
 my $dirs = Kalaclista::Directory->instance;
 

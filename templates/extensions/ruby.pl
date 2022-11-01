@@ -1,6 +1,8 @@
-no warnings 'redefine';
+use strict;
+use warnings;
+use utf8;
 
-sub ruby {
+sub furigana {
   my $src  = shift;
   my @text = split qr([|]), $src;
 
@@ -21,13 +23,11 @@ sub ruby {
   return "<ruby>${out}</ruby>";
 }
 
-use warnings 'redefine';
-
 my $extension = sub {
   my ( $entry, $dom ) = @_;
   for my $node ( $dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
     my $html = $node->innerHTML;
-    $html =~ s<[{]([^}]+)[}]><ruby($1)>eg;
+    $html =~ s<[{]([^}]+)[}]><furigana($1)>eg;
 
     $node->innerHTML($html);
   }

@@ -4,18 +4,22 @@ use strict;
 use warnings;
 use utf8;
 
-use Text::HyperScript::HTML5 qw(header p);
+use feature qw(state);
+
 use Exporter::Lite;
 
-use WebSite::Helper::Hyperlink qw(hyperlink href);
-
 our @EXPORT = qw(banner);
+
+use Text::HyperScript::HTML5 qw(header p);
+use WebSite::Helper::Hyperlink qw(hyperlink href);
 
 sub banner {
   my $baseURI = shift;
 
-  return header(
+  state $result ||= header(
     { id => 'global' },
     p( hyperlink( 'カラクリスタ', href( '/', $baseURI ) ) )
   );
+
+  return $result;
 }

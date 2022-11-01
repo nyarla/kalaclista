@@ -27,6 +27,7 @@ sub render {
       h( lastBuildDate  => Time::Moment->from_string( $vars->entries->[0]->lastmod )->strftime($format) ),
       (
         map {
+          $_->transform;
           h(
             item => [
               h( title       => $_->title ),

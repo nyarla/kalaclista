@@ -4,19 +4,20 @@ use strict;
 use warnings;
 use utf8;
 
+use feature qw(state);
+
 use Exporter::Lite;
+
+our @EXPORT = qw(sitemenu);
 
 use Text::HyperScript::HTML5 qw(nav hr p);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
-
-our @EXPORT = qw(sitemenu);
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
 sub sitemenu {
   my $baseURI = shift;
-
-  return nav(
+  state $result ||= nav(
     { id => 'menu', class => 'entry__content' },
     hr,
     p(
@@ -32,6 +33,8 @@ sub sitemenu {
       hyperlink( '検索',   $search ),
     ),
   );
+
+  return $result;
 }
 
 1;

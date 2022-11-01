@@ -30,6 +30,7 @@ sub render {
 
       (
         map {
+          $_->transform;
           h(
             'entry',
             [

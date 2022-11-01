@@ -1,3 +1,7 @@
+use strict;
+use warnings;
+use utf8;
+
 use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;
