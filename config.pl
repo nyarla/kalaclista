@@ -248,7 +248,7 @@ my $query = {
       description => $description,
       kind        => 'feed',
       data        => $data->{'pages'},
-      entries     => [ grep { $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries ],
+      entries     => [ grep { $_->type =~ m{^(posts|echos|notes)$} && $idx++ < 5 } sort { $b->lastmod cmp $a->lastmod } @entries ],
       href        => do {
         my $u = $baseURL->clone;
         $u->path("/");
