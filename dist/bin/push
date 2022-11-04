@@ -5,8 +5,8 @@ set -euo pipefail
 export PATH=$(dirname "$(pwd)/${0}"):$PATH
 
 export AWS_PROFILE=kalaclista
-export AWS_REGION=us-east-1
-export S3_BUCKET=kalaclista
+export S3_ENDPOINT_URL="https://storage.googleapis.com"
+export S3_BUCKET=the.kalaclista.com
 
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
