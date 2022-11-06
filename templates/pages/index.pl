@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use utf8;
 
+use WebSite::Widgets::Analytics;
 use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;
@@ -151,6 +152,7 @@ my $template = sub {
       sitemenu($baseURI),
       $main->( $vars, $baseURI ),
       siteinfo($baseURI),
+      analytics,
     ]
   );
 };

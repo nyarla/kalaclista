@@ -23,3 +23,5 @@ sub banner {
 
   return $result;
 }
+
+1;
