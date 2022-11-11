@@ -18,7 +18,7 @@ _gen_resize_images: _gen_clean_exif
 
 _gen_sitemap_xml:
 	@echo generate sitemap.xml
-	@$(RUN) generate-sitemap-xml -t 1
+	@perl gen.pl sitemap.xml
 
 _gen_pages: _gen_assets
 	@echo generate pages
