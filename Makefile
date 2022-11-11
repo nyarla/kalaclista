@@ -7,18 +7,13 @@ RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -a
 
 .PHONY: clean build dev test
 
-_gen_clean_exif:
-	@echo clean exif
-	@find content/assets/images -type f -name '*.jpg' \
-		| xargs -I{} -P$(FULL) -n1 jhead -purejpg {}
-
-_gen_resize_images: _gen_clean_exif
-	@echo resize images
-	@$(RUN) resize-images -t $(FULL)
+_gen_images:
+	@echo generate images
+	@perl bin/gen.pl images
 
 _gen_sitemap_xml:
 	@echo generate sitemap.xml
-	@perl gen.pl sitemap.xml
+	@perl bin/gen.pl sitemap.xml
 
 _gen_pages: _gen_assets
 	@echo generate pages
