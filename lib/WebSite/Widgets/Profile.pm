@@ -27,6 +27,7 @@ sub profile {
               src    => href( '/assets/avatar.svg', $baseURI ),
               height => 96,
               width  => 96,
+              alt    => 'アバターアイコン兼ロゴ'
             }
           )
         )
