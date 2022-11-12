@@ -16,18 +16,11 @@
       crossorigin: "anonymouse",
     });
 
-    let analytics = document.createElement("script");
-    Object.assign(script, {
-      src: "https://www.googletagmanager.com/gtag/js?id=G-18GLHBH79E",
-      async: "async",
-    });
-
     for (let ev of events) {
       document.removeEventListener(ev, lazyloader);
     }
 
     document.body.appendChild(script);
-    document.body.appendChild(analytics);
   };
 
   for (let ev of events) {
