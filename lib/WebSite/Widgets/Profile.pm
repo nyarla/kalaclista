@@ -45,7 +45,7 @@ sub profile {
       p(
         hyperlink( 'GitHub',  'https://github.com/nyarla/' ),
         hyperlink( 'Zenn',    'https://zenn.dev/nyarla' ),
-        hyperlink( 'Twitter', 'https://twitter.com/kalaclista' ),
+        hyperlink( 'Trickle', 'https://trickle.day/nyarla' ),
         hyperlink( 'トピア',     'https://user.topia.tv/5R9Y' ),
       )
     )
