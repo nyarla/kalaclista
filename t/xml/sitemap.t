@@ -1,45 +1,54 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 
 use Test2::V0;
 use XML::LibXML;
-use URI;
+use URI::Fast;
 
-use Kalaclista::Directory;
+use Kalaclista::Path;
 
-my $dist = Kalaclista::Directory->new->rootdir->child("dist/public");
+my $dist = Kalaclista::Path->detect(qr{^t$})->child('public/dist');
+
+sub at {
+  my $xml = shift;
+  return sub {
+    my $xpath = shift;
+    return $xml->find($xpath)->[0]->textContent;
+  };
+}
 
 sub main {
-  my $xml = XML::LibXML->load_xml( string => $dist->child('sitemap.xml')->slurp );
+  my $xml = XML::LibXML->load_xml( string => $dist->child('sitemap.xml')->get );
 
-  my $xc = XML::LibXML::XPathContext->new($xml);
-  $xc->registerNs( 's', 'http://www.sitemaps.org/schemas/sitemap/0.9' );
+  my %found;
+  for my $node ( $xml->findnodes('//*[name()="url"]') ) {
+    my $at = at($node);
 
-  for my $node ( $xc->findnodes('//s:url')->get_nodelist ) {
-    my $loc     = URI->new( $xc->findnodes( 's:loc', $node )->pop->textContent );
-    my $lastmod = $xc->findnodes( 's:lastmod', $node )->pop->textContent;
+    my $loc     = URI::Fast->new( $at->('*[name()="loc"]') );
+    my $lastmod = $at->('*[name()="lastmod"]');
 
-    # DateTime test
     like(
       $lastmod,
-      qr<^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[-+]\d{2}:\d{2}|Z)$>
+      qr<^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[-+]\d{2}:\d{2}|Z)$>,
     );
 
-    # URL tests
     is( $loc->scheme, 'https' );
     is( $loc->host,   'the.kalaclista.com' );
 
     my @paths = split qr{/}, $loc->path;
 
-    if ( $paths[1] eq 'nyarla'
-      || $paths[1] eq 'licenses'
-      || $paths[1] eq 'policies' ) {
-      like( $paths[1], qr{nyarla|licenses|policies} );
-      is( scalar(@paths), 2 );
+    if ( $paths[1] eq 'nyarla' || $paths[1] eq 'licenses' || $paths[1] eq 'policies' ) {
+      $found{'pages'}++;
+
+      ok( @paths == 2 );
       next;
     }
 
     if ( $paths[1] eq 'posts' || $paths[1] eq 'echos' ) {
+      $found{ $paths[1] }++;
+
       if ( @paths == 3 ) {
         like( $paths[2], qr<\d{4}> );
         next;
@@ -50,17 +59,23 @@ sub main {
       like( $paths[4], qr<\d{2}> );
       like( $paths[5], qr<\d{6}> );
 
-      is( scalar(@paths), 6 );
+      ok( @paths == 6 );
       next;
     }
 
     if ( $paths[1] eq 'notes' ) {
-      is( scalar(@paths), 3 );
+      $found{'notes'}++;
+      ok( @paths == 3 );
       next;
     }
 
-    ok( 0, "unknown url: " . join( q{/}, @paths ) . '/' );
+    fail( "unknown url: " . ( join q{/}, @paths ) . "/" );
   }
+
+  ok( $found{'pages'} > 0 );
+  ok( $found{'posts'} > 0 );
+  ok( $found{'echos'} > 0 );
+  ok( $found{'notes'} > 0 );
 
   done_testing;
 }
