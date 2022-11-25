@@ -13,11 +13,16 @@ our @EXPORT = qw(sitemenu);
 use Text::HyperScript::HTML5 qw(nav hr p);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
+use Kalaclista::Constants;
+
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
 sub sitemenu {
-  my $baseURI = shift;
-  state $result ||= nav(
+  state $result;
+  return $result if ( defined $result );
+
+  my $baseURI = Kalaclista::Constants->baseURI;
+  $result = nav(
     { id => 'menu', class => 'entry__content' },
     hr,
     p(

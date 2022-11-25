@@ -12,13 +12,17 @@ our @EXPORT = qw(banner);
 
 use Text::HyperScript::HTML5 qw(header p);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
+use Kalaclista::Constants;
 
 sub banner {
-  my $baseURI = shift;
+  state $result;
+  return $result if ( defined $result );
 
-  state $result ||= header(
+  my $baseURI = Kalaclista::Constants->baseURI;
+
+  $result = header(
     { id => 'global' },
-    p( hyperlink( 'カラクリスタ', href( '/', $baseURI ) ) )
+    p( hyperlink( 'カラクリスタ', href( '/', $baseURI ) ) ),
   );
 
   return $result;

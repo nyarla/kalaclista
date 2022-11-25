@@ -13,9 +13,15 @@ our @EXPORT = qw(siteinfo);
 use Text::HyperScript::HTML5 qw(p footer);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
+use Kalaclista::Constants;
+
 sub siteinfo {
-  my $baseURI = shift;
-  state $result ||= footer(
+  state $result;
+  return $result if ( defined $result );
+
+  my $baseURI = Kalaclista::Constants->baseURI;
+
+  $result = footer(
     { id => 'copyright' },
     p(
       '(C) 2006-' . ( (localtime)[5] + 1900 ) . ' ',
