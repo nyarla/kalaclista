@@ -399,7 +399,16 @@ my @content = (
       color           => $K06,
       padding         => '0.25em 0.5em',
       borderRadius    => '3px',
-      overflowX       => 'scroll',
+      whiteSpace      => 'pre',
+    ],
+
+    'pre > code' => [
+      width      => '100%',
+      height     => '100%',
+      display    => 'block',
+      overflowX  => 'scroll',
+      overflowY  => 'hidden',
+      whiteSpace => 'pre',
     ],
 
     '*:not(pre) > code' => [
