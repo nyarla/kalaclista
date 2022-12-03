@@ -73,7 +73,7 @@ sub fixup {
 
   $entry->href->path($path);
 
-  if ( $path =~ m{^/?(posts|notes|echos)/} ) {
+  if ( $path =~ m{(posts|notes|echos)} ) {
     $entry->type($1);
   }
   else {
