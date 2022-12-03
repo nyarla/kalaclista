@@ -28,7 +28,7 @@ my $author = {
   '@type' => 'Person',
   'email' => 'nyarla@kalaclista.com',
   'name'  => 'OKAMURA Naoki aka nyarla',
-  'url'   => 'https://the.kalaclsita.com/nyarla/',
+  'url'   => 'https://the.kalaclista.com/nyarla/',
 };
 
 my $publisher = {
@@ -178,7 +178,7 @@ sub page {
 
   my %jsonld;
   @jsonld{qw( title href type author publisher image parent )} =
-      ( $title, $href, types( $kind, $section ), $author, $publisher, $avatar, $parent );
+      ( $title, $href, types( $kind, $section ), $author, $publisher, { '@type' => 'ImageObject', contentUrl => $avatar }, $parent );
 
   return (
     title($docname),

@@ -263,26 +263,22 @@ sub testing_page_on_permalink {
           '@type' => 'Person',
           'email' => 'nyarla@kalaclista.com',
           'name'  => 'OKAMURA Naoki aka nyarla',
+          'url'   => 'https://the.kalaclista.com/nyarla/'
         },
 
         'headline' => $entry->title,
         'image'    => {
-          '@type' => 'URL',
-          'url'   => 'https://example.com/assets/avatar.png',
+          '@type'      => 'ImageObject',
+          'contentUrl' => 'https://example.com/assets/avatar.png'
         },
 
-        'mainEntryOfPage' => {
-          '@id' => 'https://example.com/posts/',
-        },
+        'mainEntityOfPage' => "https://example.com/posts/",
 
         'publisher' => {
           '@type' => 'Organization',
           'logo'  => {
-            '@type' => 'ImageObject',
-            'url'   => {
-              '@type' => 'URL',
-              'url'   => 'https://the.kalaclista.com/assets/avatar.png',
-            },
+            '@type'      => 'ImageObject',
+            'contentUrl' => 'https://the.kalaclista.com/assets/avatar.png',
           },
         },
       },
