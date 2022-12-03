@@ -150,18 +150,22 @@ sub page {
   my $docdesc = $title eq $website ? $vars->description : $vars->summary;
 
   my @ogp = (
-    property( 'og:title',     $title ),
-    property( 'og:site_name', $website ),
-    property( 'og:image',     $avatar ),
-    property( 'og:url',       $href ),
+    property( 'og:title',       $title ),
+    property( 'og:site_name',   $website ),
+    property( 'og:image',       $avatar ),
+    property( 'og:url',         $href ),
+    property( 'og:description', $docdesc ),
+    property( 'og:locale',      'ja_JP' ),
   );
 
   if ( $kind eq 'permalink' ) {
     push @ogp, (
-      property( 'og:type',           'article' ),
-      property( 'og:published_time', $meta->date ),
-      property( 'og:modified_time',  $meta->lastmod ),
-      property( 'og:section',        $section ),
+      property( 'og:type',              'article' ),
+      property( 'og:published_time',    $meta->date ),
+      property( 'og:modified_time',     $meta->lastmod ),
+      property( 'og:section',           $section ),
+      property( 'og:author:first_name', 'Naoki' ),
+      property( 'og:author:last_name',  'OKAMURA' ),
     );
   }
   else {
