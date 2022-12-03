@@ -17,7 +17,7 @@ _gen_sitemap_xml:
 
 _gen_pages: _gen_assets
 	@echo generate pages
-	@$(RUN) generate -t $(FULL)
+	@seq 2006 2022 | xargs -I{} -P$(FULL) perl bin/gen.pl permalinks {}
 
 _gen_index: _gen_assets
 	@echo generate index
@@ -27,14 +27,11 @@ _gen_entries: _gen_assets
 	@echo generate entries
 	@$(RUN) generate-entries -t $(FULL)
 
-_gen_assets_by_app:
-	@$(RUN) generate-assets -t $(FULL)
-
 _gen_assets_copy:
 	@echo copy assets
 	@cp -R content/assets/* dist/public
 
-_gen_assets_css: _gen_assets_by_app
+_gen_assets_css:
 	@echo generate css
 	@test -d resources/assets || mkdir -p resources/assets
 	@cp -RH node_modules/normalize.css/normalize.css resources/assets/normalize.css
@@ -51,8 +48,7 @@ _opti_png:
 		| xargs -I{} -P$(FULL) -n1 optipng {} 2>/dev/null
 
 _gen_assets: \
-	_gen_clean_exif \
-	_gen_resize_images \
+	_gen_images \
 	_gen_assets_copy \
 	_gen_assets_css \
 	_gen_assets_script
