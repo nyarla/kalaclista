@@ -23,10 +23,6 @@ _gen_index: _gen_assets
 	@echo generate index
 	@$(RUN) generate-index -t $(FULL)
 
-_gen_entries: _gen_assets
-	@echo generate entries
-	@$(RUN) generate-entries -t $(FULL)
-
 _gen_assets_copy:
 	@echo copy assets
 	@cp -R content/assets/* dist/public
@@ -43,10 +39,6 @@ _gen_assets_script:
 	@esbuild --bundle --platform=browser --minify templates/assets/budoux.js >resources/assets/main.js
 	@esbuild --bundle --platform=browser --minify templates/assets/ads.js >resources/assets/ads.js
 
-_opti_png:
-	@find content/assets -type f -name '*.png' \
-		| xargs -I{} -P$(FULL) -n1 optipng {} 2>/dev/null
-
 _gen_assets: \
 	_gen_images \
 	_gen_assets_copy \
@@ -58,9 +50,6 @@ gen: \
 	_gen_sitemap_xml \
 	_gen_index \
 	_gen_entries
-
-optimize: \
-	_opti_png
 
 clean:
 	@test ! -d dist/public || rm -rf dist/public
