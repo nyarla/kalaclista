@@ -8,11 +8,11 @@ use Plack::Builder;
 use Plack::Middleware::DirIndex;
  
 my $app = Plack::App::File->new(
-  root => 'dist/public',
+  root => 'public/dist',
 );
 
 builder {
-  enable 'Plack::Middleware::DirIndex', root => 'dist/public', dir_index => 'index.html';
+  enable 'Plack::Middleware::DirIndex', root => 'public/dist', dir_index => 'index.html';
 
   $app;
 };
