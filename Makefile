@@ -1,5 +1,3 @@
-URL = https://the.kalaclista.com
-
 FULL := $(shell nproc --all --ignore 1)
 HALF := $(shell echo "$(FULL) / 2" | bc)
 CWD  := $(shell pwd)
@@ -21,7 +19,11 @@ _gen_pages: _gen_assets
 
 _gen_index: _gen_assets
 	@echo generate index
-	@$(RUN) generate-index -t $(FULL)
+	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(FULL) perl bin/gen.pl index {}
+
+_gen_content: \
+	_gen_index \
+	_gen_pages
 
 _gen_assets_copy:
 	@echo copy assets
@@ -48,18 +50,17 @@ _gen_assets: \
 gen: \
 	_gen_assets \
 	_gen_sitemap_xml \
-	_gen_index \
-	_gen_entries
+	_gen_content
 
 clean:
 	@test ! -d dist/public || rm -rf dist/public
 	@mkdir -p dist/public
 
 build:
-	@$(MAKE) gen URL=https://the.kalaclista.com -j$(FULL)
+	@env URL="https://the.kalaclista.com" $(MAKE) gen -j$(FULL)
 
 dev:
-	@$(MAKE) gen URL=http://nixos:1313 -j$(FULL)
+	@env URL="http://nixos:1313" $(MAKE) gen -j$(FULL)
 
 test:
 	prove -j$(FULL) t/*/*.t

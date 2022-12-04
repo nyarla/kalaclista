@@ -15,6 +15,7 @@ use WebSite::Helper::Hyperlink qw(href);
 
 my %generators = (
   'images'      => 'Kalaclista::Generators::WebP',
+  'index'       => 'Kalaclista::Generators::Page',
   'permalinks'  => 'Kalaclista::Generators::Page',
   'sitemap.xml' => 'Kalaclista::Generators::SitemapXML',
 );
@@ -88,6 +89,8 @@ sub fixup {
 }
 
 sub transform {
+  my $entry = shift;
+  return $entry;
 }
 
 sub main {
@@ -120,6 +123,117 @@ sub main {
       datadir => $datadir->child('pictures'),
       scales  => [ [ '1x', 700 ], [ '2x', 1400 ] ],
     );
+  }
+
+  if ( $action eq 'index' ) {
+    my $class = $generators{$action};
+    load($class);
+
+    my $section = shift;
+
+    if ( $section eq 'notes' ) {
+      my @entries = map { transform($_) }
+          grep { $_->type eq $section }
+          map { fixup($_) } $entries->entries->@*;
+
+      my $vars = $const->vars;
+      $vars->title( $vars->contains->{$section}->{'website'} );
+      $vars->summary( $vars->contains->{$section}->{'description'} );
+      $vars->description( $vars->contains->{$section}->{'description'} );
+      $vars->section($section);
+      $vars->kind('index');
+      $vars->entries( \@entries );
+      $vars->href( URI::Fast->new( href( "/${section}/", $const->baseURI ) ) );
+
+      my @tree = (
+        {
+          name => 'カラクリスタ',
+          href => $const->baseURI->to_string
+        },
+        {
+          name => $vars->contains->{$section}->{'website'},
+          href => href( "/${section}/", $const->baseURI )
+        },
+      );
+
+      $vars->breadcrumb( \@tree );
+
+      my $path = "${section}/index.html";
+      my $out  = $distdir->child($path);
+
+      $class->generate(
+        dist     => $out,
+        template => 'WebSite::Templates::Index',
+        vars     => $vars,
+      );
+
+      return 1;
+    }
+
+    for my $year ( 2006 .. ( (localtime)[5] + 1900 ) ) {
+      my @entries = map { transform($_) }
+          grep { $_->date =~ m{^$year} && $_->type eq $section }
+          map { fixup($_) } $entries->entries->@*;
+
+      if ( @entries == 0 ) {
+        next;
+      }
+
+      my $vars = $const->vars;
+      $vars->title("${year}年の記事一覧");
+      $vars->summary( $vars->contains->{$section}->{'website'} . "の ${year}年の記事一覧です" );
+      $vars->section($section);
+      $vars->kind('index');
+      $vars->entries( \@entries );
+      $vars->href( URI::Fast->new( href( "/${section}/${year}/", $const->baseURI ) ) );
+
+      my @tree = (
+        {
+          name => 'カラクリスタ',
+          href => $const->baseURI->to_string
+        },
+        {
+          name => $vars->contains->{$section}->{'website'},
+          href => href( "/${section}/", $const->baseURI )
+        },
+        {
+          name => $vars->title,
+          href => href( "/${section}/${year}/", $const->baseURI )
+        },
+      );
+
+      $vars->breadcrumb( \@tree );
+
+      my $path = "${section}/${year}/index.html";
+      my $out  = $distdir->child($path);
+
+      $class->generate(
+        dist     => $out,
+        template => 'WebSite::Templates::Index',
+        vars     => $vars,
+      );
+
+      if ( $year == ( (localtime)[5] + 1900 ) ) {
+        $vars->title( $vars->contains->{$section}->{'website'} );
+        $vars->description( $vars->contains->{$section}->{'description'} );
+        $vars->summary( $vars->contains->{$section}->{'description'} );
+        $vars->kind('home');
+        $vars->href( URI::Fast->new( href( "/${section}/", $const->baseURI ) ) );
+
+        pop @tree;
+        $vars->breadcrumb( \@tree );
+
+        $path = "${section}/index.html";
+        $out  = $distdir->child($path);
+
+        $class->generate(
+          dist     => $out,
+          template => 'WebSite::Templates::Index',
+          vars     => $vars,
+        );
+      }
+    }
+    return 1;
   }
 
   if ( $action eq 'permalinks' ) {
