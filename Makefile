@@ -27,7 +27,7 @@ _gen_content: \
 
 _gen_assets_copy:
 	@echo copy assets
-	@cp -R content/assets/* dist/public
+	@cp -R content/assets/* public/dist/
 
 _gen_assets_css:
 	@echo generate css

@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use Test2::V0;
-use Kalaclista::Directory;
+use Kalaclista::Path;
 
-my $dist = Kalaclista::Directory->new->rootdir->child("dist/public");
+my $dist = Kalaclista::Path->detect(qr{^t$})->child('public/dist');
 
 sub main {
   my @files = qw(
@@ -22,7 +22,7 @@ sub main {
   );
 
   for my $fn (@files) {
-    ok( $dist->child($fn)->is_file );
+    ok( -e $dist->child($fn)->path );
   }
 
   done_testing;
