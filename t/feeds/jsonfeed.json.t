@@ -14,6 +14,9 @@ my $dist = Kalaclista::Path->detect(qr{^t$})->child('public/dist');
 sub testing_feed {
   my ( $section, $json, $data ) = @_;
 
+  my $prefix    = $section eq 'pages' ? ''                      : "/${section}";
+  my $sectionRe = $section eq 'pages' ? '(?:posts|echos|notes)' : $section;
+
   is( $json->{'version'},     'https://jsonfeed.org/version/1.1', );
   is( $json->{'title'},       $data->{'website'} );
   is( $json->{'description'}, $data->{'description'} );
@@ -32,21 +35,21 @@ sub testing_feed {
   );
 
   is( $json->{'language'},      'ja_JP' );
-  is( $json->{'home_page_url'}, "https://the.kalaclista.com/${section}/" );
+  is( $json->{'home_page_url'}, "https://the.kalaclista.com${prefix}/" );
   is(
     $json->{'feed_url'},
-    "https://the.kalaclista.com/${section}/jsonfeed.json"
+    "https://the.kalaclista.com${prefix}/jsonfeed.json"
   );
 
   for my $item ( $json->{'items'}->@* ) {
     like(
       $item->{'id'},
-      qr<https://the\.kalaclista\.com/${section}/(?:\d{4}/\d{2}/\d{2}\/d{6}|[^/]+/)>
+      qr<https://the\.kalaclista\.com/${sectionRe}/(?:\d{4}/\d{2}/\d{2}\/d{6}|[^/]+/)>
     );
 
     like(
       $item->{'url'},
-      qr<https://the\.kalaclista\.com/${section}/(?:\d{4}/\d{2}/\d{2}\/d{6}|[^/]+/)>
+      qr<https://the\.kalaclista\.com/${sectionRe}/(?:\d{4}/\d{2}/\d{2}\/d{6}|[^/]+/)>
     );
 
     ok( $item->{'title'} ne q{} );
@@ -77,6 +80,11 @@ sub testing_feed {
 
 sub main {
   my $data = {
+    pages => {
+      website     => 'カラクリスタ',
+      description => '『輝かしい青春』なんて失かった人の Web サイトです',
+    },
+
     posts => {
       website     => 'カラクリスタ・ブログ',
       description => '『輝かしい青春』なんて失かった人のブログです',
@@ -97,6 +105,8 @@ sub main {
 
     testing_feed( $section, $json, $data->{$section} );
   }
+
+  testing_feed( 'pages', decode_json( $dist->child("/jsonfeed.json")->get ), $data->{'pages'} );
 
   done_testing;
 }

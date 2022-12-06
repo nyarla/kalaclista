@@ -13,9 +13,11 @@ my $jsonify = JSON::XS->new->utf8->canonical(1);
 sub render {
   my $vars    = shift;
   my $baseURI = Kalaclista::Constants->baseURI;
+  my $section = $vars->section;
+  my $prefix  = $section eq 'pages' ? '' : "/${section}";
 
-  my $href    = href( $vars->section . "/",              $baseURI );
-  my $feed    = href( $vars->section . "/jsonfeed.json", $baseURI );
+  my $href    = href( "${prefix}/",              $baseURI );
+  my $feed    = href( "${prefix}/jsonfeed.json", $baseURI );
   my @entries = ( sort { $b->date cmp $a->date } $vars->entries->@* )[ 0 .. 4 ];
 
   my $data = {

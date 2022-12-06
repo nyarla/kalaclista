@@ -23,22 +23,24 @@ sub at {
 sub testing_feed {
   my ( $section, $xml, $data ) = @_;
 
-  my $at = at( $xml->documentElement );
+  my $at        = at( $xml->documentElement );
+  my $sectionRe = $section ne 'pages' ? $section      : '(?:posts|echos|notes)';
+  my $prefix    = $section ne 'pages' ? "/${section}" : q{};
 
   is( $at->('*[name()="title"]'),    $data->{'website'} );
   is( $at->('*[name()="subtitle"]'), $data->{'description'} );
 
   is(
     $at->('*[name()="link" and not(@rel) ]/@href'),
-    "https://the.kalaclista.com/${section}/"
+    "https://the.kalaclista.com${prefix}/"
   );
 
   is(
     $at->('*[name()="link" and contains(@rel, "self")]/@href'),
-    "https://the.kalaclista.com/${section}/atom.xml"
+    "https://the.kalaclista.com${prefix}/atom.xml"
   );
 
-  is( $at->('*[name()="id"]'), "https://the.kalaclista.com/${section}/atom.xml" );
+  is( $at->('*[name()="id"]'), "https://the.kalaclista.com${prefix}/atom.xml" );
 
   is( $at->('*[name()="icon"]'), "https://the.kalaclista.com/assets/avatar.png" );
 
@@ -60,12 +62,12 @@ sub testing_feed {
     ok( $item->('*[name()="title"]') ne q{} );
     like(
       $item->('*[name()="id"]'),
-      qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
+      qr<https://the\.kalaclista\.com/$sectionRe/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
     );
 
     like(
       $item->('*[name()="link"]/@href'),
-      qr<https://the\.kalaclista\.com/$section/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
+      qr<https://the\.kalaclista\.com/$sectionRe/(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+)/>
     );
 
     is(
@@ -94,6 +96,11 @@ sub testing_feed {
 
 sub main {
   my $data = {
+    pages => {
+      website     => 'カラクリスタ',
+      description => '『輝かしい青春』なんて失かった人の Web サイトです',
+    },
+
     posts => {
       website     => 'カラクリスタ・ブログ',
       description => '『輝かしい青春』なんて失かった人のブログです',
@@ -112,6 +119,8 @@ sub main {
     my $xml = XML::LibXML->load_xml( string => $dist->child("${section}/atom.xml")->get );
     testing_feed( $section, $xml, $data->{$section} );
   }
+
+  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/atom.xml')->get ), $data->{'pages'} );
 
   done_testing;
 }

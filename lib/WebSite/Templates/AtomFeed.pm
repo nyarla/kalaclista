@@ -12,9 +12,11 @@ use WebSite::Helper::Hyperlink qw(href);
 sub render {
   my $vars    = shift;
   my $baseURI = Kalaclista::Constants->baseURI;
+  my $section = $vars->section;
+  my $prefix  = $section eq 'pages' ? '' : "/${section}";
 
-  my $href    = href( $vars->section . '/',         $baseURI );
-  my $feed    = href( $vars->section . "/atom.xml", $baseURI );
+  my $href    = href( "${prefix}/",         $baseURI );
+  my $feed    = href( "${prefix}/atom.xml", $baseURI );
   my @entries = ( sort { $b->date cmp $b->date } $vars->entries->@* )[ 0 .. 4 ];
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(

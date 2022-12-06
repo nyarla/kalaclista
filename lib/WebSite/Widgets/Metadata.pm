@@ -184,6 +184,10 @@ sub page {
   @jsonld{qw( title href type author publisher image parent )} =
       ( $title, $href, types( $kind, $section ), $author, $publisher, { '@type' => 'ImageObject', contentUrl => $avatar }, $parent );
 
+  if ( $tree->@* == 1 ) {
+    delete $jsonld{'parent'};
+  }
+
   return (
     title($docname),
     meta( { name => 'description', content => $docdesc } ),

@@ -14,6 +14,7 @@ use Kalaclista::Variables;
 use WebSite::Helper::Hyperlink qw(href);
 
 my %generators = (
+  'home'        => 'Kalaclista::Generators::Page',
   'images'      => 'Kalaclista::Generators::WebP',
   'index'       => 'Kalaclista::Generators::Page',
   'permalinks'  => 'Kalaclista::Generators::Page',
@@ -123,6 +124,54 @@ sub main {
       datadir => $datadir->child('pictures'),
       scales  => [ [ '1x', 700 ], [ '2x', 1400 ] ],
     );
+  }
+
+  if ( $action eq 'home' ) {
+    my $class = $generators{$action};
+    load($class);
+
+    my %t;
+    my @entries =
+        map { transform($_) }
+        ( sort { $b->date cmp $a->date } grep { $_->type =~ m{posts|echos|notes} } map { fixup($_) } $entries->entries->@* )[ 0 .. 10 ];
+
+    my $vars = $const->vars;
+    $vars->title( $vars->website );
+    $vars->section('pages');
+    $vars->kind('home');
+    $vars->entries( \@entries );
+    $vars->href( URI::Fast->new( href( "/", $const->baseURI ) ) );
+
+    my @tree = (
+      {
+        name => 'カラクリスタ',
+        href => $const->baseURI->to_string
+      },
+    );
+
+    $vars->breadcrumb( \@tree );
+
+    my $path = "/index.html";
+    my $out  = $distdir->child($path);
+
+    $class->generate(
+      dist     => $out,
+      template => 'WebSite::Templates::Home',
+      vars     => $vars,
+    );
+
+    for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
+      $path = "${feed}";
+      $out  = $distdir->child($path);
+      my $tmpl =
+          'WebSite::Templates::' . ( ( $feed eq 'index.xml' ) ? 'RSS20Feed' : ( $feed eq 'atom.xml' ) ? 'AtomFeed' : "JSONFeed" );
+
+      $class->generate(
+        dist     => $out,
+        template => $tmpl,
+        vars     => $vars,
+      );
+    }
   }
 
   if ( $action eq 'index' ) {

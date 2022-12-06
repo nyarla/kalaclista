@@ -21,9 +21,14 @@ _gen_index: _gen_assets
 	@echo generate index
 	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(FULL) perl bin/gen.pl index {}
 
+_gen_home: _gen_assets
+	@echo generate home
+	@perl bin/gen.pl home
+
 _gen_content: \
 	_gen_index \
-	_gen_pages
+	_gen_pages \
+	_gen_home
 
 _gen_assets_copy:
 	@echo copy assets

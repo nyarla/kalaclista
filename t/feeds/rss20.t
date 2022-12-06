@@ -23,14 +23,17 @@ sub testing_feed {
   my $xml     = shift;
   my $data    = shift;
 
+  my $prefix    = $section eq 'pages' ? ''                      : "/${section}";
+  my $sectionRe = $section eq 'pages' ? '(?:posts|echos|notes)' : $section;
+
   my $at = at( $xml->find('//channel')->[0] );
 
   is( $at->('title'), $data->{'website'} );
 
-  is( $at->('atom:link[@type]/@href'), "https://the.kalaclista.com/${section}/" );
+  is( $at->('atom:link[@type]/@href'), "https://the.kalaclista.com${prefix}/" );
   is( $at->('atom:link[@type]/@type'), 'application/rss+xml' );
 
-  is( $at->('atom:link[@rel]/@href'), "https://the.kalaclista.com/${section}/index.xml" );
+  is( $at->('atom:link[@rel]/@href'), "https://the.kalaclista.com${prefix}/index.xml" );
   is( $at->('atom:link[@rel]/@rel'),  'self' );
 
   is( $at->('description'),    $data->{'description'} );
@@ -40,6 +43,7 @@ sub testing_feed {
   is( $at->('copyright'), '(c) 2006-' . ( (localtime)[5] + 1900 ) . " OKAMURA Naoki" );
 
   my $datetimeRe = qr<\w+ \d{2} \w+ \d{4} \d{2}:\d{2}:\d{2} (?:[-+]\d{4})>;
+  my $hrefRe     = qr{^https://the\.kalaclista\.com/${sectionRe}/};
 
   like( $at->('lastBuildDate'), $datetimeRe );
 
@@ -52,8 +56,7 @@ sub testing_feed {
     ok( $node->('description') ne q{} );
 
     is( $node->('link'), $node->('guid') );
-    like( $node->('link'), qr{^https://the\.kalaclista\.com/${section}/} );
-
+    like( $node->('link'),    $hrefRe );
     like( $node->('pubDate'), $datetimeRe );
   }
 
@@ -62,6 +65,11 @@ sub testing_feed {
 
 sub main {
   my $data = {
+    pages => {
+      website     => 'カラクリスタ',
+      description => '『輝かしい青春』なんて失かった人の Web サイトです',
+    },
+
     posts => {
       website     => 'カラクリスタ・ブログ',
       description => '『輝かしい青春』なんて失かった人のブログです',
@@ -82,6 +90,8 @@ sub main {
 
     testing_feed( $section, $xml, $data->{$section} );
   }
+
+  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/index.xml')->get ), $data->{'pages'} );
 
   done_testing;
 }
