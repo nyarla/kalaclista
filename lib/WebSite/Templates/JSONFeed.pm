@@ -6,14 +6,21 @@ use utf8;
 
 use JSON::XS;
 
+use WebSite::Helper::Hyperlink qw(href);
+
 my $jsonify = JSON::XS->new->utf8->canonical(1);
 
 sub render {
-  my ( $vars, $baseURI ) = @_;
+  my $vars    = shift;
+  my $baseURI = Kalaclista::Constants->baseURI;
+
+  my $href    = href( $vars->section . "/",              $baseURI );
+  my $feed    = href( $vars->section . "/jsonfeed.json", $baseURI );
+  my @entries = ( sort { $b->date cmp $a->date } $vars->entries->@* )[ 0 .. 4 ];
 
   my $data = {
     version     => 'https://jsonfeed.org/version/1.1',
-    title       => $vars->website,
+    title       => $vars->title,
     description => $vars->description,
     icon        => 'https://the.kalaclista.com/assets/avatar.png',
     favicon     => 'https://the.kalaclista.com/favicon.ico',
@@ -25,8 +32,8 @@ sub render {
       }
     ],
     language      => 'ja_JP',
-    home_page_url => $vars->href,
-    feed_url      => $vars->href . 'jsonfeed.json',
+    home_page_url => $href,
+    feed_url      => $feed,
     items         => [
       map {
         $_->transform;
@@ -46,7 +53,7 @@ sub render {
           ],
           language => 'ja_JP',
         }
-      } $vars->entries->@*
+      } sort { $b->date cmp $a->date } $vars->entries->@*
     ],
   };
 

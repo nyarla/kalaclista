@@ -7,24 +7,33 @@ use utf8;
 use Text::HyperScript qw(h);
 use Time::Moment;
 
+use Kalaclista::Constants;
+
+use WebSite::Helper::Hyperlink qw(href);
+
 my $format = '%a %m %b %Y %T %z';
 
 sub render {
-  my ( $vars, $baseURI ) = @_;
+  my $vars    = shift;
+  my $baseURI = Kalaclista::Constants->baseURI;
+
+  my $href    = href( $vars->section . "/",          $baseURI );
+  my $feed    = href( $vars->section . "/index.xml", $baseURI );
+  my @entries = ( sort { $b->lastmod cmp $b->lastmod } $vars->entries->@* )[ 0 .. 4 ];
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     'rss',
     { version => "2.0", "xmlns:atom" => 'http://www.w3.org/2005/Atom' },
     h(
-      channel => h( title => $vars->website ),
-      h( link => $vars->href ),
-      h( 'atom:link', { href => $vars->href,               type => 'application/rss+xml' } ),
-      h( 'atom:link', { href => $vars->href . "index.xml", rel  => 'self' } ),
+      channel => h( title => $vars->title ),
+      h( link => $feed ),
+      h( 'atom:link', { href => $href, type => 'application/rss+xml' } ),
+      h( 'atom:link', { href => $feed, rel  => 'self' } ),
       h( description    => $vars->description ),
       h( managingEditor => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( webMaster      => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( copyright      => '(c) 2006-' . ( (localtime)[5] + 1900 ) . ' OKAMURA Naoki' ),
-      h( lastBuildDate  => Time::Moment->from_string( $vars->entries->[0]->lastmod )->strftime($format) ),
+      h( lastBuildDate  => Time::Moment->from_string( $entries[0]->lastmod )->strftime($format) ),
       (
         map {
           $_->transform;
@@ -37,7 +46,7 @@ sub render {
               h( description => $_->dom->innerHTML ),
             ]
           )
-        } $vars->entries->@*
+        } @entries
       ),
     )
   );

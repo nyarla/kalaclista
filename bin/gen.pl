@@ -167,6 +167,19 @@ sub main {
         vars     => $vars,
       );
 
+      for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
+        $path = "${section}/${feed}";
+        $out  = $distdir->child($path);
+        my $tmpl =
+            'WebSite::Templates::' . ( ( $feed eq 'index.xml' ) ? 'RSS20Feed' : ( $feed eq 'atom.xml' ) ? 'AtomFeed' : "JSONFeed" );
+
+        $class->generate(
+          dist     => $out,
+          template => $tmpl,
+          vars     => $vars,
+        );
+      }
+
       return 1;
     }
 
@@ -231,6 +244,19 @@ sub main {
           template => 'WebSite::Templates::Index',
           vars     => $vars,
         );
+
+        for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
+          $path = "${section}/${feed}";
+          $out  = $distdir->child($path);
+          my $tmpl =
+              'WebSite::Templates::' . ( ( $feed eq 'index.xml' ) ? 'RSS20Feed' : ( $feed eq 'atom.xml' ) ? 'AtomFeed' : "JSONFeed" );
+
+          $class->generate(
+            dist     => $out,
+            template => $tmpl,
+            vars     => $vars,
+          );
+        }
       }
     }
     return 1;
