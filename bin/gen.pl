@@ -172,6 +172,20 @@ sub main {
         vars     => $vars,
       );
     }
+
+    $vars->title('404 not found');
+    $vars->description('ページが見つかりません');
+    $vars->section('pages');
+    $vars->kind('404');
+    $vars->entries( [] );
+    $vars->href(undef);
+    $vars->breadcrumb( [] );
+
+    $class->generate(
+      dist     => $distdir->child('404.html'),
+      template => 'WebSite::Templates::NotFound',
+      vars     => $vars,
+    );
   }
 
   if ( $action eq 'index' ) {

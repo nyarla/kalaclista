@@ -200,13 +200,22 @@ sub page {
   );
 }
 
+sub notfound {
+  my $vars = shift;
+
+  return (
+    title( $vars->title . ' - ' . $vars->website ),
+    meta( { name => 'description', content => $vars->description } ),
+  );
+}
+
 sub metadata {
   my $vars = shift;
 
   return head(
     global($vars),
     in_section($vars),
-    page($vars),
+    ( $vars->kind ne '404' ? page($vars) : notfound($vars) ),
   );
 }
 

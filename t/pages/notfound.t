@@ -7,14 +7,17 @@ use utf8;
 use Test2::V0;
 use HTML5::DOM;
 
-use Kalaclista::Directory;
+use Kalaclista::Path;
 
-my $dirs   = Kalaclista::Directory->instance;
+my $dist = Kalaclista::Path->detect(qr{^t$});
+
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $page = $dirs->rootdir->child('dist/public/404.html')->slurp_utf8;
-  my $dom  = $parser->parse($page);
+  my $html = $dist->child('public/dist/404.html')->get;
+  utf8::decode($html);
+
+  my $dom = $parser->parse($html);
 
   is( $dom->at('title')->textContent, '404 not found - カラクリスタ' );
   is(
