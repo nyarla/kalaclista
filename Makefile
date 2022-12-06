@@ -5,11 +5,34 @@ RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -a
 
 .PHONY: clean build dev test
 
-_gen_images:
+# bundle assets
+_gen_bundle_css:
+	@echo generate css
+	@test -d public/bundle || mkdir -p public/bundle
+	@cp -RH node_modules/normalize.css/normalize.css src/stylesheets/normalize.css
+	@esbuild --bundle --platform=browser --minify src/stylesheets/stylesheet.css >public/bundle/main.css
+
+_gen_bundle_script:
+	@echo generate scripts
+	@test -d public/bundle || mkdir -p public/bundle
+	@esbuild --bundle --platform=browser --minify src/scripts/budoux.js >public/bundle/main.js
+	@esbuild --bundle --platform=browser --minify src/scripts/ads.js >public/bundle/ads.js
+
+_gen_bundle: \
+	_gen_bundle_css \
+	_gen_bundle_script
+
+# static assets
+_gen_assets:
+	@echo copy assets
+	@cp -R content/assets/* public/dist/
+
+_gen_images: _gen_bundle
 	@echo generate images
 	@perl bin/gen.pl images
 
-_gen_sitemap_xml:
+# generate content
+_gen_sitemap_xml: _gen_bundle
 	@echo generate sitemap.xml
 	@perl bin/gen.pl sitemap.xml
 
@@ -26,34 +49,15 @@ _gen_home: _gen_assets
 	@perl bin/gen.pl home
 
 _gen_content: \
+	_gen_sitemap_xml \
 	_gen_index \
 	_gen_pages \
 	_gen_home
 
-_gen_assets_copy:
-	@echo copy assets
-	@cp -R content/assets/* public/dist/
-
-_gen_assets_css:
-	@echo generate css
-	@test -d resources/assets || mkdir -p resources/assets
-	@cp -RH node_modules/normalize.css/normalize.css resources/assets/normalize.css
-	@esbuild --bundle --platform=browser --minify resources/assets/stylesheet.css >resources/assets/main.css
-
-_gen_assets_script:
-	@echo generate scripts
-	@test -d resources/assets || mkdir -p resources/assets
-	@esbuild --bundle --platform=browser --minify templates/assets/budoux.js >resources/assets/main.js
-	@esbuild --bundle --platform=browser --minify templates/assets/ads.js >resources/assets/ads.js
-
-_gen_assets: \
-	_gen_images \
-	_gen_assets_copy \
-	_gen_assets_css \
-	_gen_assets_script
-
 gen: \
-	_gen_sitemap_xml \
+	_gen_bundle \
+	_gen_assets \
+	_gen_images \
 	_gen_content
 
 clean:

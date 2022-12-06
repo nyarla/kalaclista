@@ -33,9 +33,9 @@ sub init {
     data          => {
 
       # FIXME
-      'stylesheet'        => $const->rootdir->child('resources/assets/main.css')->get,
-      'script'            => $const->rootdir->child('resources/assets/main.js')->get,
-      'script.production' => $const->rootdir->child('resources/assets/ads.js')->get,
+      'stylesheet'        => $const->rootdir->child('public/bundle/main.css')->get,
+      'script'            => $const->rootdir->child('public/bundle/main.js')->get,
+      'script.production' => $const->rootdir->child('public/bundle/ads.js')->get,
     },
     contains => {
       posts => {
