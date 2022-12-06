@@ -15,11 +15,11 @@ _gen_sitemap_xml:
 
 _gen_pages: _gen_assets
 	@echo generate pages
-	@seq 2006 2022 | xargs -I{} -P$(FULL) perl bin/gen.pl permalinks {}
+	@seq 2006 2022 | xargs -I{} -P$(HALF) perl bin/gen.pl permalinks {}
 
 _gen_index: _gen_assets
 	@echo generate index
-	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(FULL) perl bin/gen.pl index {}
+	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(HALF) perl bin/gen.pl index {}
 
 _gen_home: _gen_assets
 	@echo generate home
@@ -53,7 +53,6 @@ _gen_assets: \
 	_gen_assets_script
 
 gen: \
-	_gen_assets \
 	_gen_sitemap_xml \
 	_gen_content
 
@@ -62,10 +61,10 @@ clean:
 	@mkdir -p dist/public
 
 build:
-	@env URL="https://the.kalaclista.com" $(MAKE) gen -j$(FULL)
+	@env URL="https://the.kalaclista.com" $(MAKE) gen -j2
 
 dev:
-	@env URL="http://nixos:1313" $(MAKE) gen -j$(FULL)
+	@env URL="http://nixos:1313" $(MAKE) gen -j2
 
 test:
 	prove -j$(FULL) t/*/*.t
