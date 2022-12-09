@@ -4,9 +4,14 @@ use strict;
 use warnings;
 use utf8;
 
+BEGIN {
+  use Kalaclista::Constants;
+  Kalaclista::Constants->rootdir(qr{^bin$});
+  Kalaclista::Constants->baseURI( $ENV{'URL'} // 'https://the.kalaclista.com' );
+}
+
 use Module::Load qw(load);
 
-use Kalaclista::Constants;
 use Kalaclista::Entries;
 use Kalaclista::Path;
 use Kalaclista::Variables;
@@ -30,8 +35,6 @@ my %generators = (
 my $const = 'Kalaclista::Constants';
 
 sub init {
-  $const->baseURI( $ENV{'URL'} // 'https://the.kalaclista.com' );
-  $const->rootdir(qr{^bin$});
   $const->vars(
     is_production => ( $const->baseURI->to_string eq 'https://the.kalaclista.com' ),
     website       => 'カラクリスタ',
@@ -88,11 +91,11 @@ sub fixup {
     $entry->type('pages');
   }
 
-  $entry->register( sub { "WebSite::Extensions::Affiliate"->transform(@_) } );
-  $entry->register( sub { "WebSite::Extensions::CodeSyntax"->transform(@_) } );
-  $entry->register( sub { "WebSite::Extensions::Furigana"->transform(@_) } );
-  $entry->register( sub { "WebSite::Extensions::Picture"->transform(@_) } );
-  $entry->register( sub { "WebSite::Extensions::WebSite"->transform(@_) } );
+  $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
+  $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
+  $entry->register( sub { WebSite::Extensions::Furigana->transform(@_) } );
+  $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 700, 1400 ] ) } );
+  $entry->register( sub { WebSite::Extensions::WebSite->transform(@_) } );
 
   return $entry;
 }
