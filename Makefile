@@ -77,7 +77,7 @@ test:
 
 # temporary solution
 up: clean build
-	@dist/bin/push
+	@gsutil -m rsync -r -d public/dist gs://the.kalaclista.com/
 
 shell:
 	@cp app/cpanfile.nix cpanfile.nix
