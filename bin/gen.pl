@@ -11,6 +11,12 @@ use Kalaclista::Entries;
 use Kalaclista::Path;
 use Kalaclista::Variables;
 
+use WebSite::Extensions::Affiliate;
+use WebSite::Extensions::CodeSyntax;
+use WebSite::Extensions::Furigana;
+use WebSite::Extensions::Picture;
+use WebSite::Extensions::WebSite;
+
 use WebSite::Helper::Hyperlink qw(href);
 
 my %generators = (
@@ -82,15 +88,12 @@ sub fixup {
     $entry->type('pages');
   }
 
-  # for my $extension (@extensions) {
-  #   $entry->register($extension);
-  # }
+  $entry->register( sub { "WebSite::Extensions::Affiliate"->transform(@_) } );
+  $entry->register( sub { "WebSite::Extensions::CodeSyntax"->transform(@_) } );
+  $entry->register( sub { "WebSite::Extensions::Furigana"->transform(@_) } );
+  $entry->register( sub { "WebSite::Extensions::Picture"->transform(@_) } );
+  $entry->register( sub { "WebSite::Extensions::WebSite"->transform(@_) } );
 
-  return $entry;
-}
-
-sub transform {
-  my $entry = shift;
   return $entry;
 }
 
@@ -130,9 +133,7 @@ sub main {
     my $class = $generators{$action};
     load($class);
 
-    my %t;
     my @entries =
-        map { transform($_) }
         ( sort { $b->date cmp $a->date } grep { $_->type =~ m{posts|echos|notes} } map { fixup($_) } $entries->entries->@* )[ 0 .. 10 ];
 
     my $vars = $const->vars;
@@ -195,7 +196,7 @@ sub main {
     my $section = shift;
 
     if ( $section eq 'notes' ) {
-      my @entries = map { transform($_) }
+      my @entries =
           grep { $_->type eq $section }
           map { fixup($_) } $entries->entries->@*;
 
@@ -247,7 +248,7 @@ sub main {
     }
 
     for my $year ( 2006 .. ( (localtime)[5] + 1900 ) ) {
-      my @entries = map { transform($_) }
+      my @entries =
           grep { $_->date =~ m{^$year} && $_->type eq $section }
           map { fixup($_) } $entries->entries->@*;
 
@@ -335,7 +336,7 @@ sub main {
         map { fixup($_) } $entries->entries->@*;
 
     for my $entry (@entries) {
-      transform($entry);
+      $entry->transform;
 
       my $vars = $const->vars;
       $vars->title( $entry->title );

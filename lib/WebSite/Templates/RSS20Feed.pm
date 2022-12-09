@@ -21,7 +21,7 @@ sub render {
 
   my $href    = href( "${prefix}/",          $baseURI );
   my $feed    = href( "${prefix}/index.xml", $baseURI );
-  my @entries = ( sort { $b->lastmod cmp $b->lastmod } $vars->entries->@* )[ 0 .. 4 ];
+  my @entries = map { $_->transform } ( sort { $b->lastmod cmp $b->lastmod } $vars->entries->@* )[ 0 .. 4 ];
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     'rss',
