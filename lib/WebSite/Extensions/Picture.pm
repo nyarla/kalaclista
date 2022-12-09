@@ -25,6 +25,8 @@ sub transform {
     if ( $src =~ m{^https://the\.kalaclista\.com/images/(.+)\.([^\.]+)$} ) {
       my ( $path, $ext ) = ( $1, $2 );
 
+      next if ( $ext eq 'gif' );
+
       my $yaml = $datadir->child("${path}.yaml");
 
       if ( -f $yaml->path ) {
