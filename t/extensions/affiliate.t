@@ -4,26 +4,27 @@ use strict;
 use warnings;
 
 use Test2::V0;
-use HTML5::DOM;
-use URI;
 
-use Kalaclista::Directory;
-use Kalaclista::Template;
+use HTML5::DOM;
+use URI::Fast;
+
+BEGIN {
+  use Kalaclista::Constants;
+  Kalaclista::Constants->rootdir(qr{^t$});
+}
+
 use Kalaclista::Entry;
 
-my $parser = HTML5::DOM->new( { script => 1 } );
-my $dirs   = Kalaclista::Directory->instance(
-  build => 'resources',
-  data  => 'content/data',
-);
-
-my $extension = load( $dirs->templates_dir->child('extensions/affiliate.pl') );
+use WebSite::Extensions::Affiliate;
 
 sub main {
   my $path  = 'posts/2022/07/24/121254';
-  my $entry = Kalaclista::Entry->new( $dirs->content_dir->child("/entries/${path}.md"), URI->new("https://the.kalaclista.com/${path}/") );
+  my $entry = Kalaclista::Entry->new(
+    Kalaclista::Constants->rootdir->child("content/entries/${path}.md")->path,
+    URI::Fast->new("https://the.kalaclista.com/${path}/"),
+  );
 
-  $entry->register($extension);
+  $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
   $entry->transform;
 
   my $item = $entry->dom->at('.content__card--affiliate');
