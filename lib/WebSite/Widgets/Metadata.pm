@@ -188,6 +188,11 @@ sub page {
     delete $jsonld{'parent'};
   }
 
+  my @css;
+  if ( ref( my $addon = $vars->entries->[0]->addon('style') ) ) {
+    push @css, map { style( raw($_) ) } $addon->@*;
+  }
+
   return (
     title($docname),
     meta( { name => 'description', content => $docdesc } ),
@@ -197,6 +202,7 @@ sub page {
     @ogp, @twitter,
 
     script( { type => 'application/ld+json' }, raw( jsonld( \%jsonld, $vars->breadcrumb->@* ) ) ),
+    @css,
   );
 }
 
