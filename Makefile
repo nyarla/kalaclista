@@ -61,8 +61,8 @@ gen: \
 	_gen_content
 
 clean:
-	@test ! -d dist/public || rm -rf dist/public
-	@mkdir -p dist/public
+	@test ! -d public/dist || rm -rf public/dist
+	@mkdir -p public/dist
 
 build:
 	@env URL="https://the.kalaclista.com" $(MAKE) gen -j2
