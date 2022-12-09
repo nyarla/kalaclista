@@ -1,15 +1,30 @@
+package WebSite::Templates::Home;
+
 use strict;
 use warnings;
 use utf8;
+
+use Text::HyperScript qw(raw);
+use Text::HyperScript::HTML5;
+use Kalaclista::HyperScript::More;
+use WebSite::Helper::Hyperlink qw(href);
+
+use Kalaclista::Constants;
 
 use WebSite::Widgets::Analytics;
 use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;
 use WebSite::Widgets::Title;
+use WebSite::Widgets::Metadata;
 
-my $main = sub {
-  my ( $vars, $baseURI ) = @_;
+sub date {
+  return ( split qr{T}, shift )[0];
+}
+
+sub content {
+  my $vars    = shift;
+  my $baseURI = Kalaclista::Constants->baseURI;
 
   return article(
     { class => 'entry entry__home' },
@@ -112,7 +127,7 @@ my $main = sub {
               '（',
               a(
                 { href => href( "/@{[ $_->type ]}/", $baseURI ) },
-                $vars->data->{'sections'}->{ $_->type }
+                $vars->contains->{ $_->type }->{'label'},
               ),
               '）',
               a( { href => $_->href, class => 'title' }, $_->title )
@@ -139,22 +154,22 @@ my $main = sub {
       ),
     ),
   );
-};
+}
 
-my $template = sub {
-  my ( $vars, $baseURI ) = @_;
+sub render {
+  my $vars = shift;
 
   return document(
-    expand( 'meta/head.pl', $vars, $baseURI ),
+    metadata($vars),
     [
-      banner($baseURI),
-      profile($baseURI),
-      sitemenu($baseURI),
-      $main->( $vars, $baseURI ),
-      siteinfo($baseURI),
+      banner,
+      profile,
+      sitemenu,
+      content($vars),
+      siteinfo,
       analytics,
     ]
   );
-};
+}
 
-$template;
+1;

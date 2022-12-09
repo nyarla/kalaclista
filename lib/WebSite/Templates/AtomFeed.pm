@@ -4,19 +4,29 @@ use strict;
 use warnings;
 use utf8;
 
+use Kalaclista::Constants;
+
 use Text::HyperScript qw(h);
+use WebSite::Helper::Hyperlink qw(href);
 
 sub render {
-  my ( $vars, $baseURI ) = @_;
+  my $vars    = shift;
+  my $baseURI = Kalaclista::Constants->baseURI;
+  my $section = $vars->section;
+  my $prefix  = $section eq 'pages' ? '' : "/${section}";
+
+  my $href    = href( "${prefix}/",         $baseURI );
+  my $feed    = href( "${prefix}/atom.xml", $baseURI );
+  my @entries = map { $_->transform } ( sort { $b->date cmp $b->date } $vars->entries->@* )[ 0 .. 4 ];
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     feed => { xmlns => 'http://www.w3.org/2005/Atom' } => [
 
-      h( 'title',    $vars->website ),
+      h( 'title',    $vars->title ),
       h( 'subtitle', $vars->description ),
-      h( 'link',     { href => $vars->href } ),
-      h( 'link',     { rel  => 'self', href => $vars->href . "atom.xml" } ),
-      h( 'id',       $vars->href . 'atom.xml' ),
+      h( 'link',     { href => $href } ),
+      h( 'link',     { rel  => 'self', href => $feed } ),
+      h( 'id',       $feed ),
       h( 'icon',     $baseURI->as_string . '/assets/avatar.png' ),
       h(
         'author',
@@ -26,7 +36,7 @@ sub render {
           h( 'uri',   'https://the.kalaclista.com/nyarla/' )
         ]
       ),
-      h( 'updated', $vars->entries->[0]->lastmod ),
+      h( 'updated', $entries[0]->lastmod ),
 
       (
         map {
@@ -35,7 +45,7 @@ sub render {
             'entry',
             [
               h( 'title', $_->title ),
-              h( 'id',    $_->href ),
+              h( 'id',    $_->href->to_string ),
               h( 'link',  { href => $_->href } ),
               h(
                 'author',
@@ -49,7 +59,7 @@ sub render {
               h( 'content', { type => 'html' }, $_->dom->innerHTML )
             ]
           )
-        } $vars->entries->@*
+        } @entries
       ),
     ]
   );

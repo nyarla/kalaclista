@@ -491,12 +491,22 @@ my $middle = css(
   ]
 );
 
-my $small = css( [ body => [ fontSize => '1em' ] ] );
+my $small = css(
+  [
+    body => [ fontSize => '1em' ],
+
+    '.entry__content .content__card--affiliate p' => [
+      float     => 'none',
+      margin    => '1em auto',
+      textAlign => 'center',
+    ],
+  ]
+);
 
 my $css = qq|
 ${main}
 \@media screen and (max-width: 37.5em) {${middle}}
-\@media screen and (max-width: 20em) {${small}}
+\@media screen and (max-width: 25em) {${small}}
 |;
 
 my $assets = sub {

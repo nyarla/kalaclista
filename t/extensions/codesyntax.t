@@ -4,8 +4,6 @@ use strict;
 use warnings;
 
 use Test2::V0;
-
-use HTML5::DOM;
 use URI::Fast;
 
 BEGIN {
@@ -15,23 +13,22 @@ BEGIN {
 
 use Kalaclista::Entry;
 
-use WebSite::Extensions::Affiliate;
+use WebSite::Extensions::CodeSyntax;
 
 sub main {
-  my $path  = 'posts/2022/07/24/121254';
+  my $path  = 'posts/2021/11/01/121434';
   my $entry = Kalaclista::Entry->new(
     Kalaclista::Constants->rootdir->child("content/entries/${path}.md")->path,
     URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 
-  $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
+  $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
   $entry->transform;
 
-  my $item = $entry->dom->at('.content__card--affiliate');
+  my $item = $entry->dom->at('pre > code');
 
-  ok( $item->at('h1 > a') );
-  ok( $item->at('p > a > img') );
-  ok( scalar( $item->find('ul > li > a')->@* ), 2 );
+  ok( $item->at('span.Statement') );
+  is( ref $entry->addon('style'), 'ARRAY' );
 
   done_testing;
 }

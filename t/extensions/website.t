@@ -4,24 +4,28 @@ use strict;
 use warnings;
 
 use Test2::V0;
-use URI;
+use URI::Fast;
 
-use Kalaclista::Directory;
-use Kalaclista::Template;
+BEGIN {
+  use Kalaclista::Constants;
+  Kalaclista::Constants->rootdir(qr{^t$});
+}
+
 use Kalaclista::Entry;
 
-my $dirs = Kalaclista::Directory->instance(
-  build => 'resources',
-  data  => 'content/data',
-);
+use WebSite::Extensions::WebSite;
 
-my $extension = load( $dirs->templates_dir->child('extensions/website.pl') );
+my $rootdir = Kalaclista::Path->detect(qr{^t$});
+my $content = $rootdir->child("content/entries");
 
 sub main {
   my $path  = 'notes/NERDFonts';
-  my $entry = Kalaclista::Entry->new( $dirs->content_dir->child("entries/${path}.md"), URI->new("https://the.kalaclista.com/${path}/") );
+  my $entry = Kalaclista::Entry->new(
+    $content->child("${path}.md")->path,
+    URI::Fast->new("https://the.kalaclista.com/${path}/"),
+  );
 
-  $entry->register($extension);
+  $entry->register( sub { WebSite::Extensions::WebSite->transform(@_) } );
   $entry->transform;
 
   my $item = $entry->dom->at('.content__card--website');

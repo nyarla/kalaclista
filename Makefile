@@ -1,5 +1,3 @@
-URL = https://the.kalaclista.com
-
 FULL := $(shell nproc --all --ignore 1)
 HALF := $(shell echo "$(FULL) / 2" | bc)
 CWD  := $(shell pwd)
@@ -7,79 +5,70 @@ RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -a
 
 .PHONY: clean build dev test
 
-_gen_clean_exif:
-	@echo clean exif
-	@find content/assets/images -type f -name '*.jpg' \
-		| xargs -I{} -P$(FULL) -n1 jhead -purejpg {}
+# bundle assets
+_gen_bundle_css:
+	@echo generate css
+	@test -d public/bundle || mkdir -p public/bundle
+	@cp -RH node_modules/normalize.css/normalize.css src/stylesheets/normalize.css
+	@esbuild --bundle --platform=browser --minify src/stylesheets/stylesheet.css >public/bundle/main.css
 
-_gen_resize_images: _gen_clean_exif
-	@echo resize images
-	@$(RUN) resize-images -t $(FULL)
+_gen_bundle_script:
+	@echo generate scripts
+	@test -d public/bundle || mkdir -p public/bundle
+	@esbuild --bundle --platform=browser --minify src/scripts/budoux.js >public/bundle/main.js
+	@esbuild --bundle --platform=browser --minify src/scripts/ads.js >public/bundle/ads.js
 
-_gen_sitemap_xml:
+_gen_bundle: \
+	_gen_bundle_css \
+	_gen_bundle_script
+
+# static assets
+_gen_assets:
+	@echo copy assets
+	@cp -R content/assets/* public/dist/
+
+_gen_images: _gen_bundle
+	@echo generate images
+	@perl bin/gen.pl images
+
+# generate content
+_gen_sitemap_xml: _gen_bundle
 	@echo generate sitemap.xml
-	@$(RUN) generate-sitemap-xml -t 1
+	@perl bin/gen.pl sitemap.xml
 
 _gen_pages: _gen_assets
 	@echo generate pages
-	@$(RUN) generate -t $(FULL)
+	@seq 2006 2022 | xargs -I{} -P$(HALF) perl bin/gen.pl permalinks {}
 
 _gen_index: _gen_assets
 	@echo generate index
-	@$(RUN) generate-index -t $(FULL)
+	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(HALF) perl bin/gen.pl index {}
 
-_gen_entries: _gen_assets
-	@echo generate entries
-	@$(RUN) generate-entries -t $(FULL)
+_gen_home: _gen_assets
+	@echo generate home
+	@perl bin/gen.pl home
 
-_gen_assets_by_app:
-	@$(RUN) generate-assets -t $(FULL)
-
-_gen_assets_copy:
-	@echo copy assets
-	@cp -R content/assets/* dist/public
-
-_gen_assets_css: _gen_assets_by_app
-	@echo generate css
-	@test -d resources/assets || mkdir -p resources/assets
-	@cp -RH node_modules/normalize.css/normalize.css resources/assets/normalize.css
-	@esbuild --bundle --platform=browser --minify resources/assets/stylesheet.css >resources/assets/main.css
-
-_gen_assets_script:
-	@echo generate scripts
-	@test -d resources/assets || mkdir -p resources/assets
-	@esbuild --bundle --platform=browser --minify templates/assets/budoux.js >resources/assets/main.js
-	@esbuild --bundle --platform=browser --minify templates/assets/ads.js >resources/assets/ads.js
-
-_opti_png:
-	@find content/assets -type f -name '*.png' \
-		| xargs -I{} -P$(FULL) -n1 optipng {} 2>/dev/null
-
-_gen_assets: \
-	_gen_clean_exif \
-	_gen_resize_images \
-	_gen_assets_copy \
-	_gen_assets_css \
-	_gen_assets_script
-
-gen: \
-	_gen_assets \
+_gen_content: \
 	_gen_sitemap_xml \
 	_gen_index \
-	_gen_entries
+	_gen_pages \
+	_gen_home
 
-optimize: \
-	_opti_png
+gen: \
+	_gen_bundle \
+	_gen_assets \
+	_gen_images \
+	_gen_content
 
 clean:
-	@test ! -d dist/public || rm -rf dist/public
-	@mkdir -p dist/public
+	@test ! -d public/dist || rm -rf public/dist
+	@mkdir -p public/dist
 
 build:
-	@$(MAKE) gen URL=https://the.kalaclista.com -j$(FULL)
+	@env URL="https://the.kalaclista.com" $(MAKE) gen -j2
 
 dev:
-	@$(MAKE) gen URL=http://nixos:1313 -j$(FULL)
+	@env URL="http://nixos:1313" $(MAKE) gen -j2
 
 test:
 	prove -j$(FULL) t/*/*.t

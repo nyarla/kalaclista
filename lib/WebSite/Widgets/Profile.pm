@@ -12,10 +12,14 @@ our @EXPORT = qw(profile);
 
 use Text::HyperScript::HTML5;
 use WebSite::Helper::Hyperlink qw(href hyperlink);
+use Kalaclista::Constants;
 
 sub profile {
-  my $baseURI = shift;
-  state $result ||= section(
+  state $result;
+  return $result if ( defined $result );
+
+  my $baseURI = Kalaclista::Constants->baseURI;
+  $result = section(
     { id => 'profile' },
 
     figure(

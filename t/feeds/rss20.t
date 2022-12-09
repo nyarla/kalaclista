@@ -3,16 +3,12 @@
 use strict;
 use warnings;
 
-use Kalaclista::Directory;
-
 use Test2::V0;
 use XML::LibXML;
 
-my $dirs = Kalaclista::Directory->instance;
-my $dist = $dirs->rootdir->child("dist/public");
+use Kalaclista::Path;
 
-my $config = do $dirs->rootdir->child('config.pl')->stringify;
-my $data   = $config->{'data'};
+my $dist = Kalaclista::Path->detect(qr{^t$})->child("public/dist");
 
 sub at {
   my $xml = shift;
@@ -22,83 +18,81 @@ sub at {
   };
 }
 
-sub main {
-  for my $section (qw(posts echos notes)) {
-    my $feed = $dist->child("${section}/index.xml");
-    my $xml  = XML::LibXML->load_xml( IO => $feed->openr );
+sub testing_feed {
+  my $section = shift;
+  my $xml     = shift;
+  my $data    = shift;
 
-    my $channel = $xml->find('//channel')->[0];
-    my $at      = at($channel);
+  my $prefix    = $section eq 'pages' ? ''                      : "/${section}";
+  my $sectionRe = $section eq 'pages' ? '(?:posts|echos|notes)' : $section;
 
-    is( $at->('title'), $data->{$section}->{'title'} );
+  my $at = at( $xml->find('//channel')->[0] );
 
-    is(
-      $at->('atom:link[@type]/@href'),
-      "https://the.kalaclista.com/${section}/"
-    );
+  is( $at->('title'), $data->{'website'} );
 
-    is( $at->('atom:link[@type]/@type'), 'application/rss+xml' );
-
-    is(
-      $at->('atom:link[@rel]/@href'),
-      "https://the.kalaclista.com/${section}/index.xml"
-    );
-
-    is( $at->('atom:link[@rel]/@rel'), 'self' );
-
-    is( $at->('description'), $data->{$section}->{'title'} . 'の最近の記事' );
-    is(
-      $at->('managingEditor'),
-      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)'
-    );
-    is(
-      $at->('webMaster'),
-      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)'
-    );
-
-    is( $at->('copyright'), '(c) 2006-2022 OKAMURA Naoki' );
-
-    my $dtRe = qr<\w+ \d{2} \w+ \d{4} \d{2}:\d{2}:\d{2} (?:[-+]\d{4})>;
-
-    like( $at->('lastBuildDate'), $dtRe );
-
-    for my $item ( $channel->findnodes('item') ) {
-      my $node = at($item);
-      ok( $node->('title') ne q{} );
-      ok( $node->('description') ne q{} );
-      is( $node->('link'), $node->('guid') );
-      like( $node->('pubDate'), $dtRe );
-    }
-  }
-
-  my $xml     = XML::LibXML->load_xml( IO => $dist->child('index.xml')->openr );
-  my $channel = $xml->find('//channel')->[0];
-  my $at      = at($channel);
-
-  is( $at->('title'),                  $data->{'pages'}->{'title'} );
-  is( $at->('atom:link[@type]/@href'), "https://the.kalaclista.com/" );
+  is( $at->('atom:link[@type]/@href'), "https://the.kalaclista.com${prefix}/" );
   is( $at->('atom:link[@type]/@type'), 'application/rss+xml' );
-  is( $at->('atom:link[@rel]/@href'),  "https://the.kalaclista.com/index.xml" );
-  is( $at->('atom:link[@rel]/@rel'),   'self' );
-  is( $at->('description'),            $data->{'pages'}->{'title'} . 'の最近の更新' );
-  is(
-    $at->('managingEditor'),
-    'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)'
-  );
-  is( $at->('webMaster'), 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
-  is( $at->('copyright'), '(c) 2006-2022 OKAMURA Naoki' );
 
-  my $dtRe = qr<\w+ \d{2} \w+ \d{4} \d{2}:\d{2}:\d{2} (?:[-+]\d{4})>;
+  is( $at->('atom:link[@rel]/@href'), "https://the.kalaclista.com${prefix}/index.xml" );
+  is( $at->('atom:link[@rel]/@rel'),  'self' );
 
-  like( $at->('lastBuildDate'), $dtRe );
+  is( $at->('description'),    $data->{'description'} );
+  is( $at->('managingEditor'), 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
+  is( $at->('webMaster'),      'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' );
 
-  for my $item ( $channel->findnodes('item') ) {
+  is( $at->('copyright'), '(c) 2006-' . ( (localtime)[5] + 1900 ) . " OKAMURA Naoki" );
+
+  my $datetimeRe = qr<\w+ \d{2} \w+ \d{4} \d{2}:\d{2}:\d{2} (?:[-+]\d{4})>;
+  my $hrefRe     = qr{^https://the\.kalaclista\.com/${sectionRe}/};
+
+  like( $at->('lastBuildDate'), $datetimeRe );
+
+  my $count = 0;
+  for my $item ( $xml->findnodes('//channel/item') ) {
+    $count++;
     my $node = at($item);
+
     ok( $node->('title') ne q{} );
     ok( $node->('description') ne q{} );
+
     is( $node->('link'), $node->('guid') );
-    like( $node->('pubDate'), $dtRe );
+    like( $node->('link'),    $hrefRe );
+    like( $node->('pubDate'), $datetimeRe );
   }
+
+  is( $count, 5 );
+}
+
+sub main {
+  my $data = {
+    pages => {
+      website     => 'カラクリスタ',
+      description => '『輝かしい青春』なんて失かった人の Web サイトです',
+    },
+
+    posts => {
+      website     => 'カラクリスタ・ブログ',
+      description => '『輝かしい青春』なんて失かった人のブログです',
+    },
+    echos => {
+      website     => 'カラクリスタ・エコーズ',
+      description => '『輝かしい青春』なんて失かった人の日記です',
+    },
+    notes => {
+      website     => 'カラクリスタ・ノート',
+      description => '『輝かしい青春』なんて失かった人のメモ帳です',
+    },
+  };
+
+  for my $section (qw(posts echos notes)) {
+    my $feed = $dist->child("${section}/index.xml");
+    my $xml  = XML::LibXML->load_xml( string => $feed->get );
+
+    testing_feed( $section, $xml, $data->{$section} );
+  }
+
+  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/index.xml')->get ), $data->{'pages'} );
+
   done_testing;
 }
 
