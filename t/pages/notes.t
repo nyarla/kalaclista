@@ -23,7 +23,7 @@ sub escape {
 }
 
 sub main {
-  my @files = grep { $_ =~ m{\.html$} && $_ =~ m</notes/> } Kalaclista::Files->find($posts);
+  my @files = grep { $_ =~ m</notes/[^/]+/index.html> } Kalaclista::Files->find($posts);
 
   for my $path (@files) {
     my $href = $path;
