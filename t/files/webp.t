@@ -29,8 +29,6 @@ sub main {
 
     my $path = Kalaclista::Path->new( path => $image );
 
-    print $path->path, "\n";
-
     ok( -e $path->parent->child("${fn}_1x.webp")->path );
     ok( -e $path->parent->child("${fn}_2x.webp")->path );
   }
