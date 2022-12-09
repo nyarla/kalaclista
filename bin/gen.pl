@@ -82,7 +82,8 @@ sub fixup {
     $path =~ s{/index}{/};
   }
 
-  $entry->href->path($path);
+  $path =~ s{^/}{};
+  $entry->href->path("/${path}");
 
   if ( $path =~ m{(posts|notes|echos)} ) {
     $entry->type($1);
