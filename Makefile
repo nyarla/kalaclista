@@ -16,7 +16,7 @@ _gen_bundle_script:
 	@echo generate scripts
 	@test -d public/bundle || mkdir -p public/bundle
 	@esbuild --bundle --platform=browser --minify src/scripts/budoux.js >public/bundle/main.js
-	@esbuild --bundle --platform=browser --minify src/scripts/ads.js >public/bundle/ads.js
+	@esbuild --bundle --platform=browser --minify src/scripts/production.js >public/bundle/production.js
 
 _gen_bundle: \
 	_gen_bundle_css \
