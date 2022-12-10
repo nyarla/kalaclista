@@ -77,7 +77,10 @@ test:
 
 # temporary solution
 up: clean build
-	@gsutil -m rsync -r -d public/dist gs://the.kalaclista.com/
+	cd public/dist && find . -type f | sort | xargs -I{} -P31 sha256sum '{}' >../state/new.txt
+	perl bin/up.pl >public/state/upload.txt
+	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd run public/state/upload.txt
+	cd public/state && mv new.txt old.txt
 
 shell:
 	@cp app/cpanfile.nix cpanfile.nix
