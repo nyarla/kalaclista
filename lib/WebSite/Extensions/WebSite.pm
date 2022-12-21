@@ -36,25 +36,25 @@ sub transform {
 
       $title   = $data->{'title'}   if ( exists $data->{'title'}   && $data->{'title'} ne q{} );
       $summary = $data->{'summary'} if ( exists $data->{'summary'} && $data->{'summary'} ne q{} );
-
-      $title   //= $text // $summary // $link;
-      $summary //= $text // $title   // $link;
-
-      $summary = substr( $summary, 0, 70 ) . "・・・";
-
-      my $html = a(
-        { href => $href },
-        h1($title),
-        p( cite($link) ),
-        blockquote( p($summary) )
-      );
-
-      my $article = $item->tree->createElement('aside');
-      $article->setAttribute( class => 'content__card--website' );
-      $article->innerHTML("${html}");
-
-      $item->parent->parent->replace($article);
     }
+
+    $title   //= $text // $summary // $link;
+    $summary //= $text // $title   // $link;
+
+    $summary = substr( $summary, 0, 70 ) . "・・・";
+
+    my $html = a(
+      { href => $href },
+      h1($title),
+      p( cite($link) ),
+      blockquote( p($summary) )
+    );
+
+    my $article = $item->tree->createElement('aside');
+    $article->setAttribute( class => 'content__card--website' );
+    $article->innerHTML("${html}");
+
+    $item->parent->parent->replace($article);
   }
 
   return $entry;
