@@ -29,6 +29,11 @@ sub transform {
       }
 
       $block->innerHTML( $data->{'code'} );
+
+      for my $node ( $block->find('a')->@* ) {
+        my $text = $node->tree->createTextNode( $node->textContent );
+        $node->replace($text);
+      }
     }
   }
 
