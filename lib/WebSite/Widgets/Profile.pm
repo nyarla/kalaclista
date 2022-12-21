@@ -47,10 +47,11 @@ sub profile {
 
     nav(
       p(
-        hyperlink( 'GitHub',  'https://github.com/nyarla/' ),
-        hyperlink( 'Zenn',    'https://zenn.dev/nyarla' ),
-        hyperlink( 'Trickle', 'https://trickle.day/nyarla' ),
-        hyperlink( 'トピア',     'https://user.topia.tv/5R9Y' ),
+        hyperlink( 'GitHub',    'https://github.com/nyarla/' ),
+        hyperlink( 'Zenn',      'https://zenn.dev/nyarla' ),
+        hyperlink( 'Fediverse', 'https://kalaclista.com/@nyarla' ),
+        hyperlink( 'Trickle',   'https://trickle.day/nyarla' ),
+        hyperlink( 'トピア',       'https://user.topia.tv/5R9Y' ),
       )
     )
   );

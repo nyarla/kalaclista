@@ -40,11 +40,14 @@ sub main {
   is( $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), 'https://zenn.dev/nyarla' );
   is( $dom->at('nav > p > a:nth-child(2)')->text,                 'Zenn' );
 
-  is( $dom->at('nav > p > a:nth-child(3)')->getAttribute('href'), 'https://trickle.day/nyarla' );
-  is( $dom->at('nav > p > a:nth-child(3)')->text,                 'Trickle' );
+  is( $dom->at('nav > p > a:nth-child(3)')->getAttribute('href'), 'https://kalaclista.com/@nyarla' );
+  is( $dom->at('nav > p > a:nth-child(3)')->text,                 'Fediverse' );
 
-  is( $dom->at('nav > p > a:nth-child(4)')->getAttribute('href'), 'https://user.topia.tv/5R9Y' );
-  is( $dom->at('nav > p > a:nth-child(4)')->text,                 'トピア' );
+  is( $dom->at('nav > p > a:nth-child(4)')->getAttribute('href'), 'https://trickle.day/nyarla' );
+  is( $dom->at('nav > p > a:nth-child(4)')->text,                 'Trickle' );
+
+  is( $dom->at('nav > p > a:nth-child(5)')->getAttribute('href'), 'https://user.topia.tv/5R9Y' );
+  is( $dom->at('nav > p > a:nth-child(5)')->text,                 'トピア' );
 
   my $profile2 = profile;
   utf8::decode($profile2);
