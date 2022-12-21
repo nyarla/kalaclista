@@ -176,9 +176,9 @@ sub entry {
     '.entry' => [
       header => [
         p => [
-          display        => 'flex',
-          flexDirectiuon => 'row',
-          fontSize       => '0.865em',
+          display       => 'flex',
+          flexDirection => 'row',
+          fontSize      => '0.865em',
 
           [qw(time span)] => [
             display => 'block',
@@ -283,7 +283,7 @@ sub card {
     # affiliate
     '.content__card--affiliate' => [
       margin          => '1em 0',
-      backgroundColor => color('backgroud'),
+      backgroundColor => color('background'),
       padding         => '0.25em 1em',
       borderRadius    => '3px',
       border          => "1px solid @{[ color('borderColorAffiliate') ]}",
