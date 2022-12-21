@@ -28,6 +28,7 @@ my %generators = (
   'home'        => 'Kalaclista::Generators::Page',
   'images'      => 'Kalaclista::Generators::WebP',
   'index'       => 'Kalaclista::Generators::Page',
+  'main.css'    => 'Kalaclista::Generators::Page',
   'permalinks'  => 'Kalaclista::Generators::Page',
   'sitemap.xml' => 'Kalaclista::Generators::SitemapXML',
 );
@@ -118,6 +119,16 @@ sub main {
     return $class->generate(
       file    => $distdir->child('sitemap.xml'),
       entries => $entries,
+    );
+  }
+
+  if ( $action eq 'main.css' ) {
+    my $class = $generators{$action};
+    load($class);
+
+    return $class->generate(
+      dist     => $const->rootdir->child('src/stylesheets/main.css'),
+      template => 'WebSite::Templates::Stylesheet',
     );
   }
 
