@@ -1,7 +1,6 @@
 FULL := $(shell nproc --all --ignore 1)
 HALF := $(shell echo "$(FULL) / 2" | bc)
 CWD  := $(shell pwd)
-RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -a
 
 .PHONY: clean build dev test
 
@@ -9,8 +8,9 @@ RUN  := perl app/bin/kalaclista.pl -u $(URL) -c $(CWD)/config.pl -a
 _gen_bundle_css:
 	@echo generate css
 	@test -d public/bundle || mkdir -p public/bundle
+	@perl bin/gen.pl main.css
 	@cp -RH node_modules/normalize.css/normalize.css src/stylesheets/normalize.css
-	@esbuild --bundle --platform=browser --minify src/stylesheets/stylesheet.css >public/bundle/main.css
+	@esbuild --bundle --platform=browser --minify src/stylesheets/main.css >public/bundle/main.css
 
 _gen_bundle_script:
 	@echo generate scripts
@@ -83,8 +83,8 @@ up: clean build
 	cd public/state && mv new.txt old.txt
 
 shell:
+	@cp /etc/nixos/flake.lock .
 	@cp app/cpanfile.nix cpanfile.nix
-	@cp app/flake.lock flake.lock
 	@nix develop -c env SHELL=zsh sh -c 'env PERL5LIB=$(shell pwd)/app/lib:$(shell pwd)/lib:$$PERL5LIB zsh'
 	@pkill proclet || true
 
