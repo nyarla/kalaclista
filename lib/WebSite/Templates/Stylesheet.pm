@@ -13,10 +13,11 @@ use Kalaclista::HyperStyle qw(css);
 
 sub color {
   state $table ||= {
-    background     => '#fff',
-    backgroundCode => '#ccc',
-    foreground     => '#333',
-    foregroundURL  => '#690',
+    background          => '#fff',
+    backgroundCode      => '#ccc',
+    backgroundCodeBlock => '#000',
+    foreground          => '#333',
+    foregroundURL       => '#690',
 
     foregroundAffiliate          => '#666',
     foregroundAffiliateActivated => '#f93',
@@ -456,7 +457,7 @@ sub content {
       ],
 
       pre => [
-        backgroundColor => color('foreground'),
+        backgroundColor => color('backgroundCodeBlock'),
         color           => color('background'),
         padding         => '0.25em 0.5em',
         borderRadius    => '3px',
