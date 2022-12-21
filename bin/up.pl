@@ -31,7 +31,6 @@ sub main {
   if ( -f $state->child('old.txt')->path ) {
     my %old;
     my @up;
-    my @rm;
 
     open( my $fh, '<', $state->child('old.txt')->path )
         or die "failed to open public/state/old.txt: ${!}";
@@ -54,13 +53,15 @@ sub main {
       my ( $sha256sum, $path ) = split qr{ +}, $line;
 
       if ( !exists $old{$path} ) {
-        push @rm, $path;
+        push @up, $path;
         next;
       }
 
       if ( $old{$path} ne $sha256sum ) {
         push @up, $path;
       }
+
+      delete $old{$path};
     }
 
     close($fh) or die "failed to close public/state/new.txt: ${!}";
@@ -70,7 +71,7 @@ sub main {
       print "cp --cache-control @{[ cache_control($file) ]} public/dist/${file} s3://the.kalaclista.com/${file}", "\n";
     }
 
-    for my $file (@rm) {
+    for my $file ( keys %old ) {
       $file =~ s{^\./}{};
       print "rm s3://the.kalaclista.com/${file}", "\n";
     }
