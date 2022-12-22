@@ -2,21 +2,27 @@
 
 use strict;
 use warnings;
+use utf8;
 
 use HTML5::DOM;
-use Path::Tiny qw(tempdir);
 use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS;
 
-use Kalaclista::Directory;
+BEGIN {
+  use Kalaclista::Constants;
+  Kalaclista::Constants->baseURI('https://the.kalaclista.com');
+}
+
+use Kalaclista::Path;
 use Kalaclista::Entry;
 use Kalaclista::Entries;
+
 use Kalaclista::Utils qw(make_fn);
 
-my $dirs = Kalaclista::Directory->instance;
-my $dist = $dirs->content_dir->child('data/highlight');
-my $src  = $dirs->content_dir->child('entries');
+my $content = Kalaclista::Path->detect(qr{^bin$})->child('content');
+my $dist    = $content->child('data/highlight');
+my $src     = $content->child('entries');
 
 my $parser = HTML5::DOM->new;
 
@@ -162,27 +168,29 @@ sub handle {
     my $attr = $code->getAttribute('class');
     my $fn   = ftname($attr);
 
-    my $tmp = tempdir( 'kalaclista_XXXXXXX', CLEANUP => 1 );
+    my $tmp = Kalaclista::Path->tempdir;
     my $in  = $tmp->child($fn);
-    my $out = $tmp->child("result.html");
+    my $out = $tmp->child('result.html');
 
-    $in->spew_utf8($src);
+    $in->emit($src);
 
     system(
       qw(nvim --headless -u),
       $ENV{'HOME'} . '/.config/nvim/highlight.lua',
-      '-c', "TOhtml | w! @{[ $out->stringify ]} | qa! ",
-      $in->stringify,
+      '-c', "TOhtml | w! @{[ $out->path ]} | qa! ",
+      $in->path,
     );
 
-    if ( $out->is_file ) {
-      my $dom   = $parser->parse( $out->slurp_utf8 );
+    if ( -f $out->path ) {
+      my $dom   = $parser->parse( $out->get );
       my $style = $dom->at('style')->innerText;
       my $code  = $dom->at('pre')->innerHTML;
 
+      utf8::decode($code);
+
       my $emit = $dist->child("${path}/${idx}.yaml");
       $emit->parent->mkpath;
-      $emit->spew( YAML::XS::Dump( { style => css($style), code => $code } ) );
+      $emit->emit( YAML::XS::Dump( { code => $code, style => css($style) } ) );
     }
 
     $idx++;
@@ -192,9 +200,8 @@ sub handle {
 }
 
 sub main {
-  my $entries = Kalaclista::Entries->new(
-    $src->stringify,
-    URI::Fast->new("https://the.kalaclista.com"),
+  my $entries = Kalaclista::Entries->instance(
+    $src->path,
   );
 
   handle($_) for $entries->entries->@*;
