@@ -18,7 +18,9 @@ my $posts = Kalaclista::Constants->rootdir(qr{^t$})->child('public/dist/posts')-
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my @files = grep { $_ =~ m</\d{4}/index.html$> } Kalaclista::Files->find($posts);
+  my @files = sort { $b cmp $a } grep { $_ =~ m</\d{4}/index.html$> } Kalaclista::Files->find($posts);
+  my $begin = ( $files[-1] =~ m{/(\d{4})/index.html$} )[0];
+  my $end   = ( $files[0]  =~ m{/(\d{4})/index.html$} )[0];
 
   for my $path (@files) {
     my $href = $path;
@@ -156,10 +158,10 @@ sub main {
 
     is(
       $dom->at('.entry__archives .entry__content .archives + hr + p')->textContent,
-      "過去ログ：" . ( join q{ / }, sort { $b <=> $a } ( 2006 .. 2022 ) )
+      "過去ログ：" . ( join q{ / }, sort { $b <=> $a } ( $begin .. $end ) )
     );
 
-    for my $yr ( 2006 .. 2022 ) {
+    for my $yr ( $begin .. $end ) {
       if ( $year == $yr ) {
         ok( $dom->at('.entry__archives .entry__content .archives + hr + p strong') );
         next;
@@ -211,7 +213,7 @@ sub main {
     'https://the.kalaclista.com/posts/jsonfeed.json'
   );
 
-  my $year    = (localtime)[5] + 1900;
+  my $year    = $end;
   my $title   = "カラクリスタ・ブログ";
   my $website = "カラクリスタ・ブログ";
   my $summary = "『輝かしい青春』なんて失かった人のブログです";
@@ -300,10 +302,10 @@ sub main {
 
   is(
     $dom->at('.entry__archives .entry__content .archives + hr + p')->textContent,
-    "過去ログ：" . ( join q{ / }, sort { $b <=> $a } ( 2006 .. 2022 ) )
+    "過去ログ：" . ( join q{ / }, sort { $b <=> $a } ( $begin .. $end ) )
   );
 
-  for my $yr ( 2006 .. 2022 ) {
+  for my $yr ( $begin .. $end ) {
     if ( $year == $yr ) {
       ok( $dom->at('.entry__archives .entry__content .archives + hr + p strong') );
       next;

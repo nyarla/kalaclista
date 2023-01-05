@@ -48,8 +48,7 @@ sub content {
   }
 
   if ( $section ne 'notes' ) {
-    my $begin = ( $section eq 'posts' ) ? 2006 : 2018;
-    for my $yr ( sort { $b <=> $a } $begin .. ( (localtime)[5] + 1900 ) ) {
+    for my $yr ( sort { $b <=> $a } $vars->begin .. $vars->end ) {
       if ( $yr == $year ) {
         push @archives, strong($year);
         next;

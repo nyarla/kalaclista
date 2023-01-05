@@ -38,7 +38,7 @@ _gen_sitemap_xml: _gen_bundle
 
 _gen_pages: _gen_assets
 	@echo generate pages
-	@seq 2006 2022 | xargs -I{} -P$(HALF) perl bin/gen.pl permalinks {}
+	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(HALF) perl bin/gen.pl permalinks {}
 
 _gen_index: _gen_assets
 	@echo generate index

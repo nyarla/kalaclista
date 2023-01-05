@@ -178,6 +178,7 @@ sub main {
 
     for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
       my @contains = map { $_->transform } @entries[ 0 .. 4 ];
+      $vars->entries( \@contains );
 
       $path = "${feed}";
       $out  = $distdir->child($path);
@@ -211,18 +212,21 @@ sub main {
     load($class);
 
     my $section = shift;
-    my @entries = map { fixup($_) } $entries->entries->@*;
+    my @entries = grep { $_->type eq $section } map { fixup($_) } $entries->entries->@*;
 
     if ( $section eq 'notes' ) {
-      my @contains = grep { $_->type eq $section } @entries;
+      @entries = sort { $b->lastmod cmp $a->lastmod } @entries;
 
       my $vars = $const->vars;
+      $vars->begin( ( $entries[-1]->lastmod =~ m{^(\d{4})} )[0] );
+      $vars->end( ( $entries[0]->lastmod    =~ m{^(\d{4})} )[0] );
+
       $vars->title( $vars->contains->{$section}->{'website'} );
       $vars->summary( $vars->contains->{$section}->{'description'} );
       $vars->description( $vars->contains->{$section}->{'description'} );
       $vars->section($section);
       $vars->kind('index');
-      $vars->entries( \@contains );
+      $vars->entries( \@entries );
       $vars->href( URI::Fast->new( href( "/${section}/", $const->baseURI ) ) );
 
       my @tree = (
@@ -247,7 +251,8 @@ sub main {
         vars     => $vars,
       );
 
-      @contains = map { $_->transform } @contains[ 0 .. 4 ];
+      @entries = map { $_->transform } @entries[ 0 .. 4 ];
+      $vars->entries( \@entries );
       for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
         $path = "${section}/${feed}";
         $out  = $distdir->child($path);
@@ -264,14 +269,21 @@ sub main {
       return 1;
     }
 
-    for my $year ( 2006 .. ( (localtime)[5] + 1900 ) ) {
-      my @contains = grep { $_->date =~ m{^$year} && $_->type eq $section } @entries;
+    @entries = sort { $b->date cmp $a->date } @entries;
+    my $begin = ( $entries[-1]->date =~ m{^(\d{4})} )[0];
+    my $end   = ( $entries[0]->date  =~ m{^(\d{4})} )[0];
+
+    for my $year ( $begin .. $end ) {
+      my @contains = grep { $_->date =~ m{^$year} } @entries;
 
       if ( @contains == 0 ) {
         next;
       }
 
       my $vars = $const->vars;
+      $vars->begin($begin);
+      $vars->end($end);
+
       $vars->title("${year}年の記事一覧");
       $vars->summary( $vars->contains->{$section}->{'website'} . "の ${year}年の記事一覧です" );
       $vars->section($section);
@@ -305,7 +317,7 @@ sub main {
         vars     => $vars,
       );
 
-      if ( $year == ( (localtime)[5] + 1900 ) ) {
+      if ( $year == $vars->end ) {
         $vars->title( $vars->contains->{$section}->{'website'} );
         $vars->description( $vars->contains->{$section}->{'description'} );
         $vars->summary( $vars->contains->{$section}->{'description'} );
@@ -324,8 +336,7 @@ sub main {
           vars     => $vars,
         );
 
-        @contains = map { $_->transform } ( sort { $b->date cmp $a->date } @entries )[ 0 .. 4 ];
-
+        @contains = map { $_->transform } ( grep { $_->type eq $section } sort { $b->date cmp $a->date } @entries )[ 0 .. 4 ];
         for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
           $path = "${section}/${feed}";
           $out  = $distdir->child($path);
