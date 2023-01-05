@@ -209,11 +209,10 @@ sub main {
     load($class);
 
     my $section = shift;
+    my @entries = map { fixup($_) } $entries->entries->@*;
 
     if ( $section eq 'notes' ) {
-      my @entries =
-          grep { $_->type eq $section }
-          map { fixup($_) } $entries->entries->@*;
+      my @contains = grep { $_->type eq $section } @entries;
 
       my $vars = $const->vars;
       $vars->title( $vars->contains->{$section}->{'website'} );
@@ -221,7 +220,7 @@ sub main {
       $vars->description( $vars->contains->{$section}->{'description'} );
       $vars->section($section);
       $vars->kind('index');
-      $vars->entries( \@entries );
+      $vars->entries( \@contains );
       $vars->href( URI::Fast->new( href( "/${section}/", $const->baseURI ) ) );
 
       my @tree = (
@@ -263,11 +262,9 @@ sub main {
     }
 
     for my $year ( 2006 .. ( (localtime)[5] + 1900 ) ) {
-      my @entries =
-          grep { $_->date =~ m{^$year} && $_->type eq $section }
-          map { fixup($_) } $entries->entries->@*;
+      my @contains = grep { $_->date =~ m{^/$year} && $_->section eq $section } @entries;
 
-      if ( @entries == 0 ) {
+      if ( @contains == 0 ) {
         next;
       }
 
@@ -276,7 +273,7 @@ sub main {
       $vars->summary( $vars->contains->{$section}->{'website'} . "の ${year}年の記事一覧です" );
       $vars->section($section);
       $vars->kind('index');
-      $vars->entries( \@entries );
+      $vars->entries( \@contains );
       $vars->href( URI::Fast->new( href( "/${section}/${year}/", $const->baseURI ) ) );
 
       my @tree = (
@@ -323,6 +320,8 @@ sub main {
           template => 'WebSite::Templates::Index',
           vars     => $vars,
         );
+
+        @contains = sort { $b->date cmp $a->date } @entries;
 
         for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
           $path = "${section}/${feed}";
