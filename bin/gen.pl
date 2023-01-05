@@ -177,6 +177,8 @@ sub main {
     );
 
     for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
+      my @contains = map { $_->transform } @entries[ 0 .. 4 ];
+
       $path = "${feed}";
       $out  = $distdir->child($path);
       my $tmpl =
@@ -245,6 +247,7 @@ sub main {
         vars     => $vars,
       );
 
+      @contains = map { $_->transform } @contains[ 0 .. 4 ];
       for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
         $path = "${section}/${feed}";
         $out  = $distdir->child($path);
@@ -262,7 +265,7 @@ sub main {
     }
 
     for my $year ( 2006 .. ( (localtime)[5] + 1900 ) ) {
-      my @contains = grep { $_->date =~ m{^/$year} && $_->section eq $section } @entries;
+      my @contains = grep { $_->date =~ m{^$year} && $_->type eq $section } @entries;
 
       if ( @contains == 0 ) {
         next;
@@ -321,7 +324,7 @@ sub main {
           vars     => $vars,
         );
 
-        @contains = sort { $b->date cmp $a->date } @entries;
+        @contains = map { $_->transform } ( sort { $b->date cmp $a->date } @entries )[ 0 .. 4 ];
 
         for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
           $path = "${section}/${feed}";

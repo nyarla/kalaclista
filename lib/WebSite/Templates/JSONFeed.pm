@@ -18,7 +18,7 @@ sub render {
 
   my $href    = href( "${prefix}/",              $baseURI );
   my $feed    = href( "${prefix}/jsonfeed.json", $baseURI );
-  my @entries = map { $_->transform } ( sort { $b->date cmp $a->date } $vars->entries->@* )[ 0 .. 4 ];
+  my @entries = $vars->entries->@*;
 
   my $data = {
     version     => 'https://jsonfeed.org/version/1.1',
@@ -38,7 +38,6 @@ sub render {
     feed_url      => $feed,
     items         => [
       map {
-        $_->transform;
         +{
           id             => $_->href . '',
           url            => $_->href . '',

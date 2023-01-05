@@ -17,7 +17,7 @@ sub render {
 
   my $href    = href( "${prefix}/",         $baseURI );
   my $feed    = href( "${prefix}/atom.xml", $baseURI );
-  my @entries = map { $_->transform } ( sort { $b->date cmp $b->date } $vars->entries->@* )[ 0 .. 4 ];
+  my @entries = $vars->entries->@*;
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     feed => { xmlns => 'http://www.w3.org/2005/Atom' } => [
@@ -40,7 +40,6 @@ sub render {
 
       (
         map {
-          $_->transform;
           h(
             'entry',
             [

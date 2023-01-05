@@ -21,7 +21,7 @@ sub render {
 
   my $href    = href( "${prefix}/",          $baseURI );
   my $feed    = href( "${prefix}/index.xml", $baseURI );
-  my @entries = map { $_->transform } ( sort { $b->lastmod cmp $b->lastmod } $vars->entries->@* )[ 0 .. 4 ];
+  my @entries = $vars->entries->@*;
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     'rss',
@@ -38,7 +38,6 @@ sub render {
       h( lastBuildDate  => Time::Moment->from_string( $entries[0]->lastmod )->strftime($format) ),
       (
         map {
-          $_->transform;
           h(
             item => [
               h( title       => $_->title ),
