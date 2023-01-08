@@ -18,8 +18,6 @@ use Kalaclista::Path;
 use Kalaclista::Entry;
 use Kalaclista::Entries;
 
-use Kalaclista::Utils qw(make_fn);
-
 my $content = Kalaclista::Path->detect(qr{^bin$})->child('content');
 my $dist    = $content->child('data/highlight');
 my $src     = $content->child('entries');
