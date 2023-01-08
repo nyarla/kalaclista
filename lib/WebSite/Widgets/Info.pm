@@ -10,7 +10,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(siteinfo);
 
-use Text::HyperScript::HTML5 qw(p footer);
+use Kalaclista::HyperScript qw(p footer);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
 use Kalaclista::Constants;

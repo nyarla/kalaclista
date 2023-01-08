@@ -8,10 +8,9 @@ use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS ();
 
-use Text::HyperScript::HTML5 qw(a h1 p blockquote cite);
+use Kalaclista::HyperScript qw(a h1 p blockquote cite);
 
 use Kalaclista::Constants;
-use Kalaclista::Utils qw(make_path);
 use Kalaclista::WebSite;
 
 my $datadir = Kalaclista::Constants->rootdir->child('content/data/webdata');
@@ -25,23 +24,25 @@ sub transform {
 
     next if ( $href !~ m{^https?} );
 
-    my $path = make_path( URI::Fast->new($href) );
-    my $file = $datadir->child("${path}.yaml");
-
+    my $data = Kalaclista::WebSite->load( $href, $datadir );
     my $link = uri_unescape($href);
     my ( $title, $summary );
 
-    if ( -f $file->path ) {
-      my $data = YAML::XS::LoadFile( $file->path );
-
-      $title   = $data->{'title'}   if ( exists $data->{'title'}   && $data->{'title'} ne q{} );
-      $summary = $data->{'summary'} if ( exists $data->{'summary'} && $data->{'summary'} ne q{} );
+    if ( !$data->is_gone and !$data->is_ignore ) {
+      $title   = $data->title;
+      $summary = $data->summary;
     }
 
     $title   //= $text // $summary // $link;
     $summary //= $text // $title   // $link;
 
-    $summary = substr( $summary, 0, 70 ) . "・・・";
+    if ( length($title) > 35 ) {
+      $title = substr( $title, 0, 35 ) . "……";
+    }
+
+    if ( length($summary) > 70 ) {
+      $summary = substr( $summary, 0, 70 ) . "……";
+    }
 
     my $html = a(
       { href => $href },

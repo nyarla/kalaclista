@@ -10,7 +10,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(sitemenu);
 
-use Text::HyperScript::HTML5 qw(nav hr p);
+use Kalaclista::HyperScript qw(nav hr p);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
 use Kalaclista::Constants;

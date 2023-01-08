@@ -10,7 +10,8 @@ use Exporter::Lite;
 
 our @EXPORT = qw(banner);
 
-use Text::HyperScript::HTML5 qw(header p);
+use Kalaclista::HyperScript qw(header p);
+
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 use Kalaclista::Constants;
 

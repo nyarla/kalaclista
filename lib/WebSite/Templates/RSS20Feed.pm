@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Text::HyperScript qw(h);
+use Kalaclista::HyperScript qw(h);
 use Time::Moment;
 
 use Kalaclista::Constants;

@@ -43,7 +43,7 @@ subtest blog => sub {
   );
 
   is( $item->at('img')->getAttribute('height'), 582 );
-  is( $item->at('img')->getAttribute('width'),  700 );
+  is( $item->at('img')->getAttribute('width'),  581 );
   is(
     $item->at('img')->getAttribute('src'),
     "https://the.kalaclista.com/images/$path/1_2x.webp",
@@ -52,8 +52,8 @@ subtest blog => sub {
   is(
     $item->at('img')->getAttribute('srcset'),
     join(
-      q{, }, qq<https://the.kalaclista.com/images/${path}/1_1x.webp 700w>,
-      qq<https://the.kalaclista.com/images/${path}/1_2x.webp 1400w>,
+      q{, }, qq<https://the.kalaclista.com/images/${path}/1_1x.webp 581w>,
+      qq<https://the.kalaclista.com/images/${path}/1_2x.webp 581w>,
       qq<https://the.kalaclista.com/images/${path}/1.png 581w>,
     ),
   );

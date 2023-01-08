@@ -6,7 +6,7 @@ use utf8;
 
 use Kalaclista::Constants;
 
-use Text::HyperScript qw(h);
+use Kalaclista::HyperScript qw(h);
 use WebSite::Helper::Hyperlink qw(href);
 
 sub render {

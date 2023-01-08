@@ -4,9 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Text::HyperScript qw(raw);
-use Text::HyperScript::HTML5;
-use Kalaclista::HyperScript::More;
+use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 
 use Kalaclista::Constants;

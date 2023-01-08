@@ -10,8 +10,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(analytics);
 
-use Text::HyperScript qw(raw);
-use Text::HyperScript::HTML5 qw(script);
+use Kalaclista::HyperScript qw(script raw);
 
 my $code = <<'...';
 window.dataLayer = window.dataLayer || [];

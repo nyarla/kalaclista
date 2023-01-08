@@ -8,7 +8,7 @@ use Kalaclista::Constants;
 use Kalaclista::Shop::Amazon;
 use Kalaclista::Shop::Rakuten;
 
-use Text::HyperScript::HTML5;
+use Kalaclista::HyperScript;
 
 my $datadir = Kalaclista::Constants->rootdir->child('content/data/items');
 

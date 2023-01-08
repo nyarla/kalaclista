@@ -6,9 +6,7 @@ use utf8;
 
 use feature qw(state);
 
-use Text::HyperScript qw(raw);
-use Text::HyperScript::HTML5;
-use Kalaclista::HyperScript::More;
+use Kalaclista::HyperScript;
 
 use WebSite::Widgets::Analytics;
 use WebSite::Widgets::Info;

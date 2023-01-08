@@ -10,7 +10,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(profile);
 
-use Text::HyperScript::HTML5;
+use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href hyperlink);
 use Kalaclista::Constants;
 

@@ -3,7 +3,7 @@ package WebSite::Helper::Hyperlink;
 use strict;
 use warnings;
 
-use Text::HyperScript::HTML5 qw(a);
+use Kalaclista::HyperScript qw(a);
 
 use Exporter::Lite;
 

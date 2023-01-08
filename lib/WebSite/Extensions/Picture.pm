@@ -6,7 +6,7 @@ use utf8;
 
 use YAML::XS;
 use URI::Escape;
-use Text::HyperScript::HTML5 qw(a img);
+use Kalaclista::HyperScript qw(a img);
 
 use Kalaclista::Constants;
 
