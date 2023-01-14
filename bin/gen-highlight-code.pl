@@ -198,11 +198,24 @@ sub handle {
 }
 
 sub main {
+  my ( $type, $path ) = @_;
+
   my $entries = Kalaclista::Entries->instance(
     $src->path,
   );
 
+  if ( defined $type && defined $path ) {
+    if ( $type eq 'entry' ) {
+      handle($_) for grep { $_->href->path =~ $path } $entries->entries->@*;
+
+      exit 0;
+    }
+
+    exit 1;
+  }
+
   handle($_) for $entries->entries->@*;
+  exit 0;
 }
 
-main;
+main(@ARGV);
