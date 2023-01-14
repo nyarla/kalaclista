@@ -19,6 +19,7 @@
             optipng
             esbuild
             s5cmd
+            nodePackages.prettier
           ] ++ cpanfile;
         };
     };
