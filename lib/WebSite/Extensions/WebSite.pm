@@ -8,7 +8,7 @@ use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS ();
 
-use Kalaclista::HyperScript qw(a h1 p blockquote cite);
+use Kalaclista::HyperScript qw(a h1 p blockquote cite div small);
 
 use Kalaclista::Constants;
 use Kalaclista::WebSite;
@@ -28,13 +28,40 @@ sub transform {
     my $link = uri_unescape($href);
     my ( $title, $summary );
 
-    if ( !$data->is_gone and !$data->is_ignore ) {
+    my $exist = 1;
+
+    if ( defined( $data->is_gone ) && $data->is_gone ) {
+      $exist = 0;
+    }
+    elsif ( defined( $data->is_ignore ) && $data->is_ignore ) {
+      $exist = 0;
+    }
+    elsif ( defined( $data->status ) && ( $data->status !~ m{^(?:2|304)} ) ) {
+      $exist = 0;
+    }
+
+    if ($exist) {
       $title   = $data->title;
       $summary = $data->summary;
     }
 
-    $title   //= $text // $summary // $link;
-    $summary //= $text // $title   // $link;
+    for my $label ( ( $text, $summary, $link ) ) {
+      if ( !defined $title || $title eq q{} ) {
+        $title = $label;
+        next;
+      }
+
+      last;
+    }
+
+    for my $label ( ( $text, $title, $link ) ) {
+      if ( !defined $summary || $summary eq q{} ) {
+        $summary = $label;
+        next;
+      }
+
+      last;
+    }
 
     if ( length($title) > 35 ) {
       $title = substr( $title, 0, 35 ) . "……";
@@ -44,12 +71,24 @@ sub transform {
       $summary = substr( $summary, 0, 70 ) . "……";
     }
 
-    my $html = a(
-      { href => $href },
-      h1($title),
-      p( cite($link) ),
-      blockquote( p($summary) )
-    );
+    my $html;
+    if ($exist) {
+      $html = a(
+        { href => $href },
+        h1($title),
+        p( cite($link) ),
+        blockquote( p($summary) )
+      );
+    }
+    else {
+      my $msg = $data->is_ignore ? '無効なリンクです' : 'リンク切れです';
+
+      $html = div(
+        h1($title),
+        p( cite($link), small($msg) ),
+        blockquote( p($summary) )
+      );
+    }
 
     my $article = $item->tree->createElement('aside');
     $article->setAttribute( class => 'content__card--website' );

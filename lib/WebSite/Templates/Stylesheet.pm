@@ -24,6 +24,7 @@ sub color {
 
     linkText      => '#000',
     linkActivated => '#999',
+    linkDisabled  => '#999',
 
     entryTitle          => '#000',
     entryTitleActivated => '#f93',
@@ -233,18 +234,7 @@ sub card {
     # website
     '.content__card--website' => [
       a => [
-        display  => 'block',
-        overflow => 'hidden',
-
         backgroundColor => color('background'),
-        padding         => '0.25em 01em',
-        borderRadius    => '3px',
-
-        transition     => 'border-color 0.125s',
-        textDecoration => 'none',
-
-        border => '1px solid',
-
         (
           map {
             (
@@ -253,14 +243,56 @@ sub card {
               "&:${_}:active" => [ borderColor => color('borderColorWebsiteActivated') ],
             )
           } qw(link visited)
-        )
+        ),
 
+        h1 => [
+          color => color('foreground'),
+        ],
+
+        cite => [
+          color => color('foregroundURL'),
+        ],
+
+        blockquote => [
+          color => color('borderColorQuote'),
+        ],
+      ],
+
+      div => [
+        backgroundColor => color('background'),
+        h1              => [
+          color => color('linkDisabled'),
+        ],
+
+        cite => [
+          color => color('linkDisabled'),
+        ],
+
+        blockquote => [
+          color => color('linkDisabled'),
+
+          '&::before' => [
+            backgroundColor => color('linkDisabled'),
+          ],
+        ],
+      ],
+
+      [qw(a div)] => [
+        display  => 'block',
+        overflow => 'hidden',
+
+        padding      => '0.25em 01em',
+        borderRadius => '3px',
+
+        transition     => 'border-color 0.125s',
+        textDecoration => 'none',
+
+        border => '1px solid',
       ],
 
       "h1" => [
         fontSize     => "1.2em",
         marginBottom => 0,
-        color        => color('foreground'),
       ],
 
       "h1 + p" => [
@@ -271,13 +303,19 @@ sub card {
         fontStyle  => 'normal',
         fontWeight => 'bold',
         fontSize   => '0.8em',
-        color      => color('foregroundURL'),
+      ],
+
+      "cite + small" => [
+        color      => color('linkDisabled'),
+        fontStyle  => 'normal',
+        fontWeight => 'bold',
+        fontSize   => '0.7em',
+        marginLeft => '0.5em',
       ],
 
       blockquote => [
         marginTop => '0.5em',
         fontSize  => '0.75em',
-        color     => color('borderColorQuote'),
       ],
     ],
 
