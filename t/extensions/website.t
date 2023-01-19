@@ -32,7 +32,7 @@ sub main {
 
   is( $item->at('a')->getAttribute('href'), "https://www.nerdfonts.com/" );
 
-  ok( $item->at('a > h1') );
+  ok( $item->at('a > h2') );
   ok( $item->at('a > p') );
   ok( $item->at('a > blockquote') );
 

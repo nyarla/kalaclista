@@ -23,19 +23,17 @@ sub sitemenu {
 
   my $baseURI = Kalaclista::Constants->baseURI;
   $result = nav(
-    { id => 'menu', class => 'entry__content' },
-    hr,
+    { id => 'menu' },
     p(
-      { class => 'kind' },
+      { class => 'section' },
       hyperlink( 'ブログ', href( '/posts/', $baseURI ) ),
       hyperlink( '日記',  href( '/echos/', $baseURI ) ),
       hyperlink( 'メモ帳', href( '/notes/', $baseURI ) ),
     ),
     p(
-      { class => 'links' },
-      hyperlink( '運営方針', href( '/policies/', $baseURI ) ),
-      hyperlink( '権利情報', href( '/licenses/', $baseURI ) ),
-      hyperlink( '検索',   $search ),
+      { class => 'help' },
+      hyperlink( 'プロフィール', href( '/nyarla/', $baseURI ) ),
+      hyperlink( '検索',     $search ),
     ),
   );
 

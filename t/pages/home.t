@@ -118,7 +118,7 @@ sub main {
     'https://the.kalaclista.com/nyarla/'
   );
 
-  my $list = $dom->at('.entry__home .entry__content h1:nth-child(4) ~ ul');
+  my $list = $dom->at('.entry__home .entry__content h2:nth-child(4) ~ ul');
 
   is(
     $list->at('li:nth-child(1) a')->getAttribute('href'),
@@ -135,7 +135,7 @@ sub main {
     'https://the.kalaclista.com/notes/',
   );
 
-  my $feeds = $dom->at('.entry__home .entry__content h1:nth-child(4) ~ ul ~ ul');
+  my $feeds = $dom->at('.entry__home .entry__content h2:nth-child(4) ~ ul ~ ul');
 
   is(
     $feeds->at('li:nth-child(1) a:nth-child(1)')->getAttribute('href'),

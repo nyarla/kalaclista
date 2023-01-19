@@ -8,7 +8,7 @@ use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS ();
 
-use Kalaclista::HyperScript qw(a h1 p blockquote cite div small);
+use Kalaclista::HyperScript qw(a h2 p blockquote cite div small);
 
 use Kalaclista::Constants;
 use Kalaclista::WebSite;
@@ -75,7 +75,7 @@ sub transform {
     if ($exist) {
       $html = a(
         { href => $href },
-        h1($title),
+        h2($title),
         p( cite($link) ),
         blockquote( p($summary) )
       );
@@ -84,7 +84,7 @@ sub transform {
       my $msg = $data->is_ignore ? '無効なリンクです' : 'リンク切れです';
 
       $html = div(
-        h1($title),
+        h2($title),
         p( cite($link), small($msg) ),
         blockquote( p($summary) )
       );

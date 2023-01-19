@@ -80,11 +80,10 @@ sub render {
   return document(
     metadata($vars),
     [
-      banner,
-      profile,
+      banner($vars),
       sitemenu,
       main(
-        ads('top'),
+        ( $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('top') : () ),
         article(
           { class => 'entry' },
           header(
@@ -99,8 +98,9 @@ sub render {
             raw( $entry->dom->innerHTML ),
           ),
         ),
-        ads('bottom'),
+        ( $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('bottom') : () ),
       ),
+      profile,
       siteinfo,
       analytics,
     ],

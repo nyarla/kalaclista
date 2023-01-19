@@ -68,7 +68,7 @@ sub content {
         hr,
         ( $section ne 'notes' ? strong("${year}年：") : () ),
         ul( { class => 'archives' }, @contents ),
-        ( $section ne 'notes' ? ( hr, p( "過去ログ：", raw( join q{ / }, @archives ) ) ) : () ),
+        ( $section ne 'notes' ? ( hr, p( { class => 'logs' }, "過去ログ：", raw( join q{/}, @archives ) ) ) : () ),
       )
     ),
   );
@@ -80,10 +80,10 @@ sub render {
   return document(
     metadata($vars),
     [
-      banner,
-      profile,
+      banner($vars),
       sitemenu,
       content($vars),
+      profile,
       siteinfo,
     ]
   );

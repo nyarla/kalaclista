@@ -27,8 +27,7 @@ sub render {
   return document(
     metadata($vars),
     [
-      banner,
-      profile,
+      banner($vars),
       sitemenu,
       main(
         article(
@@ -51,6 +50,7 @@ sub render {
           ),
         ),
       ),
+      profile,
       siteinfo,
       analytics,
     ],

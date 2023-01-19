@@ -60,10 +60,6 @@ sub global {
       fontFeatureSettings => q("palt"),
     ],
 
-    body => [
-      fontSize => '1.25em',
-    ],
-
     a => [
       textDecoration => 'underline solid',
       transition     => 'color 0.125s',
@@ -85,8 +81,8 @@ sub container {
   return (
     [ '#global', '#profile', '#menu', '#copyright', '.ads', '.entry' ] => [
       margin   => '0 auto',
-      padding  => '0 1.5em',
-      maxWidth => '35em',
+      padding  => '0 1em',
+      maxWidth => '40em',
     ],
 
     'aside.ads:nth-child(1) > ins.adsbygoogle' => [
@@ -97,16 +93,58 @@ sub container {
 
 sub widgets {
   return (
-    # title
     '#global' => [
       p => [
-        margin => '5em 0',
+        marginBottom => '.5em',
+        img          => [
+          verticalAlign => 'middle',
+          marginRight   => '.75em'
+        ],
+        span => [
+          margin     => '0 0.5em',
+          fontWeight => 'bold',
+        ],
+      ],
+      hr => [
+        backgroundColor => color('borderColorHr'),
+        borderRadius    => '3px',
+        border          => 'none',
+        height          => '3px',
       ],
     ],
 
-    # profile
+    '#menu' => [
+      display => 'flex',
+
+      p => [
+        width => '50%',
+
+        '&.section' => [
+          textAlign => 'left',
+          a         => [
+            marginRight => '0.75em',
+          ],
+        ],
+
+        '&.help' => [
+          textAlign => 'right',
+          a         => [
+            marginLeft => '0.75em',
+          ]
+        ],
+      ],
+    ],
+
+    'main::before, #profile::before' => [
+      display    => 'block',
+      content    => q{"↓"},
+      textAlign  => 'center',
+      fontWeight => 'bold',
+      margin     => '2em 0',
+    ],
+
     '#profile' => [
-      marginTop    => '5em',
+      paddingTop   => '0.5em',
       marginBottom => '0',
 
       figure => [
@@ -130,44 +168,10 @@ sub widgets {
       ],
 
       'nav p' => [
-        fontSize => '0.75em',
+        fontSize => '0.825em',
         a        => [
-          marginRight => '0.5em',
+          marginRight => '0.625em',
         ],
-      ],
-    ],
-
-    # menu
-    '#menu' => [
-      marginBottom => '5em',
-
-      hr => [ marginBottom => '0.5em' ],
-      p  => [ fontSize     => '0.75em' ],
-
-      'p.kind' => [
-        float      => 'left',
-        marginLeft => '4.5%',
-        textAlign  => 'left',
-        width      => '45%',
-        a          => [
-          marginRight => '0.5em',
-        ],
-      ],
-
-      'p.links' => [
-        float       => 'right',
-        marginRight => '4.5%',
-        textAlign   => 'right',
-        width       => '45%',
-        a           => [
-          marginLeft => '0.5em',
-        ],
-      ],
-
-      '&::after' => [
-        display => 'block',
-        content => q(""),
-        clear   => 'both',
       ],
     ],
   );
@@ -190,6 +194,8 @@ sub entry {
           time => [ textAlign => 'left' ],
           span => [ textAlign => 'right' ],
         ],
+
+        h1 => [ fontSize => '1.5em' ],
 
         'h1 a' => [
           textDecoration => 'none',
@@ -290,12 +296,12 @@ sub card {
         border => '1px solid',
       ],
 
-      "h1" => [
+      "h2" => [
         fontSize     => "1.2em",
         marginBottom => 0,
       ],
 
-      "h1 + p" => [
+      "h2 + p" => [
         margin => 0,
       ],
 
@@ -409,22 +415,21 @@ sub content {
         ],
       ],
 
-      [qw( h1 h2 h3 h4 h5 h6 )] => [
+      [qw( h2 h3 h4 h5 h6 )] => [
         margin => '1em 0',
       ],
 
-      h1 => [ fontSize   => '1.5em' ],
       h2 => [ fontSize   => '1.375em' ],
       h3 => [ fontSize   => '1.25em' ],
       h4 => [ fontSize   => '1.125em' ],
       h5 => [ fontSize   => '1em' ],
-      h6 => [ fontWeight => 'normal', textDecoration => 'underline' ],
+      h6 => [ fontWeight => 'bold' ],
 
       p => [ lineHeight => '1.727em' ],
 
       hr => [
         margin          => '2em auto',
-        width           => '91%',
+        width           => '100%',
         backgroundColor => color('borderColorHr'),
         borderRadius    => '3px',
         border          => 'none',
@@ -539,15 +544,17 @@ sub archive {
     [qw( .entry__home .entry__archives .entry__related )] => [
       '.entry__content .archives' => [
         li => [
-          marginBottom => '1em',
-          fontSize     => '0.75em',
+          marginBottom => '2em',
 
           'a.title' => [
             display    => 'block',
-            fontSize   => '1.25em',
             lineHeight => '1.727em',
           ],
         ],
+
+      ],
+      '.entry__content .logs' => [
+        '& > *' => [ margin => '0 0.5em' ],
       ],
     ],
   );
@@ -556,10 +563,9 @@ sub archive {
 sub copyright {
   return (
     '#copyright' => [
-      marginTop    => '5em',
-      marginBottom => '5em',
+      marginTop    => '2.5em',
+      marginBottom => '2.5em',
       textAlign    => 'center',
-      fontSize     => '0.75em',
     ],
   );
 }
@@ -569,19 +575,18 @@ sub render {
     [
       global,
       container,
+
       widgets,
       entry,
       content,
       archive,
+
       copyright,
     ]
   );
 
   my $middle = css(
     [
-      'body' => [
-        fontSize => '1.125em',
-      ],
       '#profile' => [
         figure => [
           p => [
@@ -596,25 +601,11 @@ sub render {
           ]
         ],
       ],
-      '#menu' => [
-        [qw(p.kind p.links)] => [
-          float     => 'none',
-          width     => 'auto',
-          textAlign => 'left',
-          margin    => '1em 0',
-
-          a => [
-            margin => '0 0.5em 0 0',
-          ],
-        ]
-      ],
     ]
   );
 
   my $small = css(
     [
-      body => [ fontSize => '1em' ],
-
       '.entry__content .content__card--affiliate p' => [
         float     => 'none',
         margin    => '1em auto',

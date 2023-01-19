@@ -158,7 +158,7 @@ sub main {
 
     is(
       $dom->at('.entry__archives .entry__content .archives + hr + p')->textContent,
-      "過去ログ：" . ( join q{ / }, sort { $b <=> $a } ( $begin .. $end ) )
+      "過去ログ：" . ( join q{/}, sort { $b <=> $a } ( $begin .. $end ) )
     );
 
     for my $yr ( $begin .. $end ) {
@@ -302,7 +302,7 @@ sub main {
 
   is(
     $dom->at('.entry__archives .entry__content .archives + hr + p')->textContent,
-    "過去ログ：" . ( join q{ / }, sort { $b <=> $a } ( $begin .. $end ) )
+    "過去ログ：" . ( join q{/}, sort { $b <=> $a } ( $begin .. $end ) )
   );
 
   for my $yr ( $begin .. $end ) {

@@ -16,6 +16,7 @@ use Kalaclista::Entries;
 use Kalaclista::Path;
 use Kalaclista::Variables;
 
+use WebSite::Extensions::AdjustHeading;
 use WebSite::Extensions::Affiliate;
 use WebSite::Extensions::CodeSyntax;
 use WebSite::Extensions::Furigana;
@@ -93,6 +94,7 @@ sub fixup {
     $entry->type('pages');
   }
 
+  $entry->register( sub { WebSite::Extensions::AdjustHeading->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Furigana->transform(@_) } );

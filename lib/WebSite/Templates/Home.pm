@@ -49,7 +49,7 @@ sub content {
         '本当はもうちょっと良さげな記事とか書きたいんですが、やる気を出してないんで仕方ないよね……。'
       ),
 
-      h1('提供されるコンテンツ'),
+      h2('提供されるコンテンツ'),
 
       p('カラクリスタで提供されるコンテンツは次の通りとなります：'),
 
@@ -112,7 +112,14 @@ sub content {
         )
       ),
 
-      h1('最近の更新'),
+      h2('運営方針と著作権の云々'),
+      p('このブログの運営方針と著作権やライセンスの云々は次のページで確認できます：'),
+      ul(
+        li( a( { href => href( '/policies/', $baseURI ) }, 'カラクリスタの運営ポリシー' ) ),
+        li( a( { href => href( '/licenses/', $baseURI ) }, 'この Web サイトでのライセンスなどについて' ) ),
+      ),
+
+      h2('最近の更新'),
       ul(
         { class => 'archives' },
         (
@@ -134,7 +141,7 @@ sub content {
         )
       ),
 
-      h1('連絡先'),
+      h2('連絡先'),
       p('あとこの WebSite も含め私の連絡先は次の通りとなりますが、場合によっては返信しない可能性もあるのでその点はご了承ください。'),
       ul(
         li(
@@ -160,10 +167,10 @@ sub render {
   return document(
     metadata($vars),
     [
-      banner,
-      profile,
+      banner($vars),
       sitemenu,
-      content($vars),
+      main( content($vars) ),
+      profile,
       siteinfo,
       analytics,
     ]

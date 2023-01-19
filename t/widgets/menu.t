@@ -22,32 +22,22 @@ sub main {
 
   my $dom = $parser->parse($menu)->at('body');
 
-  is( $dom->at('nav')->getAttribute('id'),    'menu' );
-  is( $dom->at('nav')->getAttribute('class'), 'entry__content' );
+  is( $dom->at('nav')->getAttribute('id'), 'menu' );
 
-  ok( $dom->at('nav > hr:first-child') );
+  is( $dom->at('nav > .section > a:first-child')->getAttribute('href'), 'https://example.com/posts/' );
+  is( $dom->at('nav > .section > a:first-child')->text,                 'ブログ' );
 
-  is( $dom->at('nav > p:nth-child(2)')->getAttribute('class'), 'kind' );
+  is( $dom->at('nav > .section a:nth-child(2)')->getAttribute('href'), 'https://example.com/echos/' );
+  is( $dom->at('nav > .section a:nth-child(2)')->text,                 '日記' );
 
-  is( $dom->at('nav > p:nth-child(2) a:first-child')->getAttribute('href'), 'https://example.com/posts/' );
-  is( $dom->at('nav > p:nth-child(2) a:first-child')->text,                 'ブログ' );
+  is( $dom->at('nav > .section a:last-child')->getAttribute('href'), 'https://example.com/notes/' );
+  is( $dom->at('nav > .section a:last-child')->text,                 'メモ帳' );
 
-  is( $dom->at('nav > p:nth-child(2) a:nth-child(2)')->getAttribute('href'), 'https://example.com/echos/' );
-  is( $dom->at('nav > p:nth-child(2) a:nth-child(2)')->text,                 '日記' );
+  is( $dom->at('nav > .help a:first-child')->getAttribute('href'), 'https://example.com/nyarla/' );
+  is( $dom->at('nav > .help a:first-child')->text,                 'プロフィール' );
 
-  is( $dom->at('nav > p:nth-child(2) a:last-child')->getAttribute('href'), 'https://example.com/notes/' );
-  is( $dom->at('nav > p:nth-child(2) a:last-child')->text,                 'メモ帳' );
-
-  is( $dom->at('nav > p:nth-child(3)')->getAttribute('class'), 'links' );
-
-  is( $dom->at('nav > p:nth-child(3) a:first-child')->getAttribute('href'), 'https://example.com/policies/' );
-  is( $dom->at('nav > p:nth-child(3) a:first-child')->text,                 '運営方針' );
-
-  is( $dom->at('nav > p:nth-child(3) a:nth-child(2)')->getAttribute('href'), 'https://example.com/licenses/' );
-  is( $dom->at('nav > p:nth-child(3) a:nth-child(2)')->text,                 '権利情報' );
-
-  is( $dom->at('nav > p:nth-child(3) a:last-child')->getAttribute('href'), $search );
-  is( $dom->at('nav > p:nth-child(3) a:last-child')->text,                 '検索' );
+  is( $dom->at('nav > .help a:last-child')->getAttribute('href'), $search );
+  is( $dom->at('nav > .help a:last-child')->text,                 '検索' );
 
   my $menu2 = sitemenu;
   utf8::decode($menu2);

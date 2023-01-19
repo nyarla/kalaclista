@@ -50,7 +50,7 @@ sub replace {
   $aside->setAttribute( 'class', 'content__card--affiliate' );
 
   my $html = q{};
-  $html .= h1( a( { href => $data->{'href'} }, $data->{'title'} ) );
+  $html .= h2( a( { href => $data->{'href'} }, $data->{'title'} ) );
   $html .= p(
     a(
       { href => $data->{'href'} },
