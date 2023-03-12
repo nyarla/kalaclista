@@ -1,11 +1,11 @@
 lockfileVersion: 5.4
 
 specifiers:
-  budoux: ^0.4.0
+  budoux: ^0.5.0
   normalize.css: ^8.0.1
 
 dependencies:
-  budoux: 0.4.0
+  budoux: 0.5.0
   normalize.css: 8.0.1
 
 packages:
@@ -22,7 +22,7 @@ packages:
   /acorn-globals/7.0.1:
     resolution: {integrity: sha512-umOSDSDrfHbTNPuNpC2NSnnA3LUrqpevPb4T9jRx4MagXNS0rs+gwiTcAvqCRmsD6utzsrzNt+ebm00SNWiC3Q==}
     dependencies:
-      acorn: 8.8.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
     dev: false
 
@@ -31,8 +31,8 @@ packages:
     engines: {node: '>=0.4.0'}
     dev: false
 
-  /acorn/8.8.1:
-    resolution: {integrity: sha512-7zFpHzhnqYKrkYdUjF1HI1bzd0VygEGX8lFk4k5zVMqHEoES+P+7TKI+EvLO9WVMJ8eekdO0aDEK044xTXwPPA==}
+  /acorn/8.8.2:
+    resolution: {integrity: sha512-xjIYgE8HBrkpd/sJqOGNspf8uHG+NOHGOw6a/Urj8taM2EXfdNAH2oFcPeIFfsv3+kz/mJrS5VuMqbNLjCa2vw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: false
@@ -50,11 +50,11 @@ packages:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
     dev: false
 
-  /budoux/0.4.0:
-    resolution: {integrity: sha512-7t2cz5Y6mEji4EgpgTB431k4kLAiCRqfZM9eoONDjsjd4VeXxphZPfaoQICqIGfizwEVs07UV2jITCETpTwDCg==}
+  /budoux/0.5.0:
+    resolution: {integrity: sha512-JYh8b5d4nNqZFyD+fwQvZ3RW9WHCEzAFDFX2X1qA8izUbQccuWhQBx6fm3KIjS+o/b8+/ItIhQPozR3Ae/uETg==}
     hasBin: true
     dependencies:
-      commander: 9.4.1
+      commander: 9.5.0
       jsdom: 20.0.3
     transitivePeerDependencies:
       - bufferutil
@@ -70,8 +70,8 @@ packages:
       delayed-stream: 1.0.0
     dev: false
 
-  /commander/9.4.1:
-    resolution: {integrity: sha512-5EEkTNyHNGFPD2H+c/dXXfQZYa/scCKasxWcXJaWnNJ99pnQN9Vnmqow+p+PlFPE63Q6mThaZws1T+HxfpgtPw==}
+  /commander/9.5.0:
+    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
     dev: false
 
@@ -227,7 +227,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.8.1
+      acorn: 8.8.2
       acorn-globals: 7.0.1
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -250,7 +250,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.11.0
+      ws: 8.13.0
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -317,8 +317,8 @@ packages:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==}
     dev: false
 
-  /punycode/2.1.1:
-    resolution: {integrity: sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==}
+  /punycode/2.3.0:
+    resolution: {integrity: sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==}
     engines: {node: '>=6'}
     dev: false
 
@@ -357,7 +357,7 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       psl: 1.9.0
-      punycode: 2.1.1
+      punycode: 2.3.0
       universalify: 0.2.0
       url-parse: 1.5.10
     dev: false
@@ -366,7 +366,7 @@ packages:
     resolution: {integrity: sha512-l7FvfAHlcmulp8kr+flpQZmVwtu7nfRV7NZujtN0OqES8EL4O4e0qqzL0DC5gAvx/ZC/9lk6rhcUwYvkBnBnYA==}
     engines: {node: '>=12'}
     dependencies:
-      punycode: 2.1.1
+      punycode: 2.3.0
     dev: false
 
   /type-check/0.3.2:
@@ -425,12 +425,12 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /ws/8.11.0:
-    resolution: {integrity: sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==}
+  /ws/8.13.0:
+    resolution: {integrity: sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
+      utf-8-validate: '>=5.0.2'
     peerDependenciesMeta:
       bufferutil:
         optional: true
