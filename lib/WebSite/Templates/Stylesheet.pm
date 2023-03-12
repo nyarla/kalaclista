@@ -251,7 +251,7 @@ sub card {
           } qw(link visited)
         ),
 
-        h1 => [
+        h2 => [
           color => color('foreground'),
         ],
 
@@ -266,7 +266,7 @@ sub card {
 
       div => [
         backgroundColor => color('background'),
-        h1              => [
+        h2              => [
           color => color('linkDisabled'),
         ],
 
@@ -296,12 +296,12 @@ sub card {
         border => '1px solid',
       ],
 
-      "h2" => [
+      "h3" => [
         fontSize     => "1.2em",
         marginBottom => 0,
       ],
 
-      "h2 + p" => [
+      "h3 + p" => [
         margin => 0,
       ],
 
@@ -334,7 +334,7 @@ sub card {
       border          => "1px solid @{[ color('borderColorAffiliate') ]}",
       overflow        => 'hidden',
 
-      h1 => [
+      h2 => [
         fontSize => "1.2em",
         float    => 'left',
 

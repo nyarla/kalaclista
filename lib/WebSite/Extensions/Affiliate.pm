@@ -28,7 +28,6 @@ sub linkify {
     return li(
       { class => 'amazon' },
       a( { href => $shop->link }, 'Amazon.co.jp で探す' ),
-      img( { src => $shop->beacon, width => 1, height => 1 } )
     );
   }
 
@@ -43,27 +42,20 @@ sub linkify {
 }
 
 sub replace {
-  my $el   = shift;
-  my $data = shift;
+  my $el    = shift;
+  my @shops = @_;
+
+  my $primary = $shops[0];
 
   my $aside = $el->tree->createElement('aside');
   $aside->setAttribute( 'class', 'content__card--affiliate' );
 
   my $html = q{};
-  $html .= h2( a( { href => $data->{'href'} }, $data->{'title'} ) );
+  $html .= h2( a( { href => $primary->link }, $primary->label ) );
   $html .= p(
-    a(
-      { href => $data->{'href'} },
-      img(
-        {
-          src    => $data->{'thumbnail'},
-          width  => $data->{'width'},
-          height => $data->{'height'},
-        }
-      )
-    )
+    raw( $primary->image ),
   );
-  $html .= ul( map { linkify($_) } $data->{'links'}->@* );
+  $html .= ul( map { linkify($_) } @shops );
 
   $aside->innerHTML($html);
 
@@ -92,29 +84,41 @@ sub transform {
     my @shops;
 
     for my $shop ( $info->{'data'}->@* ) {
+
+      if ( !exists $shop->{'provider'} ) {
+        warn "provider is not found: ${title}\n";
+        next;
+      }
+
       if ( $shop->{'provider'} eq 'amazon' ) {
-        push @shops,
-            Kalaclista::Shop::Amazon->new(
-              label  => $title,
-              asin   => $shop->{'asin'},
-              width  => ( split qr{x}, $shop->{'size'} )[0],
-              height => ( split qr{x}, $shop->{'size'} )[1],
-              tag    => $shop->{'tag'},
-            );
+        push @shops, Kalaclista::Shop::Amazon->new(
+          $shop->%*,
+          label => $title,
+        );
         next;
       }
 
       if ( $shop->{'provider'} eq 'rakuten' ) {
         if ( exists $shop->{'shop'} && $shop->{'shop'} ne q{} ) {
-          push @shops,
-              Kalaclista::Shop::Rakuten->new(
-                label  => $title,
-                search => $shop->{'search'},
-                width  => ( split qr{x}, $shop->{'size'} )[0],
-                height => ( split qr{x}, $shop->{'size'} )[1],
-                image  => $shop->{'image'},
-                shop   => $shop->{'shop'},
-              );
+          my $item = Kalaclista::Shop::Rakuten->new(
+            label  => $title,
+            search => ( defined $shop->{'search'} ? $shop->{'search'} : $title ),
+          );
+
+          push @shops, Kalaclista::Shop::Rakuten->new(
+            label => $item->label,
+            link  => $item->link,
+            image => a(
+              { href => $item->link },
+              img(
+                {
+                  src    => $shop->{'image'},
+                  width  => ( split qr{x}, $shop->{'size'} )[0],
+                  height => ( split qr{x}, $shop->{'size'} )[1]
+                }
+              )
+            ),
+          );
         }
         else {
           push @shops,
@@ -124,19 +128,7 @@ sub transform {
         next;
       }
     }
-
-    my $first = $shops[0];
-    my %data  = (
-      title     => $first->label,
-      href      => $first->link,
-      beacon    => ( $first->can('beacon') ? $first->beacon : '' ),
-      thumbnail => $first->image,
-      width     => $first->width,
-      height    => $first->height,
-      links     => \@shops,
-    );
-
-    replace( $item, \%data );
+    replace( $item, @shops );
   }
 
   return $entry;

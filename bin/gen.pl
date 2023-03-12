@@ -95,11 +95,11 @@ sub fixup {
   }
 
   $entry->register( sub { WebSite::Extensions::AdjustHeading->transform(@_) } );
-  $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Furigana->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 700, 1400 ] ) } );
   $entry->register( sub { WebSite::Extensions::WebSite->transform(@_) } );
+  $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
 
   return $entry;
 }
