@@ -18,7 +18,7 @@ _gen_bundle_script:
 	@esbuild --bundle --platform=browser --minify src/scripts/budoux.js >public/bundle/main.js
 	@esbuild --bundle --platform=browser --minify src/scripts/production.js >public/bundle/production.js
 
-_gen_bundle: \
+bundle: \
 	_gen_bundle_css \
 	_gen_bundle_script
 
@@ -27,12 +27,12 @@ _gen_assets:
 	@echo copy assets
 	@cp -R content/assets/* public/dist/
 
-_gen_images: _gen_bundle
+_gen_images:
 	@echo generate images
 	@perl bin/gen.pl images
 
 # generate content
-_gen_sitemap_xml: _gen_bundle
+_gen_sitemap_xml:
 	@echo generate sitemap.xml
 	@perl bin/gen.pl sitemap.xml
 
@@ -55,7 +55,6 @@ _gen_content: \
 	_gen_home
 
 gen: \
-	_gen_bundle \
 	_gen_assets \
 	_gen_images \
 	_gen_content
@@ -65,9 +64,11 @@ clean:
 	@mkdir -p public/dist
 
 build:
+	@$(MAKE) bundle
 	@env URL="https://the.kalaclista.com" $(MAKE) gen -j2
 
 dev:
+	@$(MAKE) bundle
 	@env URL="http://nixos:1313" $(MAKE) gen -j2
 
 test:
