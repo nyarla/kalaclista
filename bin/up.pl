@@ -20,7 +20,7 @@ sub cache_control {
     return 60 * 5;
   }
 
-  if ( $path =~ m{^(?:404\.html|atom\.xml|index\.html|index\.xml|jsonfeed\.json|sitemap\.xml)$} ) {
+  if ( $path =~ m{^(?:404\.html|atom\.xml|index\.html|index\.xml|jsonfeed\.json|sitemap\.xml|.+\.js|.+\.css)$} ) {
     return 60 * 5;
   }
 
