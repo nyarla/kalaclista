@@ -316,9 +316,10 @@ sub content {
         [qw/ strong a /] => [ margin => '0 .25em' ],
       ],
 
-      'aside.ads' => [
-        margin    => '1em 0',
-        minHeight => '140px',
+      '.ads' => [
+        margin => '1em 0',
+
+        '&.top' => [ height => '140px', maxHeight => '140px', ],
       ],
 
       '#profile__information' => [textCenter],

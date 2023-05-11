@@ -29,7 +29,7 @@ sub date {
 
 sub ads {
   state $top ||= aside(
-    { class => 'ads' },
+    { class => 'ads top' },
     ins(
       {
         class => 'adsbygoogle',
@@ -47,7 +47,7 @@ sub ads {
   );
 
   state $bottom ||= aside(
-    { class => 'ads' },
+    { class => 'ads bottom' },
     ins(
       {
         class => 'adsbygoogle',
