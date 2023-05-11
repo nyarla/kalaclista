@@ -87,10 +87,10 @@ sub global {
 
     link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } ),
 
-    style( raw( $vars->data->{'stylesheet'} ) ),
-    script( raw( $vars->data->{'script'} ) ),
+    link_( { rel => 'stylesheet', href => href( '/main.css', $baseURI ) } ),
 
-    ( $vars->is_production ? script( raw( $vars->data->{'script.production'} ) ) : () ),
+    script( { src => href( 'main.js', $baseURI ) }, '' ),
+    ( $vars->is_production ? script( { src => href( 'production.js', $baseURI ) }, '' ) : () ),
   );
 
   return @result;

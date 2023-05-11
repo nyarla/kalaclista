@@ -36,35 +36,35 @@ sub main {
   my $banner = banner($vars);
   my $dom    = parse($banner);
 
-  is( $dom->at('header')->getAttribute('id'),  'global' );
-  is( scalar $dom->find('header > p > a')->@*, 1 );
+  is( $dom->at('nav')->getAttribute('id'),      'global' );
+  is( scalar $dom->find('#global > p > a')->@*, 1 );
 
   is(
-    $dom->at('header > p > a')->getAttribute('href'),
+    $dom->at('#global > p > a')->getAttribute('href'),
     'https://example.com/'
   );
 
   is(
-    $dom->at('header > p > a > img')->getAttribute('src'),
+    $dom->at('#global > p > a > img')->getAttribute('src'),
     'https://example.com/assets/avatar.svg'
   );
 
-  is( $dom->at('header > p > a > img')->getAttribute('width'),  50 );
-  is( $dom->at('header > p > a > img')->getAttribute('height'), 50 );
+  is( $dom->at('#global > p > a > img')->getAttribute('width'),  50 );
+  is( $dom->at('#global > p > a > img')->getAttribute('height'), 50 );
 
   for my $section (qw(posts echos notes)) {
     $vars->section($section);
     $dom = parse( banner($vars) );
 
-    is( $dom->at('header > p > span')->innerText, '→' );
+    is( $dom->at('#global > p > span')->innerText, '→' );
 
     is(
-      $dom->at('header > p > a:last-child')->getAttribute('href'),
+      $dom->at('#global > p > a:last-child')->getAttribute('href'),
       "https://example.com/${section}/",
     );
 
     is(
-      $dom->at('header > p > a:last-child')->innerText,
+      $dom->at('#global > p > a:last-child')->innerText,
       $vars->contains->{ $vars->section }->{'label'},
     );
   }

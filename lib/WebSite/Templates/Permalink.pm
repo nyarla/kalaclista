@@ -7,13 +7,11 @@ use utf8;
 use feature qw(state);
 
 use Kalaclista::HyperScript;
+use WebSite::Helper::Hyperlink qw(href);
 
-use WebSite::Widgets::Analytics;
-use WebSite::Widgets::Info;
-use WebSite::Widgets::Menu;
-use WebSite::Widgets::Profile;
-use WebSite::Widgets::Title;
-use WebSite::Widgets::Metadata;
+use Kalaclista::Constants;
+
+use WebSite::Widgets::Layout;
 
 sub readtime {
   my $text = shift;
@@ -67,44 +65,42 @@ sub ads {
 
   my $position = shift;
 
-  return $position eq 'top' ? $top : $bottom;
+  return ( $position eq 'top' ? ( hr, $top ) : ( hr, $bottom ) );
 }
 
-sub render {
+sub content {
   my $vars  = shift;
   my $entry = $vars->entries->[0];
 
   my $date     = date( $entry->date );
   my $readtime = readtime( $entry->dom->innerHTML );
 
-  return document(
-    metadata($vars),
-    [
-      banner($vars),
-      sitemenu,
-      main(
-        ( $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('top') : () ),
-        article(
-          { class => 'entry' },
-          header(
-            p(
-              time_( { datetime => $date }, "${date}：" ),
-              span("読了まで：約${readtime}分"),
-            ),
-            h1( a( { href => $entry->href->to_string }, $entry->title ) ),
-          ),
-          section(
-            { class => 'entry__content' },
-            raw( $entry->dom->innerHTML ),
-          ),
-        ),
-        ( $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('bottom') : () ),
+  my @top    = $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('top')    : ();
+  my @bottom = $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('bottom') : ();
+
+  return article(
+    { class => 'entry entry__permalink' },
+    header(
+      h1( a( { href => $entry->href->to_string }, $entry->title ) ),
+      p(
+        time_( { datetime => $date }, "更新：${date}" ),
+        span("読了まで：約${readtime}分"),
       ),
-      profile,
-      siteinfo,
-      analytics,
-    ],
+    ),
+    section(
+      { class => 'entry__content' },
+      @top,
+      hr( { class => 'sep' } ),
+      raw( $entry->dom->innerHTML ),
+      @bottom,
+    ),
   );
+}
+
+sub render {
+  my $vars = shift;
+
+  return layout( $vars => content($vars) );
 }
 
 1;

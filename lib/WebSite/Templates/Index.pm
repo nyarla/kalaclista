@@ -7,16 +7,11 @@ use utf8;
 use feature qw(state);
 
 use Kalaclista::HyperScript;
-use Kalaclista::Constants;
-
 use WebSite::Helper::Hyperlink qw(href);
 
-use WebSite::Widgets::Analytics;
-use WebSite::Widgets::Info;
-use WebSite::Widgets::Menu;
-use WebSite::Widgets::Profile;
-use WebSite::Widgets::Title;
-use WebSite::Widgets::Metadata;
+use Kalaclista::Constants;
+
+use WebSite::Widgets::Layout;
 
 sub date {
   return ( split qr{T}, shift )[0];
@@ -56,37 +51,25 @@ sub content {
     }
   }
 
-  return main(
-    article(
-      { class => [qw( entry entry__archives )] },
+  return article(
+    { class => [qw( entry entry__archives )] },
 
-      header( h1( a( { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
+    header( h1( a( { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
 
-      section(
-        { class => 'entry__content' },
-        p($summary),
-        hr,
-        ( $section ne 'notes' ? strong("${year}年：") : () ),
-        ul( { class => 'archives' }, @contents ),
-        ( $section ne 'notes' ? ( hr, p( { class => 'logs' }, "過去ログ：", raw( join q{/}, @archives ) ) ) : () ),
-      )
-    ),
+    section(
+      { class => 'entry__content' },
+      p($summary),
+      hr,
+      ( $section ne 'notes' ? strong("${year}年：") : () ),
+      ul( { class => 'archives' }, @contents ),
+      ( $section ne 'notes' ? ( hr, p( { class => 'logs' }, "過去ログ：", raw( join q{/}, @archives ) ) ) : () ),
+    )
   );
 }
 
 sub render {
   my $vars = shift;
-
-  return document(
-    metadata($vars),
-    [
-      banner($vars),
-      sitemenu,
-      content($vars),
-      profile,
-      siteinfo,
-    ]
-  );
+  return layout( $vars => content($vars) );
 }
 
 1;

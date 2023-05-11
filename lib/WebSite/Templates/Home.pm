@@ -9,12 +9,7 @@ use WebSite::Helper::Hyperlink qw(href);
 
 use Kalaclista::Constants;
 
-use WebSite::Widgets::Analytics;
-use WebSite::Widgets::Info;
-use WebSite::Widgets::Menu;
-use WebSite::Widgets::Profile;
-use WebSite::Widgets::Title;
-use WebSite::Widgets::Metadata;
+use WebSite::Widgets::Layout;
 
 sub date {
   return ( split qr{T}, shift )[0];
@@ -28,25 +23,48 @@ sub content {
     { class => 'entry entry__home' },
     header( h1('カラクリスタとは？') ),
     section(
+      hr( { class => 'sep' } ),
       { class => 'entry__content' },
       p(
         'カラクリスタとは',
         a(
           { href => 'https://the.kalaclista.com/nyarla/' },
-          'にゃるらとかカラクリスタとか名乗っている岡村直樹'
+          'にゃるらとかカラクリスタと名乗っている岡村直樹'
         ),
         'によって運営されているブログとメモ帳サイトです。',
         '長年ブログをあっちこっちで書いては移転を繰り返し、今の形に落ち着きました。'
       ),
 
       p(
-        '過去に色々と書き散らしていたので、今見返すと『何言ってんだコイツ』みたいな記事や、',
-        'ホスティング元を移転しまくった結果として表示が乱れている記事もあります。'
+        '元々色々なホスティング先に引越したり記事を思うがまま書き散らしていたので、',
+        '今見返すと『何言ってんだコイツ』みたいな記事や表示が乱れている記事もあります。'
       ),
 
       p(
-        'しかし最近ではそのアホな行動も落ち着き、今は定期的な週報と月報ブログになっています。',
-        '本当はもうちょっと良さげな記事とか書きたいんですが、やる気を出してないんで仕方ないよね……。'
+        'しかし最近ではその様な行動も落ち着き、今は定期的な週報と月報ブログになっているほか、',
+        'また時々誰かの役に立つかもしれない記事を公開を不定期に公開しています。'
+      ),
+
+      h2('最近の更新'),
+      ul(
+        { class => 'archives' },
+        (
+          map {
+            li(
+              time_(
+                { datetime => date( $_->date ) },
+                date( $_->date ),
+                '：（',
+                a(
+                  { href => href( "/@{[ $_->type ]}/", $baseURI ) },
+                  $vars->contains->{ $_->type }->{'label'},
+                ),
+                '）'
+              ),
+              a( { href => $_->href, class => 'title' }, $_->title )
+            )
+          } $vars->entries->@*
+        )
       ),
 
       h2('提供されるコンテンツ'),
@@ -64,7 +82,7 @@ sub content {
         ),
         li(
           a( { href => href( '/notes/', $baseURI ) }, 'メモ帳' ),
-          '：個人的なメモっぽいもの。Wiki の成りそこない'
+          '：個人的なメモっぽいもの。Wiki 感を出したかった（つもり）'
         ),
       ),
 
@@ -119,28 +137,6 @@ sub content {
         li( a( { href => href( '/licenses/', $baseURI ) }, 'この Web サイトでのライセンスなどについて' ) ),
       ),
 
-      h2('最近の更新'),
-      ul(
-        { class => 'archives' },
-        (
-          map {
-            li(
-              time_(
-                { datetime => date( $_->date ) },
-                date( $_->date )
-              ),
-              '（',
-              a(
-                { href => href( "/@{[ $_->type ]}/", $baseURI ) },
-                $vars->contains->{ $_->type }->{'label'},
-              ),
-              '）',
-              a( { href => $_->href, class => 'title' }, $_->title )
-            )
-          } $vars->entries->@*
-        )
-      ),
-
       h2('連絡先'),
       p('あとこの WebSite も含め私の連絡先は次の通りとなりますが、場合によっては返信しない可能性もあるのでその点はご了承ください。'),
       ul(
@@ -163,18 +159,7 @@ sub content {
 
 sub render {
   my $vars = shift;
-
-  return document(
-    metadata($vars),
-    [
-      banner($vars),
-      sitemenu,
-      main( content($vars) ),
-      profile,
-      siteinfo,
-      analytics,
-    ]
-  );
+  return layout( $vars => content($vars) );
 }
 
 1;

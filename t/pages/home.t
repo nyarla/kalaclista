@@ -114,11 +114,11 @@ sub main {
 
   # html > body
   is(
-    $dom->at('.entry__home .entry__content p:first-child a')->getAttribute('href'),
+    $dom->at('.entry__home .entry__content hr + p a')->getAttribute('href'),
     'https://the.kalaclista.com/nyarla/'
   );
 
-  my $list = $dom->at('.entry__home .entry__content h2:nth-child(4) ~ ul');
+  my $list = $dom->at('.entry__home .entry__content .archives + h2 + p + ul');
 
   is(
     $list->at('li:nth-child(1) a')->getAttribute('href'),
@@ -135,7 +135,7 @@ sub main {
     'https://the.kalaclista.com/notes/',
   );
 
-  my $feeds = $dom->at('.entry__home .entry__content h2:nth-child(4) ~ ul ~ ul');
+  my $feeds = $dom->at('.entry__home .entry__content .archives + h2 + p + ul + p + ul');
 
   is(
     $feeds->at('li:nth-child(1) a:nth-child(1)')->getAttribute('href'),
@@ -198,9 +198,14 @@ sub main {
   );
 
   for my $item ( $dom->find('.entry__home .entry__content ul.archives')->@* ) {
-    is(
+    like(
       $item->at('li time')->getAttribute('datetime'),
+      qr{\A\d{4}-\d{2}-\d{2}\z}
+    );
+
+    like(
       $item->at('li time')->textContent,
+      qr<\d{4}-\d{2}-\d{2}：（(?:ブログ|日記|メモ帳)）>
     );
 
     like(
@@ -216,7 +221,7 @@ sub main {
     );
   }
 
-  my $contact = $dom->at('.entry__home .entry__content ul.archives ~ ul');
+  my $contact = $dom->at('.entry__home .entry__content .archives ~ ul ~ ul ~ ul ~ ul');
 
   is(
     $contact->at('li:nth-child(1) a')->getAttribute('href'),

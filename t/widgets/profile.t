@@ -37,20 +37,17 @@ sub main {
   is( $dom->at('nav > p > a:nth-child(1)')->getAttribute('href'), 'https://github.com/nyarla/' );
   is( $dom->at('nav > p > a:nth-child(1)')->text,                 'GitHub' );
 
-  is( $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), 'https://zenn.dev/nyarla' );
-  is( $dom->at('nav > p > a:nth-child(2)')->text,                 'Zenn' );
+  is( $dom->at('nav > p > a:nth-child(3)')->getAttribute('href'), 'https://zenn.dev/nyarla' );
+  is( $dom->at('nav > p > a:nth-child(3)')->text,                 'Zenn' );
 
-  is( $dom->at('nav > p > a:nth-child(3)')->getAttribute('href'), 'https://scrapbox.io/kalaclista/' );
-  is( $dom->at('nav > p > a:nth-child(3)')->text,                 'Scrapbox' );
+  is( $dom->at('nav > p > a:nth-child(5)')->getAttribute('href'), 'https://kalaclista.com/@nyarla' );
+  is( $dom->at('nav > p > a:nth-child(5)')->text,                 'GoToSocial' );
 
-  is( $dom->at('nav > p > a:nth-child(4)')->getAttribute('href'), 'https://kalaclista.com/@nyarla' );
-  is( $dom->at('nav > p > a:nth-child(4)')->text,                 'Fediverse' );
+  is( $dom->at('nav > p > a:nth-child(7)')->getAttribute('href'), 'https://misskey.io/@nyarla' );
+  is( $dom->at('nav > p > a:nth-child(7)')->text,                 'Misskey.io' );
 
-  is( $dom->at('nav > p > a:nth-child(5)')->getAttribute('href'), 'https://trickle.day/nyarla' );
-  is( $dom->at('nav > p > a:nth-child(5)')->text,                 'Trickle' );
-
-  is( $dom->at('nav > p > a:nth-child(6)')->getAttribute('href'), 'https://user.topia.tv/5R9Y' );
-  is( $dom->at('nav > p > a:nth-child(6)')->text,                 'トピア' );
+  is( $dom->at('nav > p > a:nth-child(9)')->getAttribute('href'), 'https://fedibird.com/@nyarla' );
+  is( $dom->at('nav > p > a:nth-child(9)')->text,                 'Fedibird.com' );
 
   my $profile2 = profile;
   utf8::decode($profile2);

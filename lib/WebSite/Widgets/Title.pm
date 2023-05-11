@@ -8,7 +8,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(banner);
 
-use Kalaclista::HyperScript qw(header p a img hr span);
+use Kalaclista::HyperScript qw(nav p a img hr span br);
 
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 use Kalaclista::Constants;
@@ -21,7 +21,8 @@ sub breadcrumb {
 
   push @tree, a(
     { href => href( '/', $baseURI ) },
-    img( { src => href( '/assets/avatar.svg', $baseURI ), height => 50, width => 50 } ),
+    img( { src => href( '/assets/avatar.svg', $baseURI ), height => 50, width => 50, alt => '' } ),
+    br,
     'カラクリスタ'
   );
 
@@ -37,10 +38,9 @@ sub banner {
   my $vars    = shift;
   my $baseURI = Kalaclista::Constants->baseURI;
 
-  return header(
+  return nav(
     { id => 'global' },
     p( breadcrumb( $vars, $baseURI ) ),
-    hr,
   );
 }
 

@@ -47,12 +47,15 @@ sub profile {
 
     nav(
       p(
-        hyperlink( 'GitHub',    'https://github.com/nyarla/' ),
-        hyperlink( 'Zenn',      'https://zenn.dev/nyarla' ),
-        hyperlink( 'Scrapbox',  'https://scrapbox.io/kalaclista/' ),
-        hyperlink( 'Fediverse', 'https://kalaclista.com/@nyarla' ),
-        hyperlink( 'Trickle',   'https://trickle.day/nyarla' ),
-        hyperlink( 'トピア',       'https://user.topia.tv/5R9Y' ),
+        hyperlink( 'GitHub', 'https://github.com/nyarla/' ),
+        wbr,
+        hyperlink( 'Zenn', 'https://zenn.dev/nyarla' ),
+        wbr,
+        hyperlink( 'GoToSocial', 'https://kalaclista.com/@nyarla' ),
+        wbr,
+        hyperlink( 'Misskey.io', 'https://misskey.io/@nyarla' ),
+        wbr,
+        hyperlink( 'Fedibird.com', 'https://fedibird.com/@nyarla' ),
       )
     )
   );
