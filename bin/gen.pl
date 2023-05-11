@@ -41,14 +41,7 @@ sub init {
     is_production => ( $const->baseURI->to_string eq 'https://the.kalaclista.com' ),
     website       => 'カラクリスタ',
     description   => '『輝かしい青春』なんて失かった人の Web サイトです',
-    data          => {
-
-      # FIXME
-      'stylesheet'        => $const->rootdir->child('public/bundle/main.css')->get,
-      'script'            => $const->rootdir->child('public/bundle/main.js')->get,
-      'script.production' => $const->rootdir->child('public/bundle/production.js')->get,
-    },
-    contains => {
+    contains      => {
       posts => {
         label       => 'ブログ',
         website     => 'カラクリスタ・ブログ',
@@ -370,7 +363,7 @@ sub main {
 
       my $vars = $const->vars;
       $vars->title( $entry->title );
-      $vars->summary( $entry->dom->at('*:first-child')->textContent . '……' );
+      $vars->summary( ( $entry->dom->at('.sep ~ *') // $entry->dom->at('*:first-child') )->textContent . '……' );
       $vars->section( $entry->type );
       $vars->kind('permalink');
       $vars->entries( [$entry] );

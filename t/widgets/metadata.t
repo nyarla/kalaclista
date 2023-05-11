@@ -80,11 +80,6 @@ sub testing_types {
 sub testing_global {
   my $vars = Kalaclista::Variables->new(
     is_production => 1,
-    data          => {
-      stylesheet          => '* { color: #000; }',
-      script              => 'alert(1)',
-      'script.production' => 'alert(2)',
-    },
   );
 
   my $global = head( WebSite::Widgets::Metadata::global($vars) );
@@ -104,9 +99,8 @@ sub testing_global {
   is( $dom->at('link[rel="apple-touch-icon"]')->getAttribute('href'),                  'https://example.com/apple-touch-icon.png' );
   is( $dom->at('link[rel="author"]')->getAttribute('href'),                            'http://www.hatena.ne.jp/nyarla-net/' );
 
-  is( $dom->at('style')->textContent,         '* { color: #000; }' );
-  is( $dom->find('script')->[0]->textContent, 'alert(1)' );
-  is( $dom->find('script')->[1]->textContent, 'alert(2)' );
+  is( $dom->find('script')->[0]->getAttribute('src'), 'https://example.com/main.js' );
+  is( $dom->find('script')->[1]->getAttribute('src'), 'https://example.com/production.js' );
 
   my $global2 = head( WebSite::Widgets::Metadata::global($vars) );
   utf8::decode($global2);

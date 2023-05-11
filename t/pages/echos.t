@@ -63,7 +63,7 @@ sub main {
 
     my $title   = $dom->at('.entry header h1')->textContent;
     my $website = 'カラクリスタ・エコーズ';
-    my $summary = $dom->at('.entry .entry__content *:first-child')->textContent . "……";
+    my $summary = ( $dom->at('.entry__content > .sep ~ *') // $dom->at('.entry__content > *:first-child') )->textContent . "……";
 
     is( $dom->at('title')->textContent,                                "${title} - ${website}" );
     is( $dom->at('meta[name="description"]')->getAttribute('content'), $summary );
@@ -153,7 +153,7 @@ sub main {
 
     # html > body
     like( $dom->at('.entry header p time')->getAttribute('datetime'), qr<\d{4}-\d{2}-\d{2}> );
-    like( $dom->at('.entry header p time')->textContent,              qr<\d{4}-\d{2}-\d{2}：> );
+    like( $dom->at('.entry header p time')->textContent,              qr<更新：\d{4}-\d{2}-\d{2}> );
     like( $dom->at('.entry header p span')->textContent,              qr<読了まで：約\d+分> );
 
     is( $dom->at('.entry header h1 a')->textContent,          $title );

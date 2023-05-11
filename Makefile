@@ -11,12 +11,15 @@ _gen_bundle_css:
 	@perl bin/gen.pl main.css
 	@cp -RH node_modules/normalize.css/normalize.css src/stylesheets/normalize.css
 	@esbuild --bundle --platform=browser --minify src/stylesheets/main.css >public/bundle/main.css
+	@cp public/bundle/main.css public/dist/main.css
 
 _gen_bundle_script:
 	@echo generate scripts
 	@test -d public/bundle || mkdir -p public/bundle
 	@esbuild --bundle --platform=browser --minify src/scripts/budoux.js >public/bundle/main.js
 	@esbuild --bundle --platform=browser --minify src/scripts/production.js >public/bundle/production.js
+	@cp public/bundle/main.js public/dist/main.js
+	@cp public/bundle/production.js public/dist/production.js
 
 bundle: \
 	_gen_bundle_css \

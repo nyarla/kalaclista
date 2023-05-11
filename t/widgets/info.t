@@ -24,7 +24,7 @@ sub main {
   is( $dom->at('footer')->getAttribute('id'),           'copyright' );
   is( $dom->at('footer > p > a')->getAttribute('href'), 'https://example.com/nyarla/' );
 
-  is( $dom->at('footer > p')->textContent, qq{(C) 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla} );
+  is( $dom->at('footer > p')->textContent, qq{(c) 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla} );
 
   my $info2 = siteinfo;
   utf8::decode($info2);

@@ -10,7 +10,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(siteinfo);
 
-use Kalaclista::HyperScript qw(p footer);
+use Kalaclista::HyperScript qw(p footer raw);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
 use Kalaclista::Constants;
@@ -24,7 +24,7 @@ sub siteinfo {
   $result = footer(
     { id => 'copyright' },
     p(
-      '(C) 2006-' . ( (localtime)[5] + 1900 ) . ' ',
+      '(c) 2006-' . ( (localtime)[5] + 1900 ) . ' ',
       hyperlink( 'OKAMURA Naoki aka nyarla', href( '/nyarla/', $baseURI ) )
     )
   );

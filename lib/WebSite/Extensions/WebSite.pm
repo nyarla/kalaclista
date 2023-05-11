@@ -63,12 +63,8 @@ sub transform {
       last;
     }
 
-    if ( length($title) > 35 ) {
-      $title = substr( $title, 0, 35 ) . "……";
-    }
-
-    if ( length($summary) > 70 ) {
-      $summary = substr( $summary, 0, 70 ) . "……";
+    if ( length($summary) > 39 ) {
+      $summary = substr( $summary, 0, 39 ) . "……";
     }
 
     my $html;
