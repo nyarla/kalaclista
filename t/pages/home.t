@@ -230,7 +230,7 @@ sub main {
 
   is(
     $contact->at('li:nth-child(2) a')->getAttribute('href'),
-    'https://twitter.com/kalaclista/'
+    'https://kalaclista.com/@nyarla'
   );
 
   done_testing;

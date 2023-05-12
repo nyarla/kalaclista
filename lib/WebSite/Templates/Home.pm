@@ -149,8 +149,8 @@ sub content {
         ),
 
         li(
-          'Twitter:  ',
-          a( { href => 'https://twitter.com/kalaclista/' }, '@kalaclista' ),
+          'GoToSocial:  ',
+          a( { href => 'https://kalaclista.com/@nyarla' }, '@nyarla' ),
         ),
       ),
     ),
