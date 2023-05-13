@@ -89,6 +89,12 @@ up: clean build
 	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd run public/state/upload.txt
 	cd public/state && mv new.txt old.txt
 
+sync:
+	rm -rf public/{dist,state} && mkdir -p public/{dist,state}
+	@$(MAKE) build
+	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd sync --delete public/dist/ s3://the.kalaclista.com
+	@$(MAKE) up
+
 shell:
 	@cp /etc/nixos/flake.lock .
 	@cp app/cpanfile.nix cpanfile.nix
