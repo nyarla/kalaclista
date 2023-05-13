@@ -90,7 +90,7 @@ sub fixup {
   $entry->register( sub { WebSite::Extensions::AdjustHeading->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Furigana->transform(@_) } );
-  $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 700, 1400 ] ) } );
+  $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 640, 1280 ] ) } );
   $entry->register( sub { WebSite::Extensions::WebSite->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
 
@@ -124,18 +124,6 @@ sub main {
     return $class->generate(
       dist     => $const->rootdir->child('src/stylesheets/main.css'),
       template => 'WebSite::Templates::Stylesheet',
-    );
-  }
-
-  if ( $action eq 'images' ) {
-    my $class = $generators{$action};
-    load($class);
-
-    return $class->generate(
-      distdir => $distdir->child('images'),
-      images  => $images,
-      datadir => $datadir->child('pictures'),
-      scales  => [ [ '1x', 700 ], [ '2x', 1400 ] ],
     );
   }
 

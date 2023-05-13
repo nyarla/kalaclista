@@ -27,7 +27,13 @@ _gen_assets:
 
 _gen_images:
 	@echo generate images
-	@perl bin/gen.pl images
+	@sha256sum -b $$(find content/assets/images -type f) | sort >public/state/sha256.images.new
+	@touch public/state/sha256.images.latest
+	@comm -23 public/state/sha256.images.{new,latest} \
+		| cut -d ' ' -f2 \
+		| sed 's#*content/assets/images/##' \
+		| xargs -I{} -P$(shell nproc --all --ignore 1) bash bin/gen-image.sh {}
+	@mv public/state/sha256.images.{new,latest}
 
 # generate content
 _gen_sitemap_xml:
@@ -57,7 +63,7 @@ _gen_standalone: \
 
 gen:
 	@echo generate images
-	@perl bin/gen.pl images
+	@$(MAKE) _gen_images
 	@test -d public/bundle || mkdir -p public/bundle
 	@$(MAKE) _gen_standalone -j7
 
