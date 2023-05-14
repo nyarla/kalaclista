@@ -71,6 +71,10 @@ clean:
 	@test ! -d public/dist || rm -rf public/dist
 	@mkdir -p public/dist
 
+reset: clean
+	@test ! -d public/state || rm -rf public/state
+	@mkdir -p public/state
+
 build:
 	@env URL="https://the.kalaclista.com" $(MAKE) gen
 
@@ -89,9 +93,7 @@ up: clean build
 	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd run public/state/upload.txt
 	cd public/state && mv new.txt old.txt
 
-sync:
-	rm -rf public/{dist,state} && mkdir -p public/{dist,state}
-	@$(MAKE) build
+sync: reset build
 	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd sync --delete public/dist/ s3://the.kalaclista.com
 	@$(MAKE) up
 
