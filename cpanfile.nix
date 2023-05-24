@@ -3,24 +3,6 @@ with pkgs;
 with perlPackages;
 let
   modules = rec {
-    AlienBuildPluginDownloadGitLab = buildPerlPackage {
-      pname = "Alien-Build-Plugin-Download-GitLab";
-      version = "0.01";
-      src = fetchurl {
-        url =
-          "mirror://cpan/authors/id/P/PL/PLICEASE/Alien-Build-Plugin-Download-GitLab-0.01.tar.gz";
-        sha256 =
-          "c1f089c8ea152a789909d48a83dbfcf2626f773daf30431c8622582b26aba902";
-      };
-      buildInputs = [ Test2Suite ];
-      propagatedBuildInputs = [ AlienBuild PathTiny URI ];
-      meta = {
-        homepage =
-          "https://metacpan.org/pod/Alien::Build::Plugin::Download::GitLab";
-        description = "Alien::Build plugin to download from GitLab";
-        license = with lib.licenses; [ artistic1 gpl1Plus ];
-      };
-    };
     Appwatcher = buildPerlModule {
       pname = "App-watcher";
       version = "0.13";
@@ -262,12 +244,12 @@ let
     };
     ModuleBuildTiny = buildPerlModule {
       pname = "Module-Build-Tiny";
-      version = "0.039";
+      version = "0.045";
       src = fetchurl {
         url =
-          "mirror://cpan/authors/id/L/LE/LEONT/Module-Build-Tiny-0.039.tar.gz";
+          "mirror://cpan/authors/id/L/LE/LEONT/Module-Build-Tiny-0.045.tar.gz";
         sha256 =
-          "7d580ff6ace0cbe555bf36b86dc8ea232581530cbeaaea09bccb57b55797f11c";
+          "d20692eee246d0b329b7f7659f36286b14ae0696fe91078a64b7078f8876d300";
       };
       propagatedBuildInputs =
         [ ExtUtilsConfig ExtUtilsHelpers ExtUtilsInstallPaths ];
@@ -406,12 +388,12 @@ let
     };
     TextHyperScript = buildPerlModule {
       pname = "Text-HyperScript";
-      version = "0.05";
+      version = "0.06";
       src = fetchurl {
         url =
-          "mirror://cpan/authors/id/N/NY/NYARLA/Text-HyperScript-0.05.tar.gz";
+          "mirror://cpan/authors/id/N/NY/NYARLA/Text-HyperScript-0.06.tar.gz";
         sha256 =
-          "e0a68f90decdd513f604752f6078fdf1fe254395fba9f39d539dbc10dc264820";
+          "1b3ba5b1d087ec19f4f3f34f34997f8a5650acf0334fe3b7a22a97a9eeccc399";
       };
       buildInputs = [ ModuleBuildTiny Test2Suite ];
       propagatedBuildInputs = [ ExporterLite ];
@@ -492,6 +474,24 @@ let
       };
       meta = {
         description = "Base class for SAX Drivers and Filters";
+        license = with lib.licenses; [ artistic1 gpl1Plus ];
+      };
+    };
+    AlienBuildPluginDownloadGitLab = buildPerlPackage {
+      pname = "Alien-Build-Plugin-Download-GitLab";
+      version = "0.01";
+      src = fetchurl {
+        url =
+          "mirror://cpan/authors/id/P/PL/PLICEASE/Alien-Build-Plugin-Download-GitLab-0.01.tar.gz";
+        sha256 =
+          "c1f089c8ea152a789909d48a83dbfcf2626f773daf30431c8622582b26aba902";
+      };
+      buildInputs = [ Test2Suite ];
+      propagatedBuildInputs = [ AlienBuild PathTiny URI ];
+      meta = {
+        homepage =
+          "https://metacpan.org/pod/Alien::Build::Plugin::Download::GitLab";
+        description = "Alien::Build plugin to download from GitLab";
         license = with lib.licenses; [ artistic1 gpl1Plus ];
       };
     };
@@ -618,7 +618,6 @@ in with modules; [
   ModuleBuildXSUtil
   ModuleCPANfile
   ModuleLoad
-  ModulePluggable
   Mouse
   POSIXstrftimeCompiler
   ParallelForkBossWorkerAsync
@@ -635,7 +634,6 @@ in with modules; [
   SignalMask
   StreamBuffered
   StringShellQuote
-  SubInfo
   SubName
   SubUplevel
   TermTable
