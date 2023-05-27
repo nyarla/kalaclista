@@ -26,6 +26,7 @@ sub transform {
 
     my $data = Kalaclista::WebSite->load( $href, $datadir );
     my $link = uri_unescape($href);
+    utf8::decode($link);
     my ( $title, $summary );
 
     my $exist = 1;
