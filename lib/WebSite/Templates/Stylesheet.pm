@@ -319,7 +319,7 @@ sub content {
       '.ads' => [
         margin => '1em 0',
 
-        '&.top' => [ height => '140px', maxHeight => '140px', ],
+        '&.top' => [ minHeight => '140px', maxHeight => '140px', ],
       ],
 
       '#profile__information' => [textCenter],
