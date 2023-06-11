@@ -10,16 +10,17 @@
         mkShell rec {
           name = "the.kalaclista.com-v5";
           packages = [
-            perl
-            gnumake
-            curl
+            cmark
             coreutils
+            curl
+            esbuild
+            gnumake
             imagemagick
             jhead
-            optipng
-            esbuild
-            s5cmd
             nodePackages.prettier
+            optipng
+            perl
+            s5cmd
           ] ++ cpanfile;
         };
     };
