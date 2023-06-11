@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "budoux": "^0.5.1",
     "normalize.css": "^8.0.1"
   },
   "devDependencies": {
+    "budoux": "^0.5.1",
     "html-minifier": "^4.0.0"
   }
 }
