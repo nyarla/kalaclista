@@ -173,7 +173,7 @@ sub handle {
     $in->emit($src);
 
     system(
-      qw(nvim --headless -u),
+      qw(nvim --headless -es -u),
       $ENV{'HOME'} . '/.config/nvim/highlight.lua',
       '-c', "TOhtml | w! @{[ $out->path ]} | qa! ",
       $in->path,
@@ -193,6 +193,8 @@ sub handle {
 
     $idx++;
   }
+
+  print 'Done: ', $path, "\n";
 
   return {};
 }
