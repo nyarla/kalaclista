@@ -50,7 +50,23 @@ main() {
 
   test -d "$(dirname "$dest")" || mkdir -p "$(dirname "$dest")"
   echo "${filename}"
-  htmlfy $src >$dest
+  htmlfy $src | bash node_modules/.bin/html-minifier \
+    --collapse-whitespace \
+    --continue-on-parse-error \
+    --keep-closing-slash \
+    --minify-css \
+    --prevent-attributes-escaping \
+    --process-conditional-comments \
+    --remove-attribute-quotes \
+    --remove-comments \
+    --remove-empty-attributes \
+    --remove-empty-elements \
+    --remove-optional-tags \
+    --remove-redundant-attributes \
+    --remove-tag-whitespace \
+    --sort-attributes \
+    --sort-class-name \
+  >"$dest"
 }
 
 main "${@}"
