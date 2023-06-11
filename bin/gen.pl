@@ -11,6 +11,9 @@ BEGIN {
 }
 
 use Module::Load qw(load);
+use HTML5::DOM;
+
+my $parser = HTML5::DOM->new( { script => 1 } );
 
 use Kalaclista::Entries;
 use Kalaclista::Path;
@@ -89,7 +92,6 @@ sub fixup {
 
   $entry->register( sub { WebSite::Extensions::AdjustHeading->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
-  $entry->register( sub { WebSite::Extensions::Furigana->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 640, 1280 ] ) } );
   $entry->register( sub { WebSite::Extensions::WebSite->transform(@_) } );
   $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
@@ -347,6 +349,20 @@ sub main {
         map { fixup($_) } $entries->entries->@*;
 
     for my $entry (@entries) {
+      my $precompiled = do {
+        my $path = $entry->path;
+        $path =~ s{content/entries}{content/precompiled};
+        open( my $fh, '<', $path );
+        local $/;
+        my $data = <$fh>;
+        close($fh);
+        utf8::decode($data);
+        $data;
+      };
+
+      my $dom = $parser->parse($precompiled)->body;
+
+      $entry->dom($dom);
       $entry->transform;
 
       my $vars = $const->vars;

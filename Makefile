@@ -18,7 +18,6 @@ _gen_bundle_css:
 _gen_bundle_script:
 	@echo generate scripts
 	@esbuild --bundle --platform=browser --minify src/scripts/production.js >public/bundle/production.js
-	@cp public/bundle/main.js public/dist/main.js
 	@cp public/bundle/production.js public/dist/production.js
 
 _gen_assets:
@@ -34,6 +33,16 @@ _gen_images:
 		| sed 's#*content/assets/images/##' \
 		| xargs -I{} -P$(shell nproc --all --ignore 1) bash bin/gen-image.sh {}
 	@mv public/state/sha256.images.{new,latest}
+
+_gen_entries:
+	@echo generate precompiled entries source
+	@sha256sum -b $$(find content/entries -type f) | sort >public/state/sha256.entries.new
+	@touch public/state/sha256.entries.latest
+	@comm -23 public/state/sha256.entries.{new,latest} \
+		| cut -d ' ' -f2 \
+		| sed 's#*content/entries/##' \
+		| xargs -I{} -P$(FULL) bash bin/gen-precompiled.sh {}
+	@mv public/state/sha256.entries.{new,latest}
 
 # generate content
 _gen_sitemap_xml:
@@ -62,8 +71,8 @@ _gen_standalone: \
 	_gen_home
 
 gen:
-	@echo generate images
 	@$(MAKE) _gen_images
+	@$(MAKE) _gen_entries
 	@test -d public/bundle || mkdir -p public/bundle
 	@$(MAKE) _gen_standalone -j7
 

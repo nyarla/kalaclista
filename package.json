@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "budoux": "^0.5.0",
+    "budoux": "^0.5.1",
     "normalize.css": "^8.0.1"
   }
 }

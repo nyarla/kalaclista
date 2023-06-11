@@ -89,7 +89,6 @@ sub global {
 
     link_( { rel => 'stylesheet', href => href( '/main.css', $baseURI ) . '?v=0.0.3' } ),
 
-    script( { src => href( 'main.js', $baseURI ) }, '' ),
     ( $vars->is_production ? script( { src => href( 'production.js', $baseURI ) }, '' ) : () ),
   );
 
