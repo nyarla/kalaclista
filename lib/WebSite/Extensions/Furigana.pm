@@ -18,7 +18,9 @@ sub transform {
 }
 
 sub furigana {
-  my $src  = shift;
+  my $src = shift;
+  $src =~ s{<wbr>}{}g;
+
   my @text = split qr([|]), $src;
 
   my $rb = shift @text;
