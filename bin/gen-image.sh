@@ -18,7 +18,7 @@ resize() {
     local height="$(cwebp -q 100 "$src" -o "${dest}_${size}.webp" 2>&1 | grep Dimension | cut -d ' ' -f4)"
     cat <<...
 ${size}:
-  width: ${resize}
+  width: ${width}
   height: ${height}
 ...
   else

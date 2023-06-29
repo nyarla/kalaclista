@@ -25,7 +25,7 @@ sub entry {
     URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 
-  $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 700, 1400 ] ) } );
+  $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 640, 1280 ] ) } );
   $entry->transform;
 
   return $entry;
@@ -61,8 +61,8 @@ subtest blog => sub {
   is(
     $item->at('img')->getAttribute('sizes'),
     join(
-      q{, }, qq<(max-width: 700px) 700px>,
-      q<(max-width: 1400px) 1400px>,
+      q{, }, qq<(max-width: 640px) 640px>,
+      q<(max-width: 1280px) 1280px>,
       q<581px>
     ),
   );
@@ -81,8 +81,8 @@ subtest notes => sub {
     "https://the.kalaclista.com/images/notes/${fn}/1.jpg",
   );
 
-  is( $item->at('img')->getAttribute('height'), 315 );
-  is( $item->at('img')->getAttribute('width'),  700 );
+  is( $item->at('img')->getAttribute('height'), 288 );
+  is( $item->at('img')->getAttribute('width'),  640 );
   is(
     $item->at('img')->getAttribute('src'),
     "https://the.kalaclista.com/images/notes/${fn}/1_2x.webp",
@@ -91,8 +91,8 @@ subtest notes => sub {
   is(
     $item->at('img')->getAttribute('srcset'),
     join(
-      q{, }, qq<https://the.kalaclista.com/images/notes/${fn}/1_1x.webp 700w>,
-      qq<https://the.kalaclista.com/images/notes/${fn}/1_2x.webp 1400w>,
+      q{, }, qq<https://the.kalaclista.com/images/notes/${fn}/1_1x.webp 640w>,
+      qq<https://the.kalaclista.com/images/notes/${fn}/1_2x.webp 1280w>,
       qq<https://the.kalaclista.com/images/notes/${fn}/1.jpg 4000w>,
     ),
   );
@@ -100,8 +100,8 @@ subtest notes => sub {
   is(
     $item->at('img')->getAttribute('sizes'),
     join(
-      q{, }, qq<(max-width: 700px) 700px>,
-      q<(max-width: 1400px) 1400px>,
+      q{, }, qq<(max-width: 640px) 640px>,
+      q<(max-width: 1280px) 1280px>,
       q<4000px>
     ),
   );
