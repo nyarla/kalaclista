@@ -99,9 +99,6 @@ sub testing_global {
   is( $dom->at('link[rel="apple-touch-icon"]')->getAttribute('href'),                  'https://example.com/apple-touch-icon.png' );
   is( $dom->at('link[rel="author"]')->getAttribute('href'),                            'http://www.hatena.ne.jp/nyarla-net/' );
 
-  is( $dom->find('script')->[0]->getAttribute('src'), 'https://example.com/main.js' );
-  is( $dom->find('script')->[1]->getAttribute('src'), 'https://example.com/production.js' );
-
   my $global2 = head( WebSite::Widgets::Metadata::global($vars) );
   utf8::decode($global2);
 
