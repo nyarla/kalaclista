@@ -41,7 +41,6 @@ sub layout {
       ),
       profile,
       siteinfo,
-      analytics,
     ]
   );
 
