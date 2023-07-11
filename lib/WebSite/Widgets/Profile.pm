@@ -54,8 +54,6 @@ sub profile {
         hyperlink( 'GoToSocial', 'https://kalaclista.com/@nyarla' ),
         wbr,
         hyperlink( 'Misskey.io', 'https://misskey.io/@nyarla' ),
-        wbr,
-        hyperlink( 'Fedibird.com', 'https://fedibird.com/@nyarla' ),
       )
     )
   );

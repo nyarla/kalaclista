@@ -46,9 +46,6 @@ sub main {
   is( $dom->at('nav > p > a:nth-child(7)')->getAttribute('href'), 'https://misskey.io/@nyarla' );
   is( $dom->at('nav > p > a:nth-child(7)')->text,                 'Misskey.io' );
 
-  is( $dom->at('nav > p > a:nth-child(9)')->getAttribute('href'), 'https://fedibird.com/@nyarla' );
-  is( $dom->at('nav > p > a:nth-child(9)')->text,                 'Fedibird.com' );
-
   my $profile2 = profile;
   utf8::decode($profile2);
 
