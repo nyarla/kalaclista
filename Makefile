@@ -15,11 +15,6 @@ _gen_bundle_css:
 	@esbuild --bundle --platform=browser --minify src/stylesheets/main.css >public/bundle/main.css
 	@cp public/bundle/main.css public/dist/main.css
 
-_gen_bundle_script:
-	@echo generate scripts
-	@esbuild --bundle --platform=browser --minify src/scripts/production.js >public/bundle/production.js
-	@cp public/bundle/production.js public/dist/production.js
-
 _gen_assets:
 	@echo copy assets
 	@cp -R content/assets/* public/dist/
@@ -63,7 +58,6 @@ _gen_home:
 
 _gen_standalone: \
 	_gen_bundle_css \
-	_gen_bundle_script \
 	_gen_assets \
 	_gen_sitemap_xml \
 	_gen_pages \
@@ -98,14 +92,7 @@ test:
 
 # temporary solution
 up: clean build
-	cd public/dist && find . -type f | sort | xargs -I{} -P31 sha256sum '{}' >../state/new.txt
-	perl bin/up.pl >public/state/upload.txt
-	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd run public/state/upload.txt
-	cd public/state && mv new.txt old.txt
-
-sync: reset build
-	env AWS_PROFILE=kalaclista S3_ENDPOINT_URL="https://storage.googleapis.com" s5cmd sync --delete public/dist/ s3://the.kalaclista.com
-	@$(MAKE) up
+	pnpm exec wrangler pages publish public/dist
 
 shell:
 	@cp /etc/nixos/flake.lock .
