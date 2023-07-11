@@ -78,6 +78,7 @@ gen:
 
 clean:
 	@test ! -d public/dist || rm -rf public/dist
+	@rm public/state/sha256.images.latest
 	@mkdir -p public/dist
 
 reset: clean
