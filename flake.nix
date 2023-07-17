@@ -4,24 +4,44 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      cpanfile = import ./cpanfile.nix { inherit pkgs; };
     in {
       devShell.${system} = with pkgs;
-        mkShell rec {
+        (buildFHSUserEnv rec {
           name = "the.kalaclista.com-v5";
-          packages = [
-            cmark
-            coreutils
-            curl
-            esbuild
-            gnumake
-            imagemagick
-            jhead
-            nodePackages.prettier
-            optipng
-            perl
-            s5cmd
-          ] ++ cpanfile;
-        };
+          targetPkgs = p:
+            with p; [
+              cmark
+              coreutils
+              curl
+              esbuild
+              gnumake
+              imagemagick
+              jhead
+              libwebp
+              libxcrypt
+              nodePackages.prettier
+              openssl.dev
+              optipng
+              perl
+              perlPackages.Appcpanminus
+              perlPackages.Appcpm
+              perlPackages.Carton
+              perlPackages.PerlTidy
+              perlPackages.locallib
+              pkgconfig
+              stdenv.cc.cc
+              stdenv.cc.libc
+            ];
+
+          runScript = writeShellScript "start.sh" ''
+            export PATH=$(pwd)/extlib/bin:$PATH
+            export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
+
+            unset IN_NIX_SHELL
+            export IN_PERL_SHELL=1
+
+            exec zsh "''${@}"
+          '';
+        }).env;
     };
 }

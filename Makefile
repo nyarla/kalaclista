@@ -72,7 +72,7 @@ gen:
 
 clean:
 	@test ! -d public/dist || rm -rf public/dist
-	@rm public/state/sha256.images.latest
+	@test ! -e public/state/sha256.images.latest || rm public/state/sha256.images.latest
 	@mkdir -p public/dist
 
 reset: clean
@@ -96,9 +96,13 @@ up: clean build
 
 shell:
 	@cp /etc/nixos/flake.lock .
-	@cp app/cpanfile.nix cpanfile.nix
-	@nix develop -c env SHELL=zsh sh -c 'env PERL5LIB=$(shell pwd)/app/lib:$(shell pwd)/lib:$$PERL5LIB zsh'
+	@cp app/cpanfile cpanfile
+	@nix develop
 	@pkill proclet || true
+
+cpan:
+	@test ! -d extlib || rm -rf extlib
+	@cpm install -L extlib
 
 serve:
 	proclet start --color
