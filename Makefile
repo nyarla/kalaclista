@@ -28,6 +28,7 @@ _gen_images:
 		| sed 's#*content/assets/images/##' \
 		| xargs -I{} -P$(shell nproc --all --ignore 1) bash bin/gen-image.sh {}
 	@mv public/state/sha256.images.{new,latest}
+	@find public/dist/images -type f ! -name '*.webp' -exec rm {} \;
 
 _gen_entries:
 	@echo generate precompiled entries source
@@ -58,13 +59,13 @@ _gen_home:
 
 _gen_standalone: \
 	_gen_bundle_css \
-	_gen_assets \
 	_gen_sitemap_xml \
 	_gen_pages \
 	_gen_index \
 	_gen_home
 
 gen:
+	@$(MAKE) _gen_assets
 	@$(MAKE) _gen_images
 	@$(MAKE) _gen_entries
 	@test -d public/bundle || mkdir -p public/bundle

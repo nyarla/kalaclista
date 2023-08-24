@@ -54,7 +54,7 @@ main() {
 2x:
   width: ${width}
   height: ${height}
-src:
+gif:
   width: ${width}
   height: ${height}
 EOS

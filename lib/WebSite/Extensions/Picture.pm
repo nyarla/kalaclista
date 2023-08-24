@@ -22,55 +22,70 @@ sub transform {
     utf8::decode($src);
     $src = uri_unescape($src);
 
-    if ( $src =~ m{^https://the\.kalaclista\.com/images/(.+)\.([^\.]+)$} ) {
-      my ( $path, $ext ) = ( $1, $2 );
-
-      next if ( $ext eq 'gif' );
+    if ( $src =~ m{^\d+$} ) {
+      my $path = join q{/}, $entry->href->path, $src;
+      $path =~ s{^/}{};
 
       my $yaml = $datadir->child("${path}.yaml");
-
       if ( -f $yaml->path ) {
         my $data = YAML::XS::LoadFile( $yaml->path );
 
-        my @srcset;
-        my @sizes;
+        my $img;
+        my $src;
 
-        for my $scale ( $scales->@* ) {
-          push @sizes, "(max-width: ${scale}px) ${scale}px";
+        if ( exists $data->{'gif'} ) {
+          $src = "${prefix}/images/${path}.gif";
+          $img = img(
+            {
+              alt    => $item->getAttribute('alt'),
+              title  => $item->getAttribute('alt'),
+              src    => $src,
+              width  => $data->{'gif'}->{'width'},
+              height => $data->{'gif'}->{'height'},
+            }
+          );
         }
-        push @sizes, $data->{'src'}->{'width'} . 'px';
+        else {
+          my @srcset;
+          my @sizes;
 
-        utf8::decode($path);
-        if ( $path =~ m{^notes/([^/]+)/(.+)$} ) {
-          my ( $fn, $idx ) = ( $1, $2 );
-          utf8::decode($fn);
-          $path = "notes/@{[ uri_escape_utf8($fn) ]}/${idx}";
-        }
-
-        for my $size (qw(1x 2x)) {
-          push @srcset, "${prefix}/images/${path}_${size}.webp " . $data->{$size}->{'width'} . "w";
-        }
-        push @srcset, "${prefix}/images/${path}.${ext}" . " " . $data->{'src'}->{'width'} . "w";
-
-        my $img = img(
-          {
-            alt    => $item->getAttribute('alt'),
-            title  => $item->getAttribute('alt'),
-            srcset => join( q{, }, @srcset ),
-            sizes  => join( q{, }, @sizes ),
-            src    => "${prefix}/images/${path}_2x.webp",
-            width  => $data->{'1x'}->{'width'},
-            height => $data->{'1x'}->{'height'},
+          for my $scale ( $scales->@* ) {
+            push @sizes, "(max-width: ${scale}px) ${scale}px";
           }
-        );
+
+          if ( $path =~ m{^notes/([^/]+)/(.+)$} ) {
+            my ( $fn, $idx ) = ( $1, $2 );
+            utf8::decode($fn);
+            $path = "notes/@{[ uri_escape_utf8($fn) ]}/${idx}";
+          }
+
+          for my $size (qw(1x 2x)) {
+            push @srcset, "${prefix}/images/${path}_${size}.webp " . $data->{$size}->{'width'} . "w";
+          }
+
+          $src = "${prefix}/images/${path}_1x.webp";
+          $img = img(
+            {
+              alt    => $item->getAttribute('alt'),
+              title  => $item->getAttribute('alt'),
+              srcset => join( q{, }, @srcset ),
+              sizes  => join( q{, }, @sizes ),
+              src    => "${prefix}/images/${path}_1x.webp",
+              width  => $data->{'1x'}->{'width'},
+              height => $data->{'1x'}->{'height'},
+            }
+          );
+        }
 
         my $link = $dom->tree->createElement('a');
-        $link->setAttribute( href  => $item->getAttribute('src') );
+        $link->setAttribute( href  => $src );
         $link->setAttribute( class => 'content__card--thumbnail' );
         $link->innerHTML("${img}");
 
         $item->replace($link);
       }
+
+      return $entry;
     }
   }
 
