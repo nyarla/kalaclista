@@ -96,13 +96,12 @@ up: clean build
 
 shell:
 	@cp /etc/nixos/flake.lock .
-	@cp app/cpanfile cpanfile
 	@nix develop
 	@pkill proclet || true
 
 cpan:
 	@test ! -d extlib || rm -rf extlib
-	@cpm install -L extlib
+	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm
 
 serve:
 	proclet start --color
