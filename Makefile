@@ -93,7 +93,7 @@ test:
 
 # temporary solution
 up: clean build
-	pnpm exec wrangler pages publish public/dist
+	pnpm exec wrangler pages deploy public/dist
 
 shell:
 	@cp /etc/nixos/flake.lock .
