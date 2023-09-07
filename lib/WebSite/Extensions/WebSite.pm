@@ -3,10 +3,11 @@ package WebSite::Extensions::WebSite;
 use strict;
 use warnings;
 use utf8;
+use feature qw(state);
 
 use URI::Fast;
 use URI::Escape qw(uri_unescape);
-use YAML::XS ();
+use Text::CSV   qw(csv);
 
 use Kalaclista::HyperScript qw(a h2 p blockquote cite div small);
 
@@ -14,6 +15,43 @@ use Kalaclista::Constants;
 use Kalaclista::WebSite;
 
 my $datadir = Kalaclista::Constants->rootdir->child('content/data/webdata');
+
+sub load {
+  state $websites ||= do {
+    my $csv = csv( in => Kalaclista::Constants->rootdir->child('content/data/website.csv')->path );
+    shift $csv->@*;
+
+    my $data = {};
+    for my $line ( $csv->@* ) {
+      my $gone      = $line->[2] eq 'yes';
+      my $status    = $line->[4];
+      my $title     = $line->[5];
+      my $link      = $line->[6];
+      my $permalink = $line->[7];
+      my $summary   = $line->[8];
+
+      my $website = Kalaclista::WebSite->new(
+        is_gone      => $gone,
+        is_ignore    => $gone,
+        has_redirect => ( $link ne $permalink ),
+        status       => $status,
+        updated_at   => 0,
+        href         => $permalink,
+        title        => $title,
+        summary      => $summary,
+      );
+
+      $data->{$link}      = $website;
+      $data->{$permalink} = $website;
+    }
+
+    $data;
+  };
+
+  my $href = shift;
+
+  return $websites->{$href};
+}
 
 sub transform {
   my ( $class, $entry, $dom ) = @_;
@@ -24,44 +62,22 @@ sub transform {
 
     next if ( $href !~ m{^https?} );
 
-    my $data = Kalaclista::WebSite->load( $href, $datadir );
-    my $link = uri_unescape($href);
-    utf8::decode($link);
-    my ( $title, $summary );
+    my ( $title, $summary, $permalink, $gone );
+    my $src = uri_unescape($href);
+    utf8::decode($src);
 
-    my $exist = 1;
-
-    if ( defined( $data->is_gone ) && $data->is_gone ) {
-      $exist = 0;
+    my $website = load($href);
+    if ( defined $website && !$website->is_gone ) {
+      $title     = $website->title ne q{}   ? $website->title   : $text;
+      $summary   = $website->summary ne q{} ? $website->summary : $title;
+      $permalink = $website->href ne q{}    ? $website->href    : $href;
+      $gone      = 0;
     }
-    elsif ( defined( $data->is_ignore ) && $data->is_ignore ) {
-      $exist = 0;
-    }
-    elsif ( defined( $data->status ) && ( $data->status !~ m{^(?:2|304)} ) ) {
-      $exist = 0;
-    }
-
-    if ($exist) {
-      $title   = $data->title;
-      $summary = $data->summary;
-    }
-
-    for my $label ( ( $text, $summary, $link ) ) {
-      if ( !defined $title || $title eq q{} ) {
-        $title = $label;
-        next;
-      }
-
-      last;
-    }
-
-    for my $label ( ( $text, $title, $link ) ) {
-      if ( !defined $summary || $summary eq q{} ) {
-        $summary = $label;
-        next;
-      }
-
-      last;
+    else {
+      $title     = $text;
+      $permalink = $src;
+      $summary   = $title;
+      $gone      = 1;
     }
 
     if ( length($summary) > 39 ) {
@@ -69,27 +85,16 @@ sub transform {
     }
 
     my $html;
-    if ($exist) {
-      $html = a(
-        { href => $href },
-        h2($title),
-        p( cite($link) ),
-        blockquote( p($summary) )
-      );
+    if ( !$gone ) {
+      $html = a( { href => $permalink }, h2($title), p( cite($src) ), blockquote( p($summary) ) );
     }
     else {
-      my $msg = $data->is_ignore ? '無効なリンクです' : 'リンク切れです';
-
-      $html = div(
-        h2($title),
-        p( cite($link), small($msg) ),
-        blockquote( p($summary) )
-      );
+      $html = div( h2($title), p( cite($src), small('（無効なリンクです）') ), blockquote( p($summary) ) );
     }
 
     my $article = $item->tree->createElement('aside');
     $article->setAttribute( class => 'content__card--website' );
-    $article->innerHTML("${html}");
+    $article->innerHTML( $html->to_string );
 
     $item->parent->parent->replace($article);
   }
