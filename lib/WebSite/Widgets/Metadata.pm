@@ -87,7 +87,7 @@ sub global {
 
     link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } ),
 
-    link_( { rel => 'stylesheet', href => href( '/main.css', $baseURI ) . '?v=0.0.3' } ),
+    link_( { rel => 'stylesheet', href => href( '/main.css', $baseURI ) . '?v=0.0.4' } ),
   );
 
   return @result;

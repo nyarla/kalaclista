@@ -390,7 +390,7 @@ sub content {
         '& > *:first-child' => [ marginTop    => '0' ],
         '& > *:last-child'  => [ marginBottom => '0' ],
 
-        '& > a' => [
+        [ '& > a', '& > div' ] => [
           textDecoration => 'none',
 
           '& > h2' => [ margin => '0', fontSize => '1em', foreground('white-2') ],
