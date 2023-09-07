@@ -19,6 +19,7 @@
               jhead
               libwebp
               libxcrypt
+              libxml2.dev
               nodePackages.prettier
               openssl.dev
               optipng
@@ -26,7 +27,7 @@
               perlPackages.Appcpanminus
               perlPackages.Appcpm
               perlPackages.Carton
-              perlPackages.PerlTidy
+              perlPackages.XMLLibXML
               perlPackages.locallib
               pkgconfig
               stdenv.cc.cc
