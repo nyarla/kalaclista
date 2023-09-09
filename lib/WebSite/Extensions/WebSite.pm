@@ -34,13 +34,13 @@ sub transform {
     else {
       $html = div(
         h2( $web->title ),
-        p( cite( $web->cite ), small('（リンク先は見つかりません）') ),
+        p( cite( $web->cite ), small('（無効なリンクです）') ),
         blockquote( p( $web->summary ) )
       );
     }
 
     my $article = $item->tree->createElement('aside');
-    $article->setAttribute( class => 'content__card--website' );
+    $article->setAttribute( class => 'content__card--website' . ( $web->gone ? ' gone' : q{} ) );
     $article->innerHTML( $html->to_string );
     $item->parent->parent->replace($article);
   }

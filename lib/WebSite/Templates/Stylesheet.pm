@@ -393,26 +393,20 @@ sub content {
         [ '& > a', '& > div' ] => [
           textDecoration => 'none',
 
-          '& > h2' => [ margin => '0', fontSize => '1em', foreground('white-2') ],
+          [ '& > h2', '& p' ] => [
+            textOverflow => q("…"),
+            overflow     => 'hidden',
+            whiteSpace   => 'nowrap',
+          ],
+
+          '& > h2' => [ margin => '0', fontSize => '1em' ],
           '& > p'  => [
             margin => '0 0 0.5em 0',
             cite   => [
-              foreground('green-8'),
-              fontSize  => '.8em',
-              fontStyle => 'normal',
-            ],
-          ],
-          '& > blockquote' => [ foreground('white-2') ],
-
-          [qw/ &:link &:visited /] => [
-            [qw/ &>h2 &>p>cite /] => [
+              fontSize       => '.8em',
+              fontStyle      => 'normal',
               textDecoration => 'underline solid 1px',
-            ]
-          ],
-          [qw/ &:link:hover &:link:active &:visited:hover &:visited:active /] => [
-            [qw/ &>h2 &>p>cite /] => [
-              textDecoration => 'underline solid 2px',
-            ]
+            ],
           ],
         ],
 
@@ -429,6 +423,32 @@ sub content {
 
           background('blue-15')
         ],
+
+        '&:hover::before' => [
+          background('green-12'),
+          transition => 'background ease .1s',
+        ],
+
+        '& > a' => [
+          '& > h2'     => [ foreground('white-2') ],
+          '& > p cite' => [
+            foreground('green-8'),
+            textDecorationColor => color('green-8') . ' !important',
+          ],
+          '& > blockquote' => [ foreground('white-2') ],
+        ],
+
+        '& > div' => [
+          '& > h2'     => [ foreground('white-6') ],
+          '& > p cite' => [
+            foreground('white-6'),
+          ],
+          '& > p cite + small'     => [ foreground('black-0') ],
+          '& > blockquote'         => [ foreground('white-6') ],
+          '& > blockquote::before' => [ background('white-12') ],
+        ],
+
+        [ '&.gone::before', '&.gone:hover::before' ] => [ background('white-12') ],
       ],
     ],
   );
