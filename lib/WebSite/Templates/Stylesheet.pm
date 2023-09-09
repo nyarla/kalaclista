@@ -443,7 +443,7 @@ sub content {
           '& > p cite' => [
             foreground('white-6'),
           ],
-          '& > p cite + small'     => [ foreground('black-0') ],
+          '& > p cite + small'     => [ foreground('white-0') ],
           '& > blockquote'         => [ foreground('white-6') ],
           '& > blockquote::before' => [ background('white-12') ],
         ],
