@@ -73,10 +73,21 @@ function compaction(html) {
 
 async function compile(fn) {
   const content = await load(fn);
-  const cmark = spawn("cmark", ["--unsafe", "--to", "html"], {
-    shell: true,
-    stdio: ["pipe", "pipe", "inherit"],
-  });
+  const cmark = spawn(
+    "cmark-gfm",
+    [
+      "--unsafe",
+      "--to",
+      "html",
+      "-e",
+      "strikethrough",
+      "--strikethrough-double-tilde",
+    ],
+    {
+      shell: true,
+      stdio: ["pipe", "pipe", "inherit"],
+    },
+  );
 
   cmark.stdin.write(content);
   cmark.stdin.end();

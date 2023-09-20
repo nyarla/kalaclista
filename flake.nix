@@ -11,6 +11,7 @@
           targetPkgs = p:
             with p; [
               cmark
+              cmark-gfm
               coreutils
               curl
               esbuild
@@ -21,6 +22,7 @@
               libxcrypt
               libxml2.dev
               nodePackages.prettier
+              nodejs
               openssl.dev
               optipng
               perl
@@ -29,7 +31,7 @@
               perlPackages.Carton
               perlPackages.XMLLibXML
               perlPackages.locallib
-              pkgconfig
+              pkg-config
               stdenv.cc.cc
               stdenv.cc.libc
             ];
