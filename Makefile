@@ -39,8 +39,8 @@ _gen_entries: .check
 	@touch public/state/sha256.entries.latest
 	@comm -23 public/state/sha256.entries.{new,latest} \
 		| cut -d ' ' -f2 \
-		| sed 's#*content/entries/##' \
-		| xargs -I{} -P$(FULL) bash bin/gen-precompiled.sh {}
+		| sed 's#*content/entries/##' > public/state/process.entries
+	@node bin/gen-precompile.js public/state/process.entries
 	@mv public/state/sha256.entries.{new,latest}
 
 # generate content
