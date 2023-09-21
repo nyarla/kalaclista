@@ -107,7 +107,7 @@ shell:
 cpan: .check
 	@test ! -d extlib || rm -rf extlib
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile app/cpanfile
-	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm
+	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile cpanfile
 
 serve: .check
 	proclet start --color
