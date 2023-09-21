@@ -5,13 +5,18 @@ const { spawn } = require("node:child_process");
 const { dirname, normalize } = require("node:path");
 const { createReadStream } = require("node:fs");
 const { createInterface } = require("node:readline/promises");
-const { writeFile } = require("node:fs/promises");
+const { mkdir, writeFile } = require("node:fs/promises");
+
+const cluster = require("node:cluster");
+const { availableParallelism } = require("node:os");
 
 const { loadDefaultJapaneseParser } = require("budoux");
 const { minify } = require("html-minifier");
 
 const rootdir = dirname(process.argv[1]) + "/..";
 const budoux = loadDefaultJapaneseParser();
+
+const numCPUs = availableParallelism();
 
 function fullpath(path) {
   return normalize(`${rootdir}/content/entries/${path}`);
@@ -106,20 +111,85 @@ async function compile(fn) {
   );
 
   const filepath = fullpath(fn).replace("/entries/", "/precompiled/");
-  return writeFile(filepath, html, { encoding: "utf8", mode: 0o644 });
+  return mkdir(dirname(filepath), { recursive: true }).then(() =>
+    writeFile(filepath, html, { encoding: "utf8", mode: 0o644 }),
+  );
 }
 
-async function main(file) {
-  const files = createInterface(createReadStream(file));
+function leader(fileset) {
+  let total = 0;
+  for (let files of fileset) {
+    total += files.length;
 
-  let queues = [];
+    let worker = cluster.fork();
+    worker.on("online", () => {
+      worker.send(files);
+    });
+  }
 
-  files.on("line", async function (fn) {
-    console.log(fn);
-    queues.push(compile(fn));
+  return new Promise((resolve) => {
+    let count = 0;
+    cluster.on("message", (worker, message, handle) => {
+      count++;
+      if (count === total) {
+        resolve();
+      }
+    });
+  });
+}
+
+function worker() {
+  process.on("message", async function (files) {
+    const done = [];
+
+    for (let file of files) {
+      console.log(file);
+      done.push(compile(file));
+    }
+
+    process.send(Promise.allSettled(done));
+    cluster.worker.disconnect();
+  });
+}
+
+function lookup(src) {
+  const reader = createInterface(createReadStream(src));
+  const fileset = new Array(numCPUs);
+
+  let idx = 0;
+  reader.on("line", (file) => {
+    if (idx === fileset.length) {
+      idx = 0;
+    }
+
+    if (!Array.isArray(fileset[idx])) {
+      fileset[idx] = [];
+    }
+
+    fileset[idx].push(file);
+
+    idx++;
   });
 
-  await Promise.all(queues);
+  return new Promise((resolve) => {
+    reader.on("close", () => {
+      resolve(fileset);
+    });
+  });
+}
+
+async function main(src) {
+  if (cluster.isPrimary) {
+    const fileset = await lookup(src);
+
+    if (!Array.isArray(fileset[0])) {
+      process.exit(0);
+    }
+
+    await leader(fileset);
+  } else {
+    worker();
+  }
 }
 
 main(process.argv[2]);
