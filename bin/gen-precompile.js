@@ -119,6 +119,10 @@ async function compile(fn) {
 function leader(fileset) {
   let total = 0;
   for (let files of fileset) {
+    if (!files) {
+      continue;
+    }
+
     total += files.length;
 
     let worker = cluster.fork();
@@ -181,11 +185,6 @@ function lookup(src) {
 async function main(src) {
   if (cluster.isPrimary) {
     const fileset = await lookup(src);
-
-    if (!Array.isArray(fileset[0])) {
-      process.exit(0);
-    }
-
     await leader(fileset);
   } else {
     worker();
