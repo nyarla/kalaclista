@@ -14,21 +14,20 @@ css:
 	@echo generate css
 	@perl bin/compile-css.pl
 
+images: .check
+	@echo generate webp
+	@openssl dgst -r -sha256 $$(find "src/images" -type f | grep -v '.git') | sort >cache/images/now.sha256sum
+	@touch cache/images/latest.sha256sum
+	@comm -23 cache/images/{now,latest}.sha256sum \
+		| cut -d ' ' -f2 \
+		| sed 's#*src/images/##' \
+		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 600 1200
+	@mv cache/images/{now,latest}.sha256sum
+
 # generate assets
 _gen_assets: .check
 	@echo copy assets
 	@cp -R content/assets/* public/dist/
-
-_gen_images: .check
-	@echo generate images
-	@sha256sum -b $$(find content/assets/images -type f) | sort >public/state/sha256.images.new
-	@touch public/state/sha256.images.latest
-	@comm -23 public/state/sha256.images.{new,latest} \
-		| cut -d ' ' -f2 \
-		| sed 's#*content/assets/images/##' \
-		| xargs -I{} -P$(shell nproc --all --ignore 1) bash bin/gen-image.sh {}
-	@mv public/state/sha256.images.{new,latest}
-	@find public/dist/images -type f ! -name '*.webp' -exec rm {} \;
 
 _gen_entries: .check
 	@echo generate precompiled entries source
@@ -67,15 +66,15 @@ _gen_standalone: \
 
 gen: .check
 	@$(MAKE) _gen_assets
-	@$(MAKE) _gen_images
+	@$(MAKE) images
 	@$(MAKE) _gen_entries
 	@test -d public/bundle || mkdir -p public/bundle
 	@$(MAKE) _gen_standalone -j7
 
 clean: .check
 	@test ! -d public/dist || rm -rf public/dist
-	@test ! -e public/state/sha256.images.latest || rm public/state/sha256.images.latest
 	@mkdir -p public/dist
+	@test ! -e cache/images/latest.sha256sum || rm cache/images/latest.sha256sum
 
 reset: .check clean
 	@test ! -d public/state || rm -rf public/state

@@ -10,7 +10,7 @@ use Kalaclista::HyperScript qw(a img);
 
 use Kalaclista::Constants;
 
-my $datadir = Kalaclista::Constants->rootdir->child('content/data/pictures');
+my $datadir = Kalaclista::Constants->rootdir->child('cache/images/data');
 my $prefix  = Kalaclista::Constants->baseURI->to_string;
 
 sub transform {
