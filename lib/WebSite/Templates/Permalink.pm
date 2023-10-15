@@ -27,56 +27,12 @@ sub date {
   return ( split qr{T}, shift )[0];
 }
 
-sub ads {
-  state $top ||= aside(
-    { class => 'ads top' },
-    ins(
-      {
-        class => 'adsbygoogle',
-        style => 'display:block',
-        data  => {
-          'ad-format'     => 'fluid',
-          'ad-format-key' => '-gr-d+2d-6d+7k',
-          'ad-client'     => 'ca-pub-1273544194033160',
-          'ad-slot'       => '5004342069'
-        }
-      },
-      ""
-    ),
-    script( raw("(adsbygoogle = window.adsbygoogle || []).push({})") ),
-  );
-
-  state $bottom ||= aside(
-    { class => 'ads bottom' },
-    ins(
-      {
-        class => 'adsbygoogle',
-        style => 'display:block',
-        data  => {
-          'ad-format' => 'autorelaxed',
-          'ad-client' => 'ca-pub-1273544194033160',
-          'ad-slot'   => '2107661428'
-        },
-      },
-      ""
-    ),
-    script( raw("(adsbygoogle = window.adsbygoogle || []).push({})") ),
-  );
-
-  my $position = shift;
-
-  return ( $position eq 'top' ? ( hr, $top ) : ( hr, $bottom ) );
-}
-
 sub content {
   my $vars  = shift;
   my $entry = $vars->entries->[0];
 
   my $date     = date( $entry->date );
   my $readtime = readtime( $entry->dom->innerHTML );
-
-  my @top    = $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('top')    : ();
-  my @bottom = $vars->section =~ m{^(?:posts|echos|notes)$} ? ads('bottom') : ();
 
   return article(
     { class => 'entry entry__permalink' },
@@ -89,10 +45,8 @@ sub content {
     ),
     section(
       { class => 'entry__content' },
-      @top,
       hr( { class => 'sep' } ),
       raw( $entry->dom->innerHTML ),
-      @bottom,
     ),
   );
 }
