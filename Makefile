@@ -10,14 +10,11 @@ INDEX := 3
 .check:
 	@test -n "$(IN_PERL_SHELL)" || (echo 'you need to enter perl shell by `make shell`' >&2 ; exit 1)
 
-# generate assets
-_gen_bundle_css: .check
+css:
 	@echo generate css
-	@perl bin/gen.pl main.css
-	@cp -RH node_modules/normalize.css/normalize.css src/stylesheets/normalize.css
-	@esbuild --bundle --platform=browser --minify src/stylesheets/main.css >public/bundle/main.css
-	@cp public/bundle/main.css public/dist/main.css
+	@perl bin/compile-css.pl
 
+# generate assets
 _gen_assets: .check
 	@echo copy assets
 	@cp -R content/assets/* public/dist/
@@ -62,7 +59,7 @@ _gen_home: .check
 
 _gen_standalone: \
 	.check \
-	_gen_bundle_css \
+	css \
 	_gen_sitemap_xml \
 	_gen_pages \
 	_gen_index \

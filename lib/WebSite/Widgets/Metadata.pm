@@ -13,6 +13,7 @@ our @EXPORT = qw(metadata);
 use Kalaclista::HyperScript;
 
 use WebSite::Helper::Hyperlink qw(href);
+use WebSite::Helper::Digest    qw(digest);
 
 use Kalaclista::Constants;
 
@@ -37,25 +38,6 @@ my $publisher = {
     'contentUrl' => 'https://the.kalaclista.com/assets/avatar.png',
   },
 };
-
-sub css_digest {
-  state $digest ||= do {
-    my $class = __PACKAGE__;
-
-    $class =~ s{::}{/}g;
-    $class .= ".pm";
-
-    my $path = $INC{$class};
-    $path =~ s{Widgets/Metadata\.pm$}{Templates/Stylesheet.pm};
-
-    my $value = `sha256sum "${path}" | cut -c 1-7`;
-    chomp($value);
-
-    $value;
-  };
-
-  return $digest;
-}
 
 sub types {
   my ( $kind, $section ) = @_;
@@ -89,7 +71,7 @@ sub global {
   state @result;
   return @result if ( @result != 0 );
 
-  my $digest  = css_digest;
+  my $digest  = digest("lib/WebSite/Templates/Stylesheet.pm");
   my $baseURI = Kalaclista::Constants->baseURI;
   my $vars    = shift;
 
@@ -108,7 +90,7 @@ sub global {
 
     link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } ),
 
-    link_( { rel => 'stylesheet', href => href( '/main.css', $baseURI ) . "?v=${digest}" } ),
+    link_( { rel => 'stylesheet', href => href( "/main-${digest}.css", $baseURI ) } ),
   );
 
   return @result;

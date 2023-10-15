@@ -120,16 +120,6 @@ sub main {
     );
   }
 
-  if ( $action eq 'main.css' ) {
-    my $class = $generators{$action};
-    load($class);
-
-    return $class->generate(
-      dist     => $const->rootdir->child('src/stylesheets/main.css'),
-      template => 'WebSite::Templates::Stylesheet',
-    );
-  }
-
   if ( $action eq 'home' ) {
     my $class = $generators{$action};
     load($class);
