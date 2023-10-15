@@ -20,14 +20,15 @@ use WebSite::Widgets::Title;
 use WebSite::Widgets::Metadata;
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
-
-my $analytics = <<'...';
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', 'G-18GLHBH79E');
-...
+my $goat   = script(
+  {
+    "data-goatcounter" => "https://stats.kalaclista.com/count",
+    async              => true,
+    src                => 'https://stats.kalaclista.com/count.js'
+  },
+  ''
+);
+my @analytics = Kalaclista::Constants->vars->is_production ? ($goat) : ();
 
 sub layout {
   my ( $vars, $content ) = @_;
@@ -49,15 +50,9 @@ sub layout {
       ),
       profile,
       siteinfo,
-      (
-        Kalaclista::Constants->vars->is_production
-        ? (
-          script( { async => true, src => 'https://www.googletagmanager.com/gtag/js?id=G-18GLHBH79E' }, '' ),
-          script( { defer => true },                                                                    raw($analytics) ),
-            )
-        : ()
-      ),
+      @analytics,
     ]
   );
-
 }
+
+1;
