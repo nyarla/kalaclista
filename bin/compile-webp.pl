@@ -5,12 +5,12 @@ use warnings;
 
 use YAML::XS qw(DumpFile);
 
-use Kalaclista::Path;
+use WebSite::Context;
 
-my $rootdir = Kalaclista::Path->detect(qr{^bin$});
-my $dist    = $rootdir->child("public/dist/images");
-my $src     = $rootdir->child("src/images");
-my $data    = $rootdir->child("cache/images/data");
+my $ctx  = WebSite::Context->new( detect => qr{^bin$} );
+my $dist = $ctx->dirs->dist('images');
+my $src  = $ctx->dirs->src('images');
+my $data = $ctx->dirs->cache('images');
 
 sub paths {
   my $path = shift;
@@ -101,7 +101,7 @@ sub testing {
 
   is(
     [ paths("foo/bar.jpg") ],
-    ["foo", "bar"],
+    [ "foo", "bar" ],
     '`paths` subroutine is enable to get dirname and pathname',
   );
 
@@ -118,17 +118,17 @@ sub testing {
   );
 
   ok(
-    try_ok(sub { doing("posts/2023/08/15/162025/1.jpg", 600, 1200); }),
+    try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 600, 1200 ); } ),
     'doing main process suceed',
   );
 
   ok(
-    (-e $data->child("posts/2023/08/15/162025/1.yaml")->path),
+    ( -e $data->child("posts/2023/08/15/162025/1.yaml")->path ),
     'make cache data succeed by main process'
   );
-  
+
   done_testing();
-  
+
   return 0;
 }
 
