@@ -19,6 +19,8 @@ use Kalaclista::Entries;
 use Kalaclista::Path;
 use Kalaclista::Variables;
 
+use WebSite::Context;
+
 use WebSite::Extensions::AdjustHeading;
 use WebSite::Extensions::Affiliate;
 use WebSite::Extensions::CodeSyntax;
@@ -62,6 +64,9 @@ sub init {
       },
     },
   );
+
+  $ENV{'KALACLISTA_ENV'} = $ENV{'URL'} eq 'https://the.kalaclista.com' ? 'production' : 'development';
+  WebSite::Context->init(qr{^bin$});
 }
 
 sub fixup {

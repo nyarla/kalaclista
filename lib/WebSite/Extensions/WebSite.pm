@@ -4,12 +4,25 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::Constants;
+use feature qw(state);
+
 use Kalaclista::Data::WebSite;
 use Kalaclista::HyperScript qw(a div h2 p cite blockquote small);
 
-my $csv = Kalaclista::Constants->rootdir->child('content/data/website.csv')->path;
-Kalaclista::Data::WebSite->init($csv);
+use WebSite::Context;
+
+sub website {
+  state $initialized;
+  if ( !$initialized ) {
+    my $path = WebSite::Context->instance->dirs->cache('website/website.json')->path;
+    Kalaclista::Data::WebSite->init($path);
+
+    $initialized = !!1;
+  }
+
+  my @args = @_;
+  return Kalaclista::Data::WebSite->load(@args);
+}
 
 sub transform {
   my ( $class, $entry, $dom ) = @_;
@@ -21,7 +34,7 @@ sub transform {
     next if $href !~ m{^https?};
 
     my $html;
-    my $web = Kalaclista::Data::WebSite->load( text => $text, href => $href );
+    my $web = website( text => $text, href => $href );
 
     if ( !$web->gone ) {
       $html = a(

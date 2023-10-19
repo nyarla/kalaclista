@@ -24,6 +24,11 @@ images: .check
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 600 1200
 	@mv cache/images/{now,latest}.sha256sum
 
+website: .check
+	@echo generate website.json
+	@cat src/website/src/*.nix | perl -pge 's<\}\n\{><>g' >cache/website/website.nix
+	@nix eval --json --file cache/website/website.nix >cache/website/website.json
+
 # generate assets
 _gen_assets: .check
 	@echo copy assets
