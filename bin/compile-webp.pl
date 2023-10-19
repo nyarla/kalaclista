@@ -7,7 +7,7 @@ use YAML::XS qw(DumpFile);
 
 use WebSite::Context;
 
-my $ctx  = WebSite::Context->new( detect => qr{^bin$} );
+my $ctx  = WebSite::Context->init(qr{^bin$});
 my $dist = $ctx->dirs->dist('images');
 my $src  = $ctx->dirs->src('images');
 my $data = $ctx->dirs->cache('images');
