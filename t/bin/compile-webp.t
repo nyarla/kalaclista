@@ -8,9 +8,7 @@ use Test2::V0;
 use Kalaclista::Files;
 use WebSite::Context;
 
-my $c = WebSite::Context->new(
-  detect => qr{^t$},
-);
+my $c = WebSite::Context->init(qr{^t$});
 
 my $src  = $c->dirs->src('images');
 my $dist = $c->dirs->dist('images');
