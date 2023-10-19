@@ -5,30 +5,27 @@ no warnings qw(experimental);
 
 use URI::Fast;
 
+use Kalaclista::Context;
 use Kalaclista::Data::Directory;
 
-class WebSite::Context {
-  field $baseURI;
+class WebSite::Context : isa(Kalaclista::Context) {
 
-  field $detect : param;
-  field $dirs;
+  sub init {
+    my $class  = shift;
+    my $detect = shift;
 
-  method dirs {
-    $dirs ||= Kalaclista::Data::Directory->instance(
-      detect => $detect,
-      cache  => q{cache},
-      dist   => q{public/dist},
-      src    => q{src},
+    my $production = ( exists $ENV{'KALACLISTA_ENV'} && $ENV{'KALACLISTA_ENV'} eq 'production' );
+
+    Kalaclista::Context->init(
+      production => $production,
+      baseURI    => ( $production ? 'https://the.kalaclista.com' : 'http://nixos:1313' ),
+      dirs       => {
+        detect => $detect,
+        cache  => q{cache},
+        dist   => q{public/dist},
+        src    => q{src},
+      }
     );
-
-    return $dirs;
   }
 
-  method production {
-    return exists $ENV{'KALACLISTA_ENV'} && $ENV{'KALACLISTA_ENV'} eq 'production';
-  }
-
-  method baseURI {
-    return URI::Fast->new( $self->production ? 'https://the.kalaclista.com' : 'http://nixos:1313' );
-  }
 }

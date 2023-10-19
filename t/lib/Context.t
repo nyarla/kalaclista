@@ -6,40 +6,44 @@ use warnings;
 use Test2::V0;
 use WebSite::Context;
 
+sub instance {
+  my $env = shift;
+  local $ENV{'KALACLISTA_ENV'} = $env;
+
+  WebSite::Context->init( detect => qr{^t$} );
+  return WebSite::Context->instance;
+}
+
 subtest production => sub {
-  my $c = WebSite::Context->new( detect => qr{^t$} );
+  my $c;
 
-  local $ENV{'KALACLISTA_ENV'} = 'development';
-  ok !$c->production, 'if `KALACLISTA_ENV` is not `production`, this method returns false';
+  $c = instance('development');
+  ok( !$c->production, 'if `KALACLISTA_ENV` is under the `development`, this method should return false' );
 
-  local $ENV{'KALACLISTA_ENV'} = 'production';
-  ok $c->production, 'if `KALACLISTA_ENV` is `production`, this method returns true';
+  $c = instance('production');
+  ok( $c->production, 'if `KALACLISTA_ENV` is under the `production`, this method should return true' );
 };
 
 subtest baseURI => sub {
-  my $c = WebSite::Context->new( detect => qr{^t$} );
+  my $c;
 
-  local $ENV{'KALACLISTA_ENV'} = 'development';
-  is(
-    $c->baseURI->to_string,
-    'http://nixos:1313',
-    'if `KALACLISTA_ENV` is not `production`, this method returns development url'
-  );
+  $c = instance('development');
+  isa_ok( $c->baseURI, 'URI::Fast' );
+  is( $c->baseURI->to_string, 'http://nixos:1313' );
 
-  local $ENV{'KALACLISTA_ENV'} = 'production';
-  is(
-    $c->baseURI->to_string,
-    'https://the.kalaclista.com',
-    'if `KALACLISTA_ENV` is not `production`, this method returns development url'
-  );
+  $c = instance('production');
+  isa_ok( $c->baseURI, 'URI::Fast' );
+  is( $c->baseURI->to_string, 'https://the.kalaclista.com' );
 };
 
 subtest dirs => sub {
-  my $c = WebSite::Context->new( detect => qr{^t$} );
+  my $c;
 
-  isa_ok $c->dirs, 'Kalaclista::Data::Directory';
+  $c = instance('development');
+  isa_ok( $c->dirs, 'Kalaclista::Data::Directory' );
 
-  is $c->dirs, $c->dirs;
+  $c = instance('production');
+  isa_ok( $c->dirs, 'Kalaclista::Data::Directory' );
 };
 
 done_testing;
