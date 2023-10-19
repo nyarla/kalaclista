@@ -9,8 +9,6 @@ use feature qw(state);
 use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 
-use Kalaclista::Constants;
-
 use WebSite::Widgets::Layout;
 
 sub readtime {

@@ -10,10 +10,10 @@ use Exporter::Lite;
 
 our @EXPORT = qw(sitemenu);
 
-use Kalaclista::HyperScript qw(nav hr p);
+use Kalaclista::HyperScript    qw(nav hr p);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
-use Kalaclista::Constants;
+use WebSite::Context;
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
@@ -21,7 +21,7 @@ sub sitemenu {
   state $result;
   return $result if ( defined $result );
 
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $baseURI = WebSite::Context->instance->baseURI;
   $result = nav(
     { id => 'menu' },
     p(

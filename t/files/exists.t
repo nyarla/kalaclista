@@ -8,7 +8,8 @@ use Test2::V0;
 use Kalaclista::Path;
 use Kalaclista::Files;
 use Kalaclista::Entries;
-use Kalaclista::Constants;
+
+use WebSite::Context;
 
 my $content = Kalaclista::Path->detect(qr{^t$})->child('content');
 my $dist    = Kalaclista::Path->detect(qr{^t$})->child('public/dist');
@@ -70,8 +71,6 @@ sub fixup {
 }
 
 sub generated {
-  Kalaclista::Constants->baseURI('https://example.com');
-
   my $entries =
       map { fixup($_) } Kalaclista::Entries->instance( $content->child('entries')->path );
 

@@ -9,8 +9,6 @@ use feature qw(state);
 use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 
-use Kalaclista::Constants;
-
 use WebSite::Widgets::Layout;
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';

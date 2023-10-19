@@ -10,10 +10,13 @@ use JSON::XS;
 
 use Kalaclista::Path;
 
+use WebSite::Context;
+local $ENV{'KALACLISTA_ENV'} = 'production';
+
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $html = Kalaclista::Path->detect(qr{^t$})->child('public/dist/index.html')->get;
+  my $html = WebSite::Context->init(qr{^t$})->dirs->dist('index.html')->get;
   utf8::decode($html);
   my $dom = $parser->parse($html);
 

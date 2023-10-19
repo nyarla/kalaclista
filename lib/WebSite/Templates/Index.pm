@@ -9,8 +9,7 @@ use feature qw(state);
 use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 
-use Kalaclista::Constants;
-
+use WebSite::Context;
 use WebSite::Widgets::Layout;
 
 sub date {
@@ -19,9 +18,10 @@ sub date {
 
 sub content {
   my $vars = shift;
+  my $c    = WebSite::Context->instance;
 
   my $section = $vars->section;
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $baseURI = $c->baseURI;
   my $data    = $vars->contains->{$section};
   my $website = $data->{'website'};
   my $summary = $data->{'description'};

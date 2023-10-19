@@ -8,10 +8,11 @@ use Test2::V0;
 use URI::Fast;
 use HTML5::DOM;
 
-use Kalaclista::Constants;
-use WebSite::Widgets::Info;
+use WebSite::Context;
+local $ENV{'KALACLISTA_ENV'} = 'production';
+WebSite::Context->init(qr{^t$});
 
-Kalaclista::Constants->baseURI( URI::Fast->new('https://example.com') );
+use WebSite::Widgets::Info;
 
 my $parser = HTML5::DOM->new;
 
@@ -22,7 +23,7 @@ sub main {
   my $dom = $parser->parse($info)->at('body');
 
   is( $dom->at('footer')->getAttribute('id'),           'copyright' );
-  is( $dom->at('footer > p > a')->getAttribute('href'), 'https://example.com/nyarla/' );
+  is( $dom->at('footer > p > a')->getAttribute('href'), 'https://the.kalaclista.com/nyarla/' );
 
   is( $dom->at('footer > p')->textContent, qq{(c) 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla} );
 

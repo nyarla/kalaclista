@@ -4,14 +4,15 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::Constants;
-
-use Kalaclista::HyperScript qw(h);
+use Kalaclista::HyperScript    qw(h);
 use WebSite::Helper::Hyperlink qw(href);
+
+use WebSite::Context;
 
 sub render {
   my $vars    = shift;
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $c       = WebSite::Context->instance;
+  my $baseURI = $c->baseURI;
   my $section = $vars->section;
   my $prefix  = $section eq 'pages' ? '' : "/${section}";
 

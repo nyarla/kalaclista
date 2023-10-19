@@ -6,13 +6,15 @@ use utf8;
 
 use JSON::XS;
 
+use WebSite::Context;
 use WebSite::Helper::Hyperlink qw(href);
 
 my $jsonify = JSON::XS->new->utf8->canonical(1);
 
 sub render {
   my $vars    = shift;
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $c       = WebSite::Context->instance;
+  my $baseURI = $c->baseURI;
   my $section = $vars->section;
   my $prefix  = $section eq 'pages' ? '' : "/${section}";
 

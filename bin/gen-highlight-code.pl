@@ -9,18 +9,15 @@ use URI::Fast;
 use URI::Escape qw(uri_unescape);
 use YAML::XS;
 
-BEGIN {
-  use Kalaclista::Constants;
-  Kalaclista::Constants->baseURI('https://the.kalaclista.com');
-}
-
 use Kalaclista::Path;
 use Kalaclista::Entry;
 use Kalaclista::Entries;
 
-my $content = Kalaclista::Path->detect(qr{^bin$})->child('content');
-my $dist    = $content->child('data/highlight');
-my $src     = $content->child('entries');
+use WebSite::Context;
+
+my $c    = WebSite::Context->new(qr{^bin$});
+my $dist = $c->dirs->rootdir->child('data/highlight');
+my $src  = $c->dirs->src('entries/src');
 
 my $parser = HTML5::DOM->new;
 

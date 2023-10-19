@@ -11,7 +11,7 @@ our @EXPORT = qw(banner);
 use Kalaclista::HyperScript qw(nav p a img hr span br);
 
 use WebSite::Helper::Hyperlink qw(hyperlink href);
-use Kalaclista::Constants;
+use WebSite::Context;
 
 sub breadcrumb {
   my $vars    = shift;
@@ -36,7 +36,7 @@ sub breadcrumb {
 
 sub banner {
   my $vars    = shift;
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $baseURI = WebSite::Context->instance->baseURI;
 
   return nav(
     { id => 'global' },

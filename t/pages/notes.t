@@ -10,17 +10,14 @@ use HTML5::DOM;
 use JSON::XS;
 use URI::Escape qw(uri_escape_utf8);
 
-use Kalaclista::Constants;
 use Kalaclista::Entry;
 use Kalaclista::Files;
 
-my $posts = Kalaclista::Constants->rootdir(qr{^t$})->child('public/dist/notes')->path;
+use WebSite::Context;
+local $ENV{'KALACLISTA_ENV'} = 'production';
 
+my $posts  = WebSite::Context->init(qr{^t$})->dirs->dist('notes')->path;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
-
-sub escape {
-  $;;
-}
 
 sub main {
   my @files = grep { $_ =~ m</notes/[^/]+/index.html> } Kalaclista::Files->find($posts);

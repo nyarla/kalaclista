@@ -9,12 +9,12 @@ use Test2::V0;
 use HTML5::DOM;
 use JSON::XS;
 
-use Kalaclista::Constants;
 use Kalaclista::Entry;
 use Kalaclista::Files;
 
-my $posts = Kalaclista::Constants->rootdir(qr{^t$})->child('public/dist/posts')->path;
+use WebSite::Context;
 
+my $posts  = WebSite::Context->init(qr{^t$})->dirs->dist('posts')->path;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {

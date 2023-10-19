@@ -29,6 +29,10 @@ website: .check
 	@cat src/website/src/*.nix | perl -pge 's<\}\n\{><>g' >cache/website/website.nix
 	@nix eval --json --file cache/website/website.nix >cache/website/website.json
 
+assets: .check
+	@echo copy assets
+	@cp -r src/assets/* public/dist/
+
 # generate assets
 _gen_assets: .check
 	@echo copy assets
@@ -87,10 +91,10 @@ reset: .check clean
 	@mkdir -p public/state
 
 build: .check
-	@env URL="https://the.kalaclista.com" $(MAKE) gen
+	@env URL="https://the.kalaclista.com" KALACLISTA_ENV=production $(MAKE) gen
 
 dev: .check
-	@env URL="http://nixos:1313" $(MAKE) gen
+	@env URL="http://nixos:1313" KALACLISTA_ENV=development $(MAKE) gen
 
 test: .check
 	prove -j$(FULL) t/*/*.t

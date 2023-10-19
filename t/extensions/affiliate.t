@@ -8,19 +8,17 @@ use Test2::V0;
 use HTML5::DOM;
 use URI::Fast;
 
-BEGIN {
-  use Kalaclista::Constants;
-  Kalaclista::Constants->rootdir(qr{^t$});
-}
-
 use Kalaclista::Entry;
 
 use WebSite::Extensions::Affiliate;
+use WebSite::Context;
+
+my $instance = WebSite::Context->init(qr{^t$});
 
 sub main {
   my $path  = 'posts/2022/07/24/121254';
   my $entry = Kalaclista::Entry->new(
-    Kalaclista::Constants->rootdir->child("content/entries/${path}.md")->path,
+    $instance->dirs->src("entries/src/${path}.md")->path,
     URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 

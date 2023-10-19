@@ -15,7 +15,7 @@ use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 use WebSite::Helper::Digest    qw(digest);
 
-use Kalaclista::Constants;
+use WebSite::Context;
 
 my %tables = (
   posts => [ 'Blog',    'BlogPosting' ],
@@ -72,7 +72,7 @@ sub global {
   return @result if ( @result != 0 );
 
   my $digest  = digest("lib/WebSite/Templates/Stylesheet.pm");
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $baseURI = WebSite::Context->instance->baseURI;
   my $vars    = shift;
 
   @result = (
@@ -104,7 +104,7 @@ sub in_section {
   return $cache{ $vars->section }->@*
       if ( exists $cache{ $vars->section } );
 
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $baseURI = WebSite::Context->instance->baseURI;
   my $website = $vars->section =~ m{^(?:posts|echos|notes)$} ? $vars->contains->{ $vars->section }->{'website'} : $vars->website;
   my $prefix  = $vars->section =~ m{^(?:posts|echos|notes)$} ? "/" . $vars->section                             : q{};
   my @result  = (

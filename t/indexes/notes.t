@@ -9,14 +9,15 @@ use Test2::V0;
 use HTML5::DOM;
 use JSON::XS;
 
-use Kalaclista::Constants;
 use Kalaclista::Entry;
 use Kalaclista::Files;
+
+use WebSite::Context;
 
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $file = Kalaclista::Constants->rootdir(qr{^t$})->child('public/dist/notes/index.html');
+  my $file = WebSite::Context->init(qr{^t$})->dirs->dist('notes/index.html');
   my $href = "https://the.kalaclista.com/notes/";
 
   my $html = $file->get;

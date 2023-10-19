@@ -4,12 +4,6 @@ use strict;
 use warnings;
 use utf8;
 
-BEGIN {
-  use Kalaclista::Constants;
-  Kalaclista::Constants->baseURI('https://the.kalaclista.com');
-  Kalaclista::Constants->rootdir(qr{^t$});
-}
-
 use Test2::V0;
 use URI::Fast;
 use URI::Escape qw(uri_escape_utf8);
@@ -18,10 +12,13 @@ use Kalaclista::Entry;
 
 use WebSite::Extensions::Picture;
 
+local $ENV{'KALACLISTA_ENV'} = 'production';
+WebSite::Context->init(qr{^t$});
+
 sub entry {
   my $path  = shift;
   my $entry = Kalaclista::Entry->new(
-    Kalaclista::Constants->rootdir->child("content/entries/${path}.md")->path,
+    WebSite::Context->instance->dirs->src("entries/src/${path}.md")->path,
     URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 

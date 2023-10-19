@@ -4,13 +4,14 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::Constants;
+use feature qw(state);
+
 use Kalaclista::Shop::Amazon;
 use Kalaclista::Shop::Rakuten;
 
 use Kalaclista::HyperScript;
 
-my $datadir = Kalaclista::Constants->rootdir->child('content/data/items');
+use WebSite::Context;
 
 sub key {
   my $key = shift;
@@ -63,6 +64,7 @@ sub replace {
 }
 
 sub transform {
+  state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/items');
   my ( $class, $entry, $dom ) = @_;
 
   for my $item ( $dom->find('p > a:only-child')->@* ) {

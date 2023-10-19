@@ -7,9 +7,9 @@ use utf8;
 use Test2::V0;
 use JSON::XS qw(decode_json);
 
-use Kalaclista::Path;
+use WebSite::Context;
 
-my $dist = Kalaclista::Path->detect(qr{^t$})->child('public/dist');
+my $dist = WebSite::Context->init(qr{^t$})->dirs->distdir;
 
 sub testing_feed {
   my ( $section, $json, $data ) = @_;

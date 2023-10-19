@@ -6,19 +6,17 @@ use warnings;
 use Test2::V0;
 use URI::Fast;
 
-BEGIN {
-  use Kalaclista::Constants;
-  Kalaclista::Constants->rootdir(qr{^t$});
-}
-
 use Kalaclista::Entry;
 
 use WebSite::Extensions::CodeSyntax;
+use WebSite::Context;
+
+WebSite::Context->init(qr{^t$});
 
 sub main {
   my $path  = 'posts/2021/11/01/121434';
   my $entry = Kalaclista::Entry->new(
-    Kalaclista::Constants->rootdir->child("content/entries/${path}.md")->path,
+    WebSite::Context->instance->dirs->src("entries/src/${path}.md")->path,
     URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 

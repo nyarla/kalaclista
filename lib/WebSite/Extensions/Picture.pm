@@ -4,16 +4,18 @@ use strict;
 use warnings;
 use utf8;
 
+use feature qw(state);
+
 use YAML::XS;
 use URI::Escape;
 use Kalaclista::HyperScript qw(a img);
 
-use Kalaclista::Constants;
-
-my $datadir = Kalaclista::Constants->rootdir->child('cache/images');
-my $prefix  = Kalaclista::Constants->baseURI->to_string;
+use WebSite::Context;
 
 sub transform {
+  state $datadir ||= WebSite::Context->instance->dirs->cache('images');
+  state $prefix  ||= WebSite::Context->instance->baseURI->to_string;
+
   my ( $class, $entry, $dom, $scales ) = @_;
 
   for my $item ( $dom->find('p > img:only-child')->@* ) {

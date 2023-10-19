@@ -4,15 +4,16 @@ use strict;
 use warnings;
 use utf8;
 
+use feature qw(state);
+
 use Exporter::Lite;
 our @EXPORT = qw( layout );
 
 use Kalaclista::HyperScript;
-use Kalaclista::Constants;
-
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
-use WebSite::Widgets::Analytics;
+use WebSite::Context;
+
 use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;
@@ -28,11 +29,13 @@ my $goat   = script(
   },
   ''
 );
-my @analytics = Kalaclista::Constants->vars->is_production ? ($goat) : ();
 
 sub layout {
+  state $c         ||= WebSite::Context->instance;
+  state $analytics ||= [ $c->production ? ($goat) : () ];
   my ( $vars, $content ) = @_;
-  my $baseURI = Kalaclista::Constants->baseURI;
+
+  my $baseURI = $c->baseURI;
 
   return document(
     metadata($vars),
@@ -50,7 +53,7 @@ sub layout {
       ),
       profile,
       siteinfo,
-      @analytics,
+      $analytics->@*,
     ]
   );
 }

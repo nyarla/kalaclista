@@ -9,12 +9,14 @@ use HTML5::DOM;
 
 use Kalaclista::Path;
 
-my $dist = Kalaclista::Path->detect(qr{^t$});
+use WebSite::Context;
+local $ENV{'KALACLISTA_ENV'} = 'production';
 
+my $dist   = WebSite::Context->init(qr{^t$})->dirs->distdir;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $html = $dist->child('public/dist/404.html')->get;
+  my $html = $dist->child('404.html')->get;
   utf8::decode($html);
 
   my $dom = $parser->parse($html);

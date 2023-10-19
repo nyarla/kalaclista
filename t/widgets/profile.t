@@ -8,10 +8,11 @@ use Test2::V0;
 use URI::Fast;
 use HTML5::DOM;
 
-use Kalaclista::Constants;
 use WebSite::Widgets::Profile;
 
-Kalaclista::Constants->baseURI( URI::Fast->new('https://example.com') );
+use WebSite::Context;
+local $ENV{'KALACLISTA_ENV'} = 'production';
+WebSite::Context->init(qr{^t$});
 
 my $parser = HTML5::DOM->new;
 
@@ -23,12 +24,12 @@ sub main {
 
   is( $dom->at('section')->getAttribute('id'), 'profile' );
 
-  is( $dom->at('figure > p > a')->getAttribute('href'),          'https://example.com/nyarla/' );
-  is( $dom->at('figure > p > a > img')->getAttribute('src'),     'https://example.com/assets/avatar.svg' );
+  is( $dom->at('figure > p > a')->getAttribute('href'),          'https://the.kalaclista.com/nyarla/' );
+  is( $dom->at('figure > p > a > img')->getAttribute('src'),     'https://the.kalaclista.com/assets/avatar.svg' );
   is( $dom->at('figure > p > a > img')->getAttribute('width'),   96 );
   is( $dom->at('figure > p > a > img')->getAttribute('height'),  96 );
   is( $dom->at('figure > p > a > img')->getAttribute('alt'),     'アバターアイコン兼ロゴ' );
-  is( $dom->at('figure > figcaption > a')->getAttribute('href'), 'https://example.com/nyarla/' );
+  is( $dom->at('figure > figcaption > a')->getAttribute('href'), 'https://the.kalaclista.com/nyarla/' );
   is( $dom->at('figure > figcaption > a')->text,                 'にゃるら（カラクリスタ）' );
 
   is( $dom->at('section > section')->getAttribute('class'), 'entry__content' );

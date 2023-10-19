@@ -4,11 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-BEGIN {
-  use Kalaclista::Constants;
-  Kalaclista::Constants->rootdir(qr{^bin$});
-  Kalaclista::Constants->baseURI( $ENV{'URL'} // 'https://the.kalaclista.com' );
-}
+use Kalaclista::Constants;
 
 use Module::Load qw(load);
 use HTML5::DOM;
@@ -41,8 +37,10 @@ my %generators = (
 my $const = 'Kalaclista::Constants';
 
 sub init {
+  my $c = WebSite::Context->init(qr{^bin$});
+
   $const->vars(
-    is_production => ( $const->baseURI->to_string eq 'https://the.kalaclista.com' ),
+    is_production => $c->production,
     website       => 'カラクリスタ',
     description   => '『輝かしい青春』なんて失かった人の Web サイトです',
     contains      => {
@@ -63,9 +61,6 @@ sub init {
       },
     },
   );
-
-  $ENV{'KALACLISTA_ENV'} = $ENV{'URL'} eq 'https://the.kalaclista.com' ? 'production' : 'development';
-  WebSite::Context->init(qr{^bin$});
 }
 
 sub fixup {
@@ -106,10 +101,11 @@ sub fixup {
 
 sub main {
   my $action = shift;
+  my $c      = WebSite::Context->instance;
 
-  my $contents = $const->rootdir->child('src/entries/src');
-  my $datadir  = $const->rootdir->child('content/data');
-  my $distdir  = $const->rootdir->child('public/dist');
+  my $contents = $c->dirs->src('entries/src');
+  my $datadir  = $c->dirs->rootdir->child('content/data');    # FIXME
+  my $distdir  = $c->dirs->distdir;
 
   my $entries = Kalaclista::Entries->instance( $contents->path );
 
@@ -135,12 +131,12 @@ sub main {
     $vars->section('pages');
     $vars->kind('home');
     $vars->entries( \@entries );
-    $vars->href( URI::Fast->new( href( "/", $const->baseURI ) ) );
+    $vars->href( URI::Fast->new( href( "/", $c->baseURI ) ) );
 
     my @tree = (
       {
         name => 'カラクリスタ',
-        href => $const->baseURI->to_string
+        href => $c->baseURI->to_string
       },
     );
 
@@ -206,16 +202,16 @@ sub main {
       $vars->section($section);
       $vars->kind('index');
       $vars->entries( \@entries );
-      $vars->href( URI::Fast->new( href( "/${section}/", $const->baseURI ) ) );
+      $vars->href( URI::Fast->new( href( "/${section}/", $c->baseURI ) ) );
 
       my @tree = (
         {
           name => 'カラクリスタ',
-          href => $const->baseURI->to_string
+          href => $c->baseURI->to_string
         },
         {
           name => $vars->contains->{$section}->{'website'},
-          href => href( "/${section}/", $const->baseURI )
+          href => href( "/${section}/", $c->baseURI )
         },
       );
 
@@ -268,20 +264,20 @@ sub main {
       $vars->section($section);
       $vars->kind('index');
       $vars->entries( \@contains );
-      $vars->href( URI::Fast->new( href( "/${section}/${year}/", $const->baseURI ) ) );
+      $vars->href( URI::Fast->new( href( "/${section}/${year}/", $c->baseURI ) ) );
 
       my @tree = (
         {
           name => 'カラクリスタ',
-          href => $const->baseURI->to_string
+          href => $c->baseURI->to_string
         },
         {
           name => $vars->contains->{$section}->{'website'},
-          href => href( "/${section}/", $const->baseURI )
+          href => href( "/${section}/", $c->baseURI )
         },
         {
           name => $vars->title,
-          href => href( "/${section}/${year}/", $const->baseURI )
+          href => href( "/${section}/${year}/", $c->baseURI )
         },
       );
 
@@ -301,7 +297,7 @@ sub main {
         $vars->description( $vars->contains->{$section}->{'description'} );
         $vars->summary( $vars->contains->{$section}->{'description'} );
         $vars->kind('home');
-        $vars->href( URI::Fast->new( href( "/${section}/", $const->baseURI ) ) );
+        $vars->href( URI::Fast->new( href( "/${section}/", $c->baseURI ) ) );
 
         pop @tree;
         $vars->breadcrumb( \@tree );
@@ -368,13 +364,13 @@ sub main {
       $vars->href( $entry->href );
 
       my @tree = (
-        { name => 'カラクリスタ', href => $const->baseURI->to_string },
+        { name => 'カラクリスタ', href => $c->baseURI->to_string },
       );
 
       if ( $entry->type ne 'pages' ) {
         push @tree, +{
           name => $vars->contains->{ $entry->type }->{'website'},
-          href => href( '/' . $entry->type . '/', $const->baseURI ),
+          href => href( '/' . $entry->type . '/', $c->baseURI ),
         };
       }
 

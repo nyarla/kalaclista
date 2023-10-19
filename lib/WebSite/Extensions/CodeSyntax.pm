@@ -4,12 +4,14 @@ use strict;
 use warnings;
 use utf8;
 
-use Kalaclista::Constants;
+use feature qw(state);
+
 use YAML::XS ();
 
-my $datadir = Kalaclista::Constants->rootdir->child('content/data/highlight');
+use WebSite::Context;
 
 sub transform {
+  state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/highlight');
   my ( $class, $entry, $dom ) = @_;
 
   my $href = $entry->href->path;

@@ -7,8 +7,7 @@ use utf8;
 use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 
-use Kalaclista::Constants;
-
+use WebSite::Context;
 use WebSite::Widgets::Layout;
 
 sub date {
@@ -17,7 +16,8 @@ sub date {
 
 sub content {
   my $vars    = shift;
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $c       = WebSite::Context->instance;
+  my $baseURI = $c->baseURI;
 
   return article(
     { class => 'entry entry__home' },

@@ -7,15 +7,15 @@ use utf8;
 use Kalaclista::HyperScript qw(h);
 use Time::Moment;
 
-use Kalaclista::Constants;
-
+use WebSite::Context;
 use WebSite::Helper::Hyperlink qw(href);
 
 my $format = '%a %m %b %Y %T %z';
 
 sub render {
   my $vars    = shift;
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $c       = WebSite::Context->instance;
+  my $baseURI = $c->baseURI;
   my $section = $vars->section;
   my $prefix  = $section eq 'pages' ? '' : "/${section}";
 

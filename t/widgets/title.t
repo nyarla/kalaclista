@@ -8,12 +8,13 @@ use Test2::V0;
 use URI::Fast;
 use HTML5::DOM;
 
-use Kalaclista::Constants;
 use Kalaclista::Variables;
 
 use WebSite::Widgets::Title;
 
-Kalaclista::Constants->baseURI( URI::Fast->new('https://example.com') );
+use WebSite::Context;
+local $ENV{'KALACLISTA_ENV'} = 'production';
+WebSite::Context->init(qr{^t$});
 
 my $parser = HTML5::DOM->new();
 
@@ -41,12 +42,12 @@ sub main {
 
   is(
     $dom->at('#global > p > a')->getAttribute('href'),
-    'https://example.com/'
+    'https://the.kalaclista.com/'
   );
 
   is(
     $dom->at('#global > p > a > img')->getAttribute('src'),
-    'https://example.com/assets/avatar.svg'
+    'https://the.kalaclista.com/assets/avatar.svg'
   );
 
   is( $dom->at('#global > p > a > img')->getAttribute('width'),  50 );
@@ -60,7 +61,7 @@ sub main {
 
     is(
       $dom->at('#global > p > a:last-child')->getAttribute('href'),
-      "https://example.com/${section}/",
+      "https://the.kalaclista.com/${section}/",
     );
 
     is(

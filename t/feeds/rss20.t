@@ -6,9 +6,9 @@ use warnings;
 use Test2::V0;
 use XML::LibXML;
 
-use Kalaclista::Path;
+use WebSite::Context;
 
-my $dist = Kalaclista::Path->detect(qr{^t$})->child("public/dist");
+my $dist = WebSite::Context->init(qr{^t$})->dirs->distdir;
 
 sub at {
   my $xml = shift;

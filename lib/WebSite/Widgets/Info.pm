@@ -10,16 +10,16 @@ use Exporter::Lite;
 
 our @EXPORT = qw(siteinfo);
 
-use Kalaclista::HyperScript qw(p footer raw);
+use Kalaclista::HyperScript    qw(p footer raw);
 use WebSite::Helper::Hyperlink qw(hyperlink href);
 
-use Kalaclista::Constants;
+use WebSite::Context;
 
 sub siteinfo {
   state $result;
   return $result if ( defined $result );
 
-  my $baseURI = Kalaclista::Constants->baseURI;
+  my $baseURI = WebSite::Context->instance->baseURI;
 
   $result = footer(
     { id => 'copyright' },

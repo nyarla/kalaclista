@@ -10,7 +10,6 @@ use JSON::XS;
 use URI::Fast;
 use Text::HyperScript::HTML5 qw(head);
 
-use Kalaclista::Constants;
 use Kalaclista::Entry;
 use Kalaclista::Variables;
 
@@ -18,9 +17,8 @@ use WebSite::Widgets::Metadata;
 use WebSite::Helper::Hyperlink qw(href);
 
 use WebSite::Context;
-
+local $ENV{'KALACLISTA_ENV'} = 'production';
 WebSite::Context->init(qr{^t$});
-Kalaclista::Constants->baseURI( URI::Fast->new('https://example.com') );
 
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
@@ -95,10 +93,10 @@ sub testing_global {
     'width=device-width,minimum-scale=1,initial-scale=1',
   );
 
-  is( $dom->at('link[rel="manifest"]')->getAttribute('href'),                          'https://example.com/manifest.webmanifest' );
-  is( $dom->at('link[rel="icon"][type="images/svg+xml"]')->getAttribute('href'),       'https://example.com/icon.svg' );
-  is( $dom->at('link[rel="icon"]:not([type="images/svg+xml"])')->getAttribute('href'), 'https://example.com/favicon.ico' );
-  is( $dom->at('link[rel="apple-touch-icon"]')->getAttribute('href'),                  'https://example.com/apple-touch-icon.png' );
+  is( $dom->at('link[rel="manifest"]')->getAttribute('href'),                          'https://the.kalaclista.com/manifest.webmanifest' );
+  is( $dom->at('link[rel="icon"][type="images/svg+xml"]')->getAttribute('href'),       'https://the.kalaclista.com/icon.svg' );
+  is( $dom->at('link[rel="icon"]:not([type="images/svg+xml"])')->getAttribute('href'), 'https://the.kalaclista.com/favicon.ico' );
+  is( $dom->at('link[rel="apple-touch-icon"]')->getAttribute('href'),                  'https://the.kalaclista.com/apple-touch-icon.png' );
   is( $dom->at('link[rel="author"]')->getAttribute('href'),                            'http://www.hatena.ne.jp/nyarla-net/' );
 
   my $global2 = head( WebSite::Widgets::Metadata::global($vars) );
@@ -148,29 +146,29 @@ sub testing_in_section {
     if ( $section ne q{pages} ) {
       is(
         $dom->at('link[rel="alternate"][type="application/rss+xml"]')->getAttribute('href'),
-        "https://example.com/${section}/index.xml",
+        "https://the.kalaclista.com/${section}/index.xml",
       );
       is(
         $dom->at('link[rel="alternate"][type="application/atom+xml"]')->getAttribute('href'),
-        "https://example.com/${section}/atom.xml",
+        "https://the.kalaclista.com/${section}/atom.xml",
       );
       is(
         $dom->at('link[rel="alternate"][type="application/feed+json"]')->getAttribute('href'),
-        "https://example.com/${section}/jsonfeed.json",
+        "https://the.kalaclista.com/${section}/jsonfeed.json",
       );
     }
     else {
       is(
         $dom->at('link[rel="alternate"][type="application/rss+xml"]')->getAttribute('href'),
-        "https://example.com/index.xml",
+        "https://the.kalaclista.com/index.xml",
       );
       is(
         $dom->at('link[rel="alternate"][type="application/atom+xml"]')->getAttribute('href'),
-        "https://example.com/atom.xml",
+        "https://the.kalaclista.com/atom.xml",
       );
       is(
         $dom->at('link[rel="alternate"][type="application/feed+json"]')->getAttribute('href'),
-        "https://example.com/jsonfeed.json",
+        "https://the.kalaclista.com/jsonfeed.json",
       );
     }
 
@@ -198,7 +196,7 @@ sub testing_page_on_permalink {
 
   my $entry = Kalaclista::Entry->new(
     WebSite::Context->instance->dirs->rootdir->child('content/entries/posts/2022/01/05/131308.md')->path,
-    URI::Fast->new( href( '/posts/2022/01/05/131308/', Kalaclista::Constants->baseURI ) ),
+    URI::Fast->new( href( '/posts/2022/01/05/131308/', WebSite::Context->instance->baseURI ) ),
   );
 
   my $permalink = Kalaclista::Variables->new(
@@ -210,8 +208,8 @@ sub testing_page_on_permalink {
     entries    => [$entry],
     href       => $entry->href,
     breadcrumb => [
-      { name => 'カラクリスタ',                                    href => Kalaclista::Constants->baseURI->to_string },
-      { name => $global{'contains'}->{'posts'}->{'website'}, href => 'https://example.com/posts/' },
+      { name => 'カラクリスタ',                                    href => WebSite::Context->instance->baseURI->to_string },
+      { name => $global{'contains'}->{'posts'}->{'website'}, href => 'https://the.kalaclista.com/posts/' },
       { name => $entry->title,                               href => $entry->href->to_string },
     ],
   );
@@ -224,11 +222,11 @@ sub testing_page_on_permalink {
   is( $dom->at('title')->textContent,                                $entry->title . ' - ' . 'カラクリスタ・ブログ' );
   is( $dom->at('meta[name="description"]')->getAttribute('content'), $entry->dom->at('*:first-child')->textContent . "……" );
 
-  is( $dom->at('link[rel="canonical"]')->getAttribute('href'), 'https://example.com/posts/2022/01/05/131308/' );
+  is( $dom->at('link[rel="canonical"]')->getAttribute('href'), 'https://the.kalaclista.com/posts/2022/01/05/131308/' );
 
   is( $dom->at('meta[property="og:title"]')->getAttribute('content'),     $entry->title );
   is( $dom->at('meta[property="og:site_name"]')->getAttribute('content'), 'カラクリスタ・ブログ' );
-  is( $dom->at('meta[property="og:image"]')->getAttribute('content'),     'https://example.com/assets/avatar.png' );
+  is( $dom->at('meta[property="og:image"]')->getAttribute('content'),     'https://the.kalaclista.com/assets/avatar.png' );
   is( $dom->at('meta[property="og:url"]')->getAttribute('content'),       $entry->href->to_string );
 
   is( $dom->at('meta[property="og:type"]')->getAttribute('content'),           'article' );
@@ -240,7 +238,7 @@ sub testing_page_on_permalink {
   is( $dom->at('meta[name="twitter:site"]')->getAttribute('content'),        '@kalaclista' );
   is( $dom->at('meta[name="twitter:title"]')->getAttribute('content'),       $entry->title . ' - ' . 'カラクリスタ・ブログ' );
   is( $dom->at('meta[name="twitter:description"]')->getAttribute('content'), $entry->dom->at('*:first-child')->textContent . '……' );
-  is( $dom->at('meta[name="twitter:image"]')->getAttribute('content'),       'https://example.com/assets/avatar.png' );
+  is( $dom->at('meta[name="twitter:image"]')->getAttribute('content'),       'https://the.kalaclista.com/assets/avatar.png' );
 
   my $json = $dom->at('script[type="application/ld+json"]')->textContent;
   utf8::encode($json);
@@ -250,7 +248,7 @@ sub testing_page_on_permalink {
     $payload, [
       {
         '@context' => 'https://schema.org',
-        '@id'      => 'https://example.com/posts/2022/01/05/131308/',
+        '@id'      => 'https://the.kalaclista.com/posts/2022/01/05/131308/',
         '@type'    => 'BlogPosting',
         'author'   => {
           '@type' => 'Person',
@@ -262,10 +260,10 @@ sub testing_page_on_permalink {
         'headline' => $entry->title,
         'image'    => {
           '@type'      => 'ImageObject',
-          'contentUrl' => 'https://example.com/assets/avatar.png'
+          'contentUrl' => 'https://the.kalaclista.com/assets/avatar.png'
         },
 
-        'mainEntityOfPage' => "https://example.com/posts/",
+        'mainEntityOfPage' => "https://the.kalaclista.com/posts/",
 
         'publisher' => {
           '@type' => 'Organization',
@@ -281,19 +279,19 @@ sub testing_page_on_permalink {
         'itemListElement' => [
           {
             '@type'    => 'ListItem',
-            'item'     => 'https://example.com',
+            'item'     => 'https://the.kalaclista.com',
             'name'     => 'カラクリスタ',
             'position' => 1,
           },
           {
             '@type'    => 'ListItem',
-            'item'     => 'https://example.com/posts/',
+            'item'     => 'https://the.kalaclista.com/posts/',
             'name'     => 'カラクリスタ・ブログ',
             'position' => 2,
           },
           {
             '@type'    => 'ListItem',
-            'item'     => 'https://example.com/posts/2022/01/05/131308/',
+            'item'     => 'https://the.kalaclista.com/posts/2022/01/05/131308/',
             'name'     => $entry->title,
             'position' => 3,
           }
