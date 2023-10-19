@@ -12,7 +12,7 @@ use WebSite::Helper::Digest qw(digest);
 
 my $dirs   = WebSite::Context->init(qr{^bin$})->dirs;
 my $digest = digest('lib/WebSite/Templates/Stylesheet.pm');
-my $dist   = $dirs->dist("main-${digest}")->path;
+my $dist   = $dirs->dist("main-${digest}.css")->path;
 
 sub doing {
   my $main      = $dirs->cache("css/main-${digest}.css");
