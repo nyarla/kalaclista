@@ -21,7 +21,7 @@ images: .check
 	@comm -23 cache/images/{now,latest}.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*src/images/##' \
-		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 600 1200
+		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv cache/images/{now,latest}.sha256sum
 
 website: .check
@@ -80,6 +80,7 @@ clean: .check
 	@test ! -d public/dist || rm -rf public/dist
 	@mkdir -p public/dist
 	@test ! -e cache/images/latest.sha256sum || rm cache/images/latest.sha256sum
+	@test ! -e cache/images/data || rm -rf cache/images/data
 
 reset: .check clean
 	@test ! -d public/state || rm -rf public/state

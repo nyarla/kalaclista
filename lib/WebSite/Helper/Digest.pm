@@ -9,7 +9,8 @@ use Exporter::Lite;
 
 our @EXPORT = qw(digest);
 
-use Kalaclista::Path;
+use YAML::XS;
+use WebSite::Context;
 
 sub calculate {
   my $path   = shift;
@@ -20,7 +21,7 @@ sub calculate {
 }
 
 sub digest {
-  state $rootdir ||= Kalaclista::Path->detect(qr{^bin$});
+  state $rootdir ||= WebSite::Context->instance->dirs->rootdir;
   state $cache   ||= {};
 
   my $file = shift;

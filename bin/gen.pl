@@ -32,7 +32,6 @@ use WebSite::Helper::Hyperlink qw(href);
 
 my %generators = (
   'home'        => 'Kalaclista::Generators::Page',
-  'images'      => 'Kalaclista::Generators::WebP',
   'index'       => 'Kalaclista::Generators::Page',
   'main.css'    => 'Kalaclista::Generators::Page',
   'permalinks'  => 'Kalaclista::Generators::Page',
@@ -108,10 +107,9 @@ sub fixup {
 sub main {
   my $action = shift;
 
-  my $contents = $const->rootdir->child('content/entries');
+  my $contents = $const->rootdir->child('src/entries/src');
   my $datadir  = $const->rootdir->child('content/data');
   my $distdir  = $const->rootdir->child('public/dist');
-  my $images   = $const->rootdir->child('content/assets/images');
 
   my $entries = Kalaclista::Entries->instance( $contents->path );
 
@@ -347,7 +345,7 @@ sub main {
     for my $entry (@entries) {
       my $precompiled = do {
         my $path = $entry->path;
-        $path =~ s{content/entries}{content/precompiled};
+        $path =~ s{src/entries/src}{src/entries/precompiled};
         open( my $fh, '<', $path );
         local $/;
         my $data = <$fh>;

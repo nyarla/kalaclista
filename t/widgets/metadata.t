@@ -17,7 +17,9 @@ use Kalaclista::Variables;
 use WebSite::Widgets::Metadata;
 use WebSite::Helper::Hyperlink qw(href);
 
-Kalaclista::Constants->rootdir(qr{^t$});
+use WebSite::Context;
+
+WebSite::Context->init(qr{^t$});
 Kalaclista::Constants->baseURI( URI::Fast->new('https://example.com') );
 
 my $parser = HTML5::DOM->new( { scripts => 1 } );
@@ -195,7 +197,7 @@ sub testing_page_on_permalink {
   );
 
   my $entry = Kalaclista::Entry->new(
-    Kalaclista::Constants->rootdir->child('content/entries/posts/2022/01/05/131308.md')->path,
+    WebSite::Context->instance->dirs->rootdir->child('content/entries/posts/2022/01/05/131308.md')->path,
     URI::Fast->new( href( '/posts/2022/01/05/131308/', Kalaclista::Constants->baseURI ) ),
   );
 

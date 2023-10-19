@@ -112,13 +112,13 @@ sub testing {
   );
 
   is(
-    resize( "posts/2023/08/15/162025/1.jpg", "1x", 600 ),
-    { width => 600, height => 450 },
+    resize( "posts/2023/08/15/162025/1.jpg", "1x", 640 ),
+    { width => 640, height => 480 },
     '`resize` subroutine can resize to image by `cwebp`',
   );
 
   ok(
-    try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 600, 1200 ); } ),
+    try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 640, 1280 ); } ),
     'doing main process suceed',
   );
 

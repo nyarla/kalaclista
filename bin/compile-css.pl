@@ -7,15 +7,16 @@ use utf8;
 use Kalaclista::Generators::Page;
 use Kalaclista::Path;
 
+use WebSite::Context;
 use WebSite::Helper::Digest qw(digest);
 
-my $rootdir = Kalaclista::Path->detect(qr{^bin$});
-my $digest  = digest('lib/WebSite/Templates/Stylesheet.pm');
-my $dist    = $rootdir->child("public/dist/main-${digest}.css")->path;
+my $dirs   = WebSite::Context->init(qr{^bin$})->dirs;
+my $digest = digest('lib/WebSite/Templates/Stylesheet.pm');
+my $dist   = $dirs->dist("main-${digest}")->path;
 
 sub doing {
-  my $main      = $rootdir->child("cache/css/main-${digest}.css");
-  my $normalize = $rootdir->child("deps/css/normalize.css");
+  my $main      = $dirs->cache("css/main-${digest}.css");
+  my $normalize = $dirs->rootdir->child("deps/css/normalize.css");
   my $template  = 'WebSite::Templates::Stylesheet';
 
   Kalaclista::Generators::Page->generate(

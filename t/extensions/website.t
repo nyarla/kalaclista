@@ -6,17 +6,13 @@ use warnings;
 use Test2::V0;
 use URI::Fast;
 
-BEGIN {
-  use Kalaclista::Constants;
-  Kalaclista::Constants->rootdir(qr{^t$});
-}
-
 use Kalaclista::Entry;
 
+use WebSite::Context;
 use WebSite::Extensions::WebSite;
 
-my $rootdir = Kalaclista::Path->detect(qr{^t$});
-my $content = $rootdir->child("content/entries");
+my $context = WebSite::Context->init(qr{^t$});
+my $content = $context->dirs->src('entries/src');
 
 sub main {
   my $path  = 'notes/NERDFonts';

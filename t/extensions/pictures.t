@@ -39,22 +39,21 @@ subtest blog => sub {
 
   is(
     $item->getAttribute('href'),
-    "https://the.kalaclista.com/images/${path}/1.png",
+    "https://the.kalaclista.com/images/${path}/1_1x.webp",
   );
 
   is( $item->at('img')->getAttribute('height'), 582 );
-  is( $item->at('img')->getAttribute('width'),  581 );
+  is( $item->at('img')->getAttribute('width'),  640 );
   is(
     $item->at('img')->getAttribute('src'),
-    "https://the.kalaclista.com/images/$path/1_2x.webp",
+    "https://the.kalaclista.com/images/$path/1_1x.webp",
   );
 
   is(
     $item->at('img')->getAttribute('srcset'),
     join(
-      q{, }, qq<https://the.kalaclista.com/images/${path}/1_1x.webp 581w>,
-      qq<https://the.kalaclista.com/images/${path}/1_2x.webp 581w>,
-      qq<https://the.kalaclista.com/images/${path}/1.png 581w>,
+      q{, }, qq<https://the.kalaclista.com/images/${path}/1_1x.webp 640w>,
+      qq<https://the.kalaclista.com/images/${path}/1_2x.webp 1280w>,
     ),
   );
 
@@ -63,7 +62,6 @@ subtest blog => sub {
     join(
       q{, }, qq<(max-width: 640px) 640px>,
       q<(max-width: 1280px) 1280px>,
-      q<581px>
     ),
   );
 
@@ -78,14 +76,14 @@ subtest notes => sub {
 
   is(
     $item->getAttribute('href'),
-    "https://the.kalaclista.com/images/notes/${fn}/1.jpg",
+    "https://the.kalaclista.com/images/notes/${fn}/1_1x.webp",
   );
 
   is( $item->at('img')->getAttribute('height'), 288 );
   is( $item->at('img')->getAttribute('width'),  640 );
   is(
     $item->at('img')->getAttribute('src'),
-    "https://the.kalaclista.com/images/notes/${fn}/1_2x.webp",
+    "https://the.kalaclista.com/images/notes/${fn}/1_1x.webp",
   );
 
   is(
@@ -93,7 +91,6 @@ subtest notes => sub {
     join(
       q{, }, qq<https://the.kalaclista.com/images/notes/${fn}/1_1x.webp 640w>,
       qq<https://the.kalaclista.com/images/notes/${fn}/1_2x.webp 1280w>,
-      qq<https://the.kalaclista.com/images/notes/${fn}/1.jpg 4000w>,
     ),
   );
 
@@ -102,7 +99,6 @@ subtest notes => sub {
     join(
       q{, }, qq<(max-width: 640px) 640px>,
       q<(max-width: 1280px) 1280px>,
-      q<4000px>
     ),
   );
 
