@@ -26,6 +26,8 @@ class WebSite::Context : isa(Kalaclista::Context) {
         src    => q{src},
       }
     );
+
+    return $class->instance;
   }
 
 }
