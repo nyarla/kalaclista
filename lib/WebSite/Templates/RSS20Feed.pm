@@ -13,25 +13,26 @@ use WebSite::Helper::Hyperlink qw(href);
 my $format = '%a %m %b %Y %T %z';
 
 sub render {
-  my $vars    = shift;
+  my $page    = shift;
   my $c       = WebSite::Context->instance;
   my $baseURI = $c->baseURI;
-  my $section = $vars->section;
-  my $prefix  = $section eq 'pages' ? '' : "/${section}";
+  my $section = $page->section;
+  my $prefix  = $section eq 'pages' ? ''          : "/${section}";
+  my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
 
   my $href    = href( "${prefix}/",          $baseURI );
   my $feed    = href( "${prefix}/index.xml", $baseURI );
-  my @entries = $vars->entries->@*;
+  my @entries = $page->entries->@*;
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     'rss',
     { version => "2.0", "xmlns:atom" => 'http://www.w3.org/2005/Atom' },
     h(
-      channel => h( title => $vars->title ),
+      channel => h( title => $website->title ),
       h( link => $feed ),
       h( 'atom:link', { href => $href, type => 'application/rss+xml' } ),
       h( 'atom:link', { href => $feed, rel  => 'self' } ),
-      h( description    => $vars->description ),
+      h( description    => $website->summary ),
       h( managingEditor => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( webMaster      => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( copyright      => '(c) 2006-' . ( (localtime)[5] + 1900 ) . ' OKAMURA Naoki' ),

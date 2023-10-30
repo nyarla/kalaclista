@@ -19,7 +19,7 @@ const budoux = loadDefaultJapaneseParser();
 const numCPUs = availableParallelism();
 
 function fullpath(path) {
-  return normalize(`${rootdir}/content/entries/${path}`);
+  return normalize(`${rootdir}/src/entries/src/${path}`);
 }
 
 function load(path) {
@@ -110,7 +110,10 @@ async function compile(fn) {
       .replace(/overflow-wrap: break-word/g, "overflow-wrap: anywhere") + "\n",
   );
 
-  const filepath = fullpath(fn).replace("/entries/", "/precompiled/");
+  const filepath = fullpath(fn).replace(
+    "/entries/src/",
+    "/entries/precompiled/",
+  );
   return mkdir(dirname(filepath), { recursive: true }).then(() =>
     writeFile(filepath, html, { encoding: "utf8", mode: 0o644 }),
   );

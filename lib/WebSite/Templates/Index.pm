@@ -17,21 +17,21 @@ sub date {
 }
 
 sub content {
-  my $vars = shift;
+  my $page = shift;
   my $c    = WebSite::Context->instance;
 
-  my $section = $vars->section;
+  my $section = $page->section;
   my $baseURI = $c->baseURI;
-  my $data    = $vars->contains->{$section};
-  my $website = $data->{'website'};
-  my $summary = $data->{'description'};
-  my $year    = ( split q{-}, date( $vars->entries->[0]->date ) )[0];
+  my $data    = $c->sections->{$section};
+  my $website = $data->title;
+  my $summary = $data->summary;
+  my $year    = ( split qr{-}, date( $page->entries->[0]->date ) )[0];
 
   my @contents;
   my @archives;
   my $prop = $section eq 'notes' ? 'lastmod' : 'date';
 
-  for my $entry ( sort { $b->$prop cmp $a->$prop } $vars->entries->@* ) {
+  for my $entry ( $page->entries->@* ) {
     my $date = date( $entry->date );
     push @contents,
         li(
@@ -41,7 +41,7 @@ sub content {
   }
 
   if ( $section ne 'notes' ) {
-    for my $yr ( sort { $b <=> $a } $vars->begin .. $vars->end ) {
+    for my $yr ( sort { $b <=> $a } $page->vars->{'start'} .. $page->vars->{'end'} ) {
       if ( $yr == $year ) {
         push @archives, strong($year);
         next;

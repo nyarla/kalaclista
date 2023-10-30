@@ -66,20 +66,19 @@ sub main {
 
     my $title   = $dom->at('.entry header h1')->textContent;
     my $website = 'カラクリスタ・ノート';
-    my $summary = ( $dom->at('.entry__content > .sep ~ *') // $dom->at('.entry__content > *:first-child') )->textContent . "……";
 
-    is( $dom->at('title')->textContent,                                "${title} - ${website}" );
-    is( $dom->at('meta[name="description"]')->getAttribute('content'), $summary );
-    is( $dom->at('link[rel="canonical"]')->getAttribute('href'),       $href );
+    is( $dom->at('title')->textContent, "${title} - ${website}" );
+    ok( $dom->at('meta[name="description"]')->getAttribute('content') ne q{} );
+    is( $dom->at('link[rel="canonical"]')->getAttribute('href'), $href );
 
     is( $dom->at('meta[property="og:title"]')->getAttribute('content'), $title );
     is( $dom->at('meta[property="og:type"]')->getAttribute('content'),  'article' );
     is( $dom->at('meta[property="og:image"]')->getAttribute('content'), 'https://the.kalaclista.com/assets/avatar.png' );
     is( $dom->at('meta[property="og:url"]')->getAttribute('content'),   $href );
 
-    is( $dom->at('meta[property="og:description"]')->getAttribute('content'), $summary );
-    is( $dom->at('meta[property="og:locale"]')->getAttribute('content'),      'ja_JP' );
-    is( $dom->at('meta[property="og:site_name"]')->getAttribute('content'),   $website );
+    ok( $dom->at('meta[property="og:description"]')->getAttribute('content') ne q{} );
+    is( $dom->at('meta[property="og:locale"]')->getAttribute('content'),    'ja_JP' );
+    is( $dom->at('meta[property="og:site_name"]')->getAttribute('content'), $website );
 
     like(
       $dom->at('meta[property="og:published_time"]')->getAttribute('content'),

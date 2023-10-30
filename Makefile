@@ -24,6 +24,18 @@ images: .check
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv cache/images/{now,latest}.sha256sum
 
+entries: .check
+	@echo generate precompiled entries source
+	@test -d cache/entries || mkdir -p cache/entries
+	@openssl dgst -r -sha256 $$(find "src/entries/src" -type f | grep -v '.git') | sort >cache/entries/now.sha256sum
+	@touch cache/entries/latest.sha256sum
+	@comm -23 cache/entries/{now,latest}.sha256sum \
+		| cut -d ' ' -f2 \
+		| sed 's#*src/entries/src/##' >cache/entries/target
+	@node bin/gen-precompile.js cache/entries/target
+	@mv cache/entries/{now,latest}.sha256sum
+	@rm cache/entries/target
+
 website: .check
 	@echo generate website.json
 	@cat src/website/src/*.nix | perl -pge 's<\}\n\{><>g' >cache/website/website.nix
@@ -37,16 +49,6 @@ assets: .check
 _gen_assets: .check
 	@echo copy assets
 	@cp -R content/assets/* public/dist/
-
-_gen_entries: .check
-	@echo generate precompiled entries source
-	@sha256sum -b $$(find content/entries -type f) | sort >public/state/sha256.entries.new
-	@touch public/state/sha256.entries.latest
-	@comm -23 public/state/sha256.entries.{new,latest} \
-		| cut -d ' ' -f2 \
-		| sed 's#*content/entries/##' > public/state/process.entries
-	@node bin/gen-precompile.js public/state/process.entries
-	@mv public/state/sha256.entries.{new,latest}
 
 # generate content
 _gen_sitemap_xml: .check
@@ -74,9 +76,9 @@ _gen_standalone: \
 	_gen_home
 
 gen: .check
-	@$(MAKE) _gen_assets
+	@$(MAKE) assets
 	@$(MAKE) images
-	@$(MAKE) _gen_entries
+	@$(MAKE) entries
 	@test -d public/bundle || mkdir -p public/bundle
 	@$(MAKE) _gen_standalone -j7
 

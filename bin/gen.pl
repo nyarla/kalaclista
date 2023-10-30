@@ -8,12 +8,15 @@ use Kalaclista::Constants;
 
 use Module::Load qw(load);
 use HTML5::DOM;
+use URI::Escape::XS qw(uri_unescape);
 
 my $parser = HTML5::DOM->new( { script => 1 } );
 
 use Kalaclista::Entries;
 use Kalaclista::Path;
-use Kalaclista::Variables;
+
+use Kalaclista::Data::Page;
+use Kalaclista::Data::WebSite;
 
 use WebSite::Context;
 
@@ -34,31 +37,34 @@ my %generators = (
   'sitemap.xml' => 'Kalaclista::Generators::SitemapXML',
 );
 
-my $const = 'Kalaclista::Constants';
-
 sub init {
   my $c = WebSite::Context->init(qr{^bin$});
 
-  $const->vars(
-    is_production => $c->production,
-    website       => 'カラクリスタ',
-    description   => '『輝かしい青春』なんて失かった人の Web サイトです',
-    contains      => {
-      posts => {
-        label       => 'ブログ',
-        website     => 'カラクリスタ・ブログ',
-        description => '『輝かしい青春』なんて失かった人のブログです'
-      },
-      echos => {
-        label       => '日記',
-        website     => 'カラクリスタ・エコーズ',
-        description => '『輝かしい青春』なんて失かった人の日記です'
-      },
-      notes => {
-        label       => 'メモ帳',
-        website     => 'カラクリスタ・ノート',
-        description => '『輝かしい青春』なんて失かった人のメモ帳です'
-      },
+  $c->website(
+    label     => 'カラクリスタ',
+    title     => 'カラクリスタ',
+    summary   => '『輝かしい青春』なんて失かった人の Web サイトです',
+    permalink => href( '/', $c->baseURI ),
+  );
+
+  $c->sections(
+    posts => {
+      label     => 'ブログ',
+      title     => 'カラクリスタ・ブログ',
+      summary   => '『輝かしい青春』なんて失かった人のブログです',
+      permalink => href( 'posts', $c->baseURI ),
+    },
+    echos => {
+      label     => 'エコーズ',
+      title     => 'カラクリスタ・エコーズ',
+      summary   => '『輝かしい青春』なんて失かった人の日記です',
+      permalink => href( 'echos', $c->baseURI ),
+    },
+    notes => {
+      label     => 'メモ帳',
+      title     => 'カラクリスタ・ノート',
+      summary   => '『輝かしい青春』なんて失かった人のメモ帳です',
+      permalink => href( 'notes', $c->baseURI ),
     },
   );
 }
@@ -106,11 +112,12 @@ sub main {
   my $contents = $c->dirs->src('entries/src');
   my $datadir  = $c->dirs->rootdir->child('content/data');    # FIXME
   my $distdir  = $c->dirs->distdir;
+  my $srcdir   = $c->dirs->srcdir;
 
   my $entries = Kalaclista::Entries->instance( $contents->path );
 
   if ( $action eq 'sitemap.xml' ) {
-    my $class = $generators{$action};
+    my $class = 'Kalaclista::Generators::SitemapXML';
     load($class);
 
     return $class->generate(
@@ -120,217 +127,225 @@ sub main {
   }
 
   if ( $action eq 'home' ) {
-    my $class = $generators{$action};
+    my $class = 'Kalaclista::Generators::Page';
     load($class);
 
-    my @entries =
-        ( sort { $b->date cmp $a->date } grep { $_->type =~ m{posts|echos|notes} } map { fixup($_) } $entries->entries->@* )[ 0 .. 10 ];
+    my @entries = (
+      sort { $b->date cmp $a->date }
+      grep { my $t = $_->type; $t eq 'posts' || $t eq 'echos' || $t eq 'notes' }
+      map  { fixup($_) } $entries->entries->@*
+    )[ 0 .. 10 ];
 
-    my $vars = $const->vars;
-    $vars->title( $vars->website );
-    $vars->section('pages');
-    $vars->kind('home');
-    $vars->entries( \@entries );
-    $vars->href( URI::Fast->new( href( "/", $c->baseURI ) ) );
-
-    my @tree = (
-      {
-        name => 'カラクリスタ',
-        href => $c->baseURI->to_string
-      },
+    my $page = Kalaclista::Data::Page->new(
+      title   => $c->website->title,
+      section => 'pages',
+      kind    => 'home',
+      entries => [@entries],
+      href    => URI::Fast->new( href( '/', $c->baseURI ) ),
     );
 
-    $vars->breadcrumb( \@tree );
-
-    my $path = "/index.html";
-    my $out  = $distdir->child($path);
+    $page->breadcrumb->push( title => $c->website->title, permalink => $c->website->permalink );
 
     $class->generate(
-      dist     => $out,
+      dist     => $distdir->child('index.html'),
       template => 'WebSite::Templates::Home',
-      vars     => $vars,
+      vars     => $page,
     );
 
-    for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
-      my @contains = map { $_->transform } @entries[ 0 .. 4 ];
-      $vars->entries( \@contains );
-
-      $path = "${feed}";
-      $out  = $distdir->child($path);
-      my $tmpl =
-          'WebSite::Templates::' . ( ( $feed eq 'index.xml' ) ? 'RSS20Feed' : ( $feed eq 'atom.xml' ) ? 'AtomFeed' : "JSONFeed" );
-
+    my $feed = Kalaclista::Data::Page->new(
+      title   => $c->website->title,
+      section => 'pages',
+      kind    => 'home',
+      entries => [ map { $_->transform } @entries[ 0 .. 4 ] ],
+      href    => URI::Fast->new( href( '/', $c->baseURI ) ),
+    );
+    for my $type (qw/ RSS20Feed AtomFeed JSONFeed /) {
       $class->generate(
-        dist     => $out,
-        template => $tmpl,
-        vars     => $vars,
+        dist => $distdir->child(
+          {
+            RSS20Feed => 'index.xml',
+            AtomFeed  => 'atom.xml',
+            JSONFeed  => 'jsonfeed.json',
+          }->{$type}
+        ),
+        template => "WebSite::Templates::${type}",
+        vars     => $feed,
       );
     }
 
-    $vars->title('404 not found');
-    $vars->description('ページが見つかりません');
-    $vars->section('pages');
-    $vars->kind('404');
-    $vars->entries( [] );
-    $vars->href(undef);
-    $vars->breadcrumb( [] );
+    $page = Kalaclista::Data::Page->new(
+      title   => '404 not found',
+      section => 'pages',
+      kind    => '404',
+      entries => [],
+      href    => undef,
+    );
 
     $class->generate(
       dist     => $distdir->child('404.html'),
       template => 'WebSite::Templates::NotFound',
-      vars     => $vars,
+      vars     => $page,
     );
   }
 
   if ( $action eq 'index' ) {
-    my $class = $generators{$action};
+    my $class = 'Kalaclista::Generators::Page';
     load($class);
 
     my $section = shift;
     my @entries = grep { $_->type eq $section } map { fixup($_) } $entries->entries->@*;
+    @entries =
+        $section eq 'notes'
+        ? ( sort { $b->lastmod cmp $a->lastmod } @entries )
+        : ( sort { $b->date cmp $a->date } @entries );
+
+    my %data = (
+      title   => $c->sections->{$section}->title,
+      section => $section,
+      kind    => 'index',
+      href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
+    );
 
     if ( $section eq 'notes' ) {
-      @entries = sort { $b->lastmod cmp $a->lastmod } @entries;
-
-      my $vars = $const->vars;
-      $vars->begin( ( $entries[-1]->lastmod =~ m{^(\d{4})} )[0] );
-      $vars->end( ( $entries[0]->lastmod    =~ m{^(\d{4})} )[0] );
-
-      $vars->title( $vars->contains->{$section}->{'website'} );
-      $vars->summary( $vars->contains->{$section}->{'description'} );
-      $vars->description( $vars->contains->{$section}->{'description'} );
-      $vars->section($section);
-      $vars->kind('index');
-      $vars->entries( \@entries );
-      $vars->href( URI::Fast->new( href( "/${section}/", $c->baseURI ) ) );
-
-      my @tree = (
-        {
-          name => 'カラクリスタ',
-          href => $c->baseURI->to_string
-        },
-        {
-          name => $vars->contains->{$section}->{'website'},
-          href => href( "/${section}/", $c->baseURI )
-        },
+      my $page = Kalaclista::Data::Page->new(
+        %data, entries => [@entries],
       );
 
-      $vars->breadcrumb( \@tree );
+      $page->breadcrumb->push(
+        title     => $c->website->title,
+        permalink => $c->baseURI->to_string
+      );
 
-      my $path = "${section}/index.html";
-      my $out  = $distdir->child($path);
+      $page->breadcrumb->push(
+        title     => $c->sections->{$section}->title,
+        permalink => href( "/${section}/", $c->baseURI ),
+      );
 
       $class->generate(
-        dist     => $out,
+        dist     => $distdir->child("${section}/index.html"),
         template => 'WebSite::Templates::Index',
-        vars     => $vars,
+        vars     => $page,
       );
 
       @entries = map { $_->transform } @entries[ 0 .. 4 ];
-      $vars->entries( \@entries );
-      for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
-        $path = "${section}/${feed}";
-        $out  = $distdir->child($path);
-        my $tmpl =
-            'WebSite::Templates::' . ( ( $feed eq 'index.xml' ) ? 'RSS20Feed' : ( $feed eq 'atom.xml' ) ? 'AtomFeed' : "JSONFeed" );
+      $page    = Kalaclista::Data::Page->new(
+        %data, entries => [@entries],
+      );
 
+      for my $type (qw/ RSS20Feed AtomFeed JSONFeed /) {
         $class->generate(
-          dist     => $out,
-          template => $tmpl,
-          vars     => $vars,
+          dist => $distdir->child(
+            {
+              RSS20Feed => "${section}/index.xml",
+              AtomFeed  => "${section}/atom.xml",
+              JSONFeed  => "${section}/jsonfeed.json",
+            }->{$type}
+          ),
+          template => "WebSite::Templates::${type}",
+          vars     => $page,
         );
       }
-
-      return 1;
     }
+    else {
+      my ($start) = $entries[-1]->date =~ m{^(\d{4})};
+      my ($end)   = $entries[0]->date  =~ m{^(\d{4})};
 
-    @entries = sort { $b->date cmp $a->date } @entries;
-    my $begin = ( $entries[-1]->date =~ m{^(\d{4})} )[0];
-    my $end   = ( $entries[0]->date  =~ m{^(\d{4})} )[0];
+      for my $year ( $start .. $end ) {
+        my @contains = grep { $_->date =~ m{^$year} } @entries;
 
-    for my $year ( $begin .. $end ) {
-      my @contains = grep { $_->date =~ m{^$year} } @entries;
+        if ( @contains == 0 ) {
+          next;
+        }
 
-      if ( @contains == 0 ) {
-        next;
-      }
-
-      my $vars = $const->vars;
-      $vars->begin($begin);
-      $vars->end($end);
-
-      $vars->title("${year}年の記事一覧");
-      $vars->summary( $vars->contains->{$section}->{'website'} . "の ${year}年の記事一覧です" );
-      $vars->section($section);
-      $vars->kind('index');
-      $vars->entries( \@contains );
-      $vars->href( URI::Fast->new( href( "/${section}/${year}/", $c->baseURI ) ) );
-
-      my @tree = (
-        {
-          name => 'カラクリスタ',
-          href => $c->baseURI->to_string
-        },
-        {
-          name => $vars->contains->{$section}->{'website'},
-          href => href( "/${section}/", $c->baseURI )
-        },
-        {
-          name => $vars->title,
-          href => href( "/${section}/${year}/", $c->baseURI )
-        },
-      );
-
-      $vars->breadcrumb( \@tree );
-
-      my $path = "${section}/${year}/index.html";
-      my $out  = $distdir->child($path);
-
-      $class->generate(
-        dist     => $out,
-        template => 'WebSite::Templates::Index',
-        vars     => $vars,
-      );
-
-      if ( $year == $vars->end ) {
-        $vars->title( $vars->contains->{$section}->{'website'} );
-        $vars->description( $vars->contains->{$section}->{'description'} );
-        $vars->summary( $vars->contains->{$section}->{'description'} );
-        $vars->kind('home');
-        $vars->href( URI::Fast->new( href( "/${section}/", $c->baseURI ) ) );
-
-        pop @tree;
-        $vars->breadcrumb( \@tree );
-
-        $path = "${section}/index.html";
-        $out  = $distdir->child($path);
-
-        $class->generate(
-          dist     => $out,
-          template => 'WebSite::Templates::Index',
-          vars     => $vars,
+        my $page = Kalaclista::Data::Page->new(
+          title   => qq<${year}年の記事一覧>,
+          summary => $c->sections->{$section}->title . "の ${year}年の記事一覧です",
+          section => $section,
+          kind    => 'index',
+          entries => [@contains],
+          href    => URI::Fast->new( href( "/${section}/${year}/", $c->baseURI ) ),
+          vars    => { start => $start, end => $end },
         );
 
-        @contains = map { $_->transform } ( grep { $_->type eq $section } sort { $b->date cmp $a->date } @entries )[ 0 .. 4 ];
-        for my $feed (qw( index.xml atom.xml jsonfeed.json )) {
-          $path = "${section}/${feed}";
-          $out  = $distdir->child($path);
-          my $tmpl =
-              'WebSite::Templates::' . ( ( $feed eq 'index.xml' ) ? 'RSS20Feed' : ( $feed eq 'atom.xml' ) ? 'AtomFeed' : "JSONFeed" );
+        $page->breadcrumb->push(
+          title     => $c->website->title,
+          permalink => $c->baseURI->to_string
+        );
+
+        $page->breadcrumb->push(
+          title     => $c->sections->{$section}->title,
+          permalink => href( "/${section}/", $c->baseURI ),
+        );
+
+        $page->breadcrumb->push(
+          title     => $page->title,
+          permalink => $page->href->to_string,
+        );
+
+        my $dist = $distdir->child("${section}/${year}/index.html");
+        $class->generate(
+          dist     => $dist,
+          template => 'WebSite::Templates::Index',
+          vars     => $page,
+        );
+
+        if ( $year == $end ) {
+          my $top = Kalaclista::Data::Page->new(
+            title   => $c->sections->{$section}->title,
+            summary => $c->sections->{$section}->summary,
+            section => $section,
+            kind    => 'home',
+            entries => [@contains],
+            href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
+            vars    => { start => $start, end => $end },
+          );
+
+          $top->breadcrumb->push(
+            title     => $c->website->title,
+            permalink => $c->baseURI->to_string
+          );
+
+          $top->breadcrumb->push(
+            title     => $c->sections->{$section}->title,
+            permalink => href( "/${section}/", $c->baseURI ),
+          );
 
           $class->generate(
-            dist     => $out,
-            template => $tmpl,
-            vars     => $vars,
+            dist     => $distdir->child("${section}/index.html"),
+            template => 'WebSite::Templates::Index',
+            vars     => $top
           );
+
+          @contains = map { $_->transform } @contains[ 0 .. 4 ];
+          my $feed = Kalaclista::Data::Page->new(
+            title   => $page->title,
+            summary => $page->summary,
+            section => $section,
+            kind    => 'home',
+            href    => href( "/${section}/", $c->baseURI ),
+            entries => [@contains],
+          );
+
+          for my $type (qw/ RSS20Feed AtomFeed JSONFeed /) {
+            $class->generate(
+              dist => $distdir->child(
+                {
+                  RSS20Feed => "${section}/index.xml",
+                  AtomFeed  => "${section}/atom.xml",
+                  JSONFeed  => "${section}/jsonfeed.json",
+                }->{$type}
+              ),
+              template => "WebSite::Templates::${type}",
+              vars     => $feed,
+            );
+          }
         }
       }
     }
-    return 1;
   }
 
   if ( $action eq 'permalinks' ) {
-    my $class = $generators{$action};
+    my $class = 'Kalaclista::Generators::Page';
     load($class);
 
     my $year = shift;
@@ -340,62 +355,60 @@ sub main {
 
     for my $entry (@entries) {
       my $precompiled = do {
-        my $path = $entry->path;
-        $path =~ s{src/entries/src}{src/entries/precompiled};
-        open( my $fh, '<', $path );
-        local $/;
-        my $data = <$fh>;
-        close($fh);
-        utf8::decode($data);
-        $data;
+        my $path   = $entry->path;
+        my $prefix = $srcdir->child('entries')->path;
+
+        $path =~ s{$prefix/src}{$prefix/precompiled};
+
+        my $content = Kalaclista::Path->new( path => $path )->get;
+        utf8::decode($content);
+
+        $content;
       };
 
       my $dom = $parser->parse($precompiled)->body;
-
       $entry->dom($dom);
       $entry->transform;
 
-      my $vars = $const->vars;
-      $vars->title( $entry->title );
-      $vars->summary( ( $entry->dom->at('.sep ~ *') // $entry->dom->at('*:first-child') )->textContent . '……' );
-      $vars->section( $entry->type );
-      $vars->kind('permalink');
-      $vars->entries( [$entry] );
-      $vars->href( $entry->href );
+      my $summary =
+          exists $entry->meta->{'summary'}
+          ? $entry->meta->{'summary'}
+          : ( $dom->at('.sep ~ *') // $dom->at('*:first-child') )->textContent . '……';
 
-      my @tree = (
-        { name => 'カラクリスタ', href => $c->baseURI->to_string },
+      my $page = Kalaclista::Data::Page->new(
+        title   => $entry->title,
+        summary => $summary,
+        section => $entry->type,
+        kind    => 'permalink',
+        entries => [$entry],
+        href    => $entry->href,
+      );
+
+      $page->breadcrumb->push(
+        title     => $c->website->title,
+        permalink => $c->baseURI->to_string,
       );
 
       if ( $entry->type ne 'pages' ) {
-        push @tree, +{
-          name => $vars->contains->{ $entry->type }->{'website'},
-          href => href( '/' . $entry->type . '/', $c->baseURI ),
-        };
+        $page->breadcrumb->push(
+          title     => $c->sections->{ $entry->type }->title,
+          permalink => $c->sections->{ $entry->type }->permalink . "/",
+        );
       }
 
-      push @tree, +{
-        name => $entry->title,
-        href => $entry->href->to_string,
-      };
-
-      $vars->breadcrumb( \@tree );
+      $page->breadcrumb->push(
+        title     => $entry->title,
+        permalink => $entry->href->to_string,
+      );
 
       my $path = $entry->href->path;
-      $path .= "index.html";
-
-      my $out = $distdir->child($path);
       $class->generate(
-        dist     => $out,
+        dist     => $distdir->child("${path}index.html"),
         template => 'WebSite::Templates::Permalink',
-        vars     => $vars
+        vars     => $page,
       );
     }
-
-    return 1;
   }
-
-  return 1;
 }
 
 local $@;

@@ -8,13 +8,18 @@ use Test2::V0;
 use URI::Fast;
 use HTML5::DOM;
 
-use Kalaclista::Variables;
+use Kalaclista::Data::Page;
 
 use WebSite::Widgets::Title;
 
 use WebSite::Context;
 local $ENV{'KALACLISTA_ENV'} = 'production';
 WebSite::Context->init(qr{^t$});
+WebSite::Context->instance->sections(
+  posts => { label => 'ブログ' },
+  echos => { label => '日記' },
+  notes => { label => 'メモ帳' },
+);
 
 my $parser = HTML5::DOM->new();
 
@@ -25,16 +30,8 @@ sub parse {
 }
 
 sub main {
-  my $vars = Kalaclista::Variables->new(
-    section  => '',
-    contains => {
-      posts => { label => 'ブログ' },
-      echos => { label => '日記' },
-      notes => { label => 'メモ帳' },
-    },
-  );
-
-  my $banner = banner($vars);
+  my $page   = Kalaclista::Data::Page->new;
+  my $banner = banner($page);
   my $dom    = parse($banner);
 
   is( $dom->at('nav')->getAttribute('id'),      'global' );
@@ -54,8 +51,9 @@ sub main {
   is( $dom->at('#global > p > a > img')->getAttribute('height'), 50 );
 
   for my $section (qw(posts echos notes)) {
-    $vars->section($section);
-    $dom = parse( banner($vars) );
+    $page = Kalaclista::Data::Page->new( section => $section );
+
+    $dom = parse( banner($page) );
 
     is( $dom->at('#global > p > span')->innerText, '→' );
 
@@ -66,7 +64,7 @@ sub main {
 
     is(
       $dom->at('#global > p > a:last-child')->innerText,
-      $vars->contains->{ $vars->section }->{'label'},
+      Kalaclista::Context->instance->sections->{$section}->label,
     );
   }
 

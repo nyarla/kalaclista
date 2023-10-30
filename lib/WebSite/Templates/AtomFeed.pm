@@ -14,7 +14,8 @@ sub render {
   my $c       = WebSite::Context->instance;
   my $baseURI = $c->baseURI;
   my $section = $vars->section;
-  my $prefix  = $section eq 'pages' ? '' : "/${section}";
+  my $prefix  = $section eq 'pages' ? ''          : "/${section}";
+  my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
 
   my $href    = href( "${prefix}/",         $baseURI );
   my $feed    = href( "${prefix}/atom.xml", $baseURI );
@@ -23,8 +24,8 @@ sub render {
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
     feed => { xmlns => 'http://www.w3.org/2005/Atom' } => [
 
-      h( 'title',    $vars->title ),
-      h( 'subtitle', $vars->description ),
+      h( 'title',    $website->title ),
+      h( 'subtitle', $website->summary ),
       h( 'link',     { href => $href } ),
       h( 'link',     { rel  => 'self', href => $feed } ),
       h( 'id',       $feed ),

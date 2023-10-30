@@ -14,7 +14,8 @@ use WebSite::Helper::Hyperlink qw(hyperlink href);
 use WebSite::Context;
 
 sub breadcrumb {
-  my $vars    = shift;
+  my $page    = shift;
+  my $c       = WebSite::Context->instance;
   my $baseURI = shift;
 
   my @tree;
@@ -26,9 +27,9 @@ sub breadcrumb {
     'カラクリスタ'
   );
 
-  if ( $vars->section =~ m{^(?:posts|echos|notes)$} ) {
+  if ( $page->section =~ m{^(?:posts|echos|notes)$} ) {
     push @tree, span('→');
-    push @tree, a( { href => href( $vars->section . '/', $baseURI ) }, $vars->contains->{ $vars->section }->{'label'} );
+    push @tree, a( { href => href( $page->section . '/', $baseURI ) }, $c->sections->{ $page->section }->label );
   }
 
   return @tree;

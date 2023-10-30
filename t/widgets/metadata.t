@@ -11,7 +11,7 @@ use URI::Fast;
 use Text::HyperScript::HTML5 qw(head);
 
 use Kalaclista::Entry;
-use Kalaclista::Variables;
+use Kalaclista::Data::Page;
 
 use WebSite::Widgets::Metadata;
 use WebSite::Helper::Hyperlink qw(href);
@@ -19,6 +19,14 @@ use WebSite::Helper::Hyperlink qw(href);
 use WebSite::Context;
 local $ENV{'KALACLISTA_ENV'} = 'production';
 WebSite::Context->init(qr{^t$});
+WebSite::Context->instance->website(
+  title => 'カラクリスタ',
+);
+WebSite::Context->instance->sections(
+  posts => { title => 'カラクリスタ・ブログ' },
+  echos => { title => 'カラクリスタ・エコーズ' },
+  notes => { title => 'カラクリスタ・ノート' },
+);
 
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
@@ -78,11 +86,8 @@ sub testing_types {
 }
 
 sub testing_global {
-  my $vars = Kalaclista::Variables->new(
-    is_production => 1,
-  );
-
-  my $global = head( WebSite::Widgets::Metadata::global($vars) );
+  my $page   = Kalaclista::Data::Page->new;
+  my $global = head( WebSite::Widgets::Metadata::global($page) );
   utf8::decode($global);
 
   my $dom = $parser->parse($global)->at('head');
@@ -99,22 +104,13 @@ sub testing_global {
   is( $dom->at('link[rel="apple-touch-icon"]')->getAttribute('href'),                  'https://the.kalaclista.com/apple-touch-icon.png' );
   is( $dom->at('link[rel="author"]')->getAttribute('href'),                            'http://www.hatena.ne.jp/nyarla-net/' );
 
-  my $global2 = head( WebSite::Widgets::Metadata::global($vars) );
+  my $global2 = head( WebSite::Widgets::Metadata::global($page) );
   utf8::decode($global2);
 
   is( $global, $global2 );
 }
 
 sub testing_in_section {
-  my $vars = Kalaclista::Variables->new(
-    website  => 'カラクリスタ',
-    contains => {
-      posts => { website => 'カラクリスタ・ブログ' },
-      echos => { website => 'カラクリスタ・エコーズ' },
-      notes => { website => 'カラクリスタ・ノート' },
-    },
-  );
-
   my %websites = (
     posts => 'カラクリスタ・ブログ',
     echos => 'カラクリスタ・エコーズ',
@@ -122,13 +118,15 @@ sub testing_in_section {
   );
 
   for my $section (qw(posts echos notes pages)) {
-    $vars->section($section);
+    my $page = Kalaclista::Data::Page->new(
+      section => $section,
+    );
 
-    my $head = head( WebSite::Widgets::Metadata::in_section($vars) );
+    my $head = head( WebSite::Widgets::Metadata::in_section($page) );
     utf8::decode($head);
 
     my $dom   = $parser->parse($head)->at('head');
-    my $title = exists $websites{$section} ? $websites{$section} : $vars->website;
+    my $title = exists $websites{$section} ? $websites{$section} : WebSite::Context->instance->website->title;
 
     is(
       $dom->at('link[rel="alternate"][type="application/rss+xml"]')->getAttribute('title'),
@@ -172,7 +170,7 @@ sub testing_in_section {
       );
     }
 
-    my $head2 = head( WebSite::Widgets::Metadata::in_section($vars) );
+    my $head2 = head( WebSite::Widgets::Metadata::in_section($page) );
     utf8::decode($head2);
 
     is( $head, $head2 );
@@ -199,19 +197,28 @@ sub testing_page_on_permalink {
     URI::Fast->new( href( '/posts/2022/01/05/131308/', WebSite::Context->instance->baseURI ) ),
   );
 
-  my $permalink = Kalaclista::Variables->new(
-    %global,
-    title      => $entry->title,
-    summary    => $entry->dom->at('*:first-child')->textContent . '……',
-    section    => 'posts',
-    kind       => 'permalink',
-    entries    => [$entry],
-    href       => $entry->href,
-    breadcrumb => [
-      { name => 'カラクリスタ',                                    href => WebSite::Context->instance->baseURI->to_string },
-      { name => $global{'contains'}->{'posts'}->{'website'}, href => 'https://the.kalaclista.com/posts/' },
-      { name => $entry->title,                               href => $entry->href->to_string },
-    ],
+  my $permalink = Kalaclista::Data::Page->new(
+    title   => $entry->title,
+    summary => $entry->dom->at('*:first-child')->textContent . '……',
+    section => 'posts',
+    kind    => 'permalink',
+    entries => [$entry],
+    href    => URI::Fast->new( $entry->href ),
+  );
+
+  $permalink->breadcrumb->push(
+    title     => 'カラクリスタ',
+    permalink => WebSite::Context->instance->baseURI->to_string,
+  );
+
+  $permalink->breadcrumb->push(
+    title     => $global{'contains'}->{'posts'}->{'website'},
+    permalink => 'https://the.kalaclista.com/posts/',
+  );
+
+  $permalink->breadcrumb->push(
+    title     => $entry->title,
+    permalink => $entry->href->to_string,
   );
 
   my $head = head( WebSite::Widgets::Metadata::page($permalink) );

@@ -106,7 +106,7 @@ sub main {
         'itemListElement' => [
           {
             '@type'    => 'ListItem',
-            'item'     => 'https://the.kalaclista.com',
+            'item'     => 'https://the.kalaclista.com/',
             'name'     => 'カラクリスタ',
             'position' => 1,
           },

@@ -12,20 +12,21 @@ use WebSite::Helper::Hyperlink qw(href);
 my $jsonify = JSON::XS->new->utf8->canonical(1);
 
 sub render {
-  my $vars    = shift;
+  my $page    = shift;
   my $c       = WebSite::Context->instance;
   my $baseURI = $c->baseURI;
-  my $section = $vars->section;
-  my $prefix  = $section eq 'pages' ? '' : "/${section}";
+  my $section = $page->section;
+  my $prefix  = $section eq 'pages' ? ''          : "/${section}";
+  my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
 
   my $href    = href( "${prefix}/",              $baseURI );
   my $feed    = href( "${prefix}/jsonfeed.json", $baseURI );
-  my @entries = $vars->entries->@*;
+  my @entries = $page->entries->@*;
 
   my $data = {
     version     => 'https://jsonfeed.org/version/1.1',
-    title       => $vars->title,
-    description => $vars->description,
+    title       => $website->title,
+    description => $website->summary,
     icon        => 'https://the.kalaclista.com/assets/avatar.png',
     favicon     => 'https://the.kalaclista.com/favicon.ico',
     authors     => [
@@ -56,7 +57,7 @@ sub render {
           ],
           language => 'ja_JP',
         }
-      } sort { $b->date cmp $a->date } $vars->entries->@*
+      } sort { $b->date cmp $a->date } $page->entries->@*
     ],
   };
 

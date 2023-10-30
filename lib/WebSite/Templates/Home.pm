@@ -15,7 +15,7 @@ sub date {
 }
 
 sub content {
-  my $vars    = shift;
+  my $page    = shift;
   my $c       = WebSite::Context->instance;
   my $baseURI = $c->baseURI;
 
@@ -57,13 +57,13 @@ sub content {
                 '：（',
                 a(
                   { href => href( "/@{[ $_->type ]}/", $baseURI ) },
-                  $vars->contains->{ $_->type }->{'label'},
+                  $c->sections->{ $_->type }->label,
                 ),
                 '）'
               ),
               a( { href => $_->href, class => 'title' }, $_->title )
             )
-          } $vars->entries->@*
+          } $page->entries->@*
         )
       ),
 

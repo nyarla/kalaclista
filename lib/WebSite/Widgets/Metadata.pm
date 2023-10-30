@@ -68,14 +68,14 @@ sub item {
 }
 
 sub global {
-  state @result;
-  return @result if ( @result != 0 );
+  state $result;
+  return $result->@* if ( defined $result );
 
   my $digest  = digest("lib/WebSite/Templates/Stylesheet.pm");
   my $baseURI = WebSite::Context->instance->baseURI;
-  my $vars    = shift;
 
-  @result = (
+  $result ||= [];
+  push $result->@*, (
     meta( { charset => 'utf-8' } ),
     meta(
       {
@@ -93,63 +93,70 @@ sub global {
     link_( { rel => 'stylesheet', href => href( "/main-${digest}.css", $baseURI ) } ),
   );
 
-  return @result;
+  return $result->@*;
 }
 
 sub in_section {
-  state %cache;
+  state $cache ||= {};
 
-  my $vars = shift;
+  my $page = shift;
 
-  return $cache{ $vars->section }->@*
-      if ( exists $cache{ $vars->section } );
+  return $cache->{ $page->section }->@*
+      if ( exists $cache->{ $page->section } );
 
-  my $baseURI = WebSite::Context->instance->baseURI;
-  my $website = $vars->section =~ m{^(?:posts|echos|notes)$} ? $vars->contains->{ $vars->section }->{'website'} : $vars->website;
-  my $prefix  = $vars->section =~ m{^(?:posts|echos|notes)$} ? "/" . $vars->section                             : q{};
-  my @result  = (
+  my $c = WebSite::Context->instance;
+  my $website =
+      ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
+      ? $c->sections->{ $page->section }
+      : $c->website;
+  my $prefix = ( $website != $c->website ) ? '/' . $page->section : q {};
+  my @result = (
     feed(
-      "${website}の RSS フィード",
-      href( "${prefix}/index.xml", $baseURI ),
+      "@{[ $website->title ]}の RSS フィード",
+      href( "${prefix}/index.xml", $c->baseURI ),
       "application/rss+xml"
     ),
     feed(
-      "${website}の Atom フィード",
-      href( "${prefix}/atom.xml", $baseURI ),
+      "@{[ $website->title ]}の Atom フィード",
+      href( "${prefix}/atom.xml", $c->baseURI ),
       "application/atom+xml"
     ),
     feed(
-      "${website}の JSON フィード",
-      href( "${prefix}/jsonfeed.json", $baseURI ),
+      "@{[ $website->title ]}の JSON フィード",
+      href( "${prefix}/jsonfeed.json", $c->baseURI ),
       "application/feed+json"
     ),
   );
 
-  $cache{ $vars->section } = \@result;
-
+  $cache->{ $page->section } = [@result];
   return @result;
 }
 
 sub page {
-  my $vars = shift;
+  my $c    = WebSite::Context->instance;
+  my $page = shift;
 
-  my $title   = $vars->title;
-  my $website = $vars->section =~ m{^(?:posts|echos|notes)$} ? $vars->contains->{ $vars->section }->{'website'} : $vars->website;
-  my $avatar  = href( '/assets/avatar.png', $vars->href );
-  my $href    = $vars->href->to_string;
-  my $section = $vars->section;
-  my $kind    = $vars->kind;
-  my $tree    = $vars->breadcrumb;
+  my $title   = $page->title;
+  my $website = (
+    ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
+    ? $c->sections->{ $page->section }
+    : $c->website
+  );
 
-  my $meta   = $vars->entries->[0];
-  my $parent = $tree->[ $tree->@* - 2 ]->{'href'};
+  my $avatar  = href( '/assets/avatar.png', $page->href );
+  my $href    = $page->href->to_string;
+  my $section = $page->section;
+  my $kind    = $page->kind;
+  my $tree    = $page->breadcrumb;
+  my $meta    = $page->entries->[0];
+  my $parent  = $tree->index( $tree->length - 2 )->permalink;
 
-  my $docname = $title eq $website ? $title             : "${title} - ${website}";
-  my $docdesc = $title eq $website ? $vars->description : $vars->summary;
+  my $docname = $title eq $website->title ? $title            : "${title} - @{[ $website->title ]}";
+  my $docdesc = $title eq $website->title ? $website->summary : $page->summary;
 
   my @ogp = (
     property( 'og:title',       $title ),
-    property( 'og:site_name',   $website ),
+    property( 'og:site_name',   $website->title ),
     property( 'og:image',       $avatar ),
     property( 'og:url',         $href ),
     property( 'og:description', $docdesc ),
@@ -182,15 +189,22 @@ sub page {
   @jsonld{qw( title href type author publisher image parent )} =
       ( $title, $href, types( $kind, $section ), $author, $publisher, { '@type' => 'ImageObject', contentUrl => $avatar }, $parent );
 
-  if ( $tree->@* == 1 ) {
+  if ( $tree->length == 1 ) {
     delete $jsonld{'parent'};
   }
 
   my @css;
-  if ( ref( my $addon = $vars->entries->[0]->addon('style') ) ) {
+  if ( ref( my $addon = $page->entries->[0]->addon('style') ) ) {
     push @css, map { style( raw($_) ) } $addon->@*;
   }
 
+  my @breadcrumb =
+      map {
+        {
+          name => $page->breadcrumb->index($_)->title,
+          href => $page->breadcrumb->index($_)->permalink
+        }
+      } ( 0 .. $page->breadcrumb->length - 1 );
   return (
     title($docname),
     meta( { name => 'description', content => $docdesc } ),
@@ -199,27 +213,31 @@ sub page {
 
     @ogp, @twitter,
 
-    script( { type => 'application/ld+json' }, raw( jsonld( \%jsonld, $vars->breadcrumb->@* ) ) ),
+    script(
+      { type => 'application/ld+json' },
+      raw( jsonld( {%jsonld}, @breadcrumb ) )
+    ),
     @css,
   );
 }
 
 sub notfound {
-  my $vars = shift;
+  my $page = shift;
+  my $c    = WebSite::Context->instance;
 
   return (
-    title( $vars->title . ' - ' . $vars->website ),
-    meta( { name => 'description', content => $vars->description } ),
+    title( $page->title . ' - ' . $c->website->title ),
+    meta( { name => 'description', content => "ページが見つかりません" } ),
   );
 }
 
 sub metadata {
-  my $vars = shift;
+  my $page = shift;
 
   return head(
-    global($vars),
-    in_section($vars),
-    ( $vars->kind ne '404' ? page($vars) : notfound($vars) ),
+    global(),
+    in_section($page),
+    ( $page->kind ne '404' ? page($page) : notfound($page) ),
   );
 }
 
