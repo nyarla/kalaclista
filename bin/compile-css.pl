@@ -4,6 +4,12 @@ use strict;
 use warnings;
 use utf8;
 
+BEGIN {
+  if ( exists $ENV{'HARNESS_ACTIVE'} ) {
+    use Test2::V0;
+  }
+}
+
 use Kalaclista::Generators::Page;
 use Kalaclista::Path;
 
@@ -32,13 +38,10 @@ sub doing {
 }
 
 sub testing {
-  require Test2::V0;
-  "Test2::V0"->import;
+  ok try_ok( sub { doing } ), '`doing` subroutine should be callable';
+  ok -e $dist,                'output file exists';
 
-  ok( try_ok( sub { doing; } ), 'doing subroutine has no error.' );
-  ok( ( -e $dist ),             "output file exists." );
-
-  done_testing();
+  done_testing;
 }
 
 sub main {
