@@ -37,6 +37,7 @@ jobs:
         run: |
           export PATH=$(pwd)/extlib/bin:$PATH
           export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
+          export IN_PERL_SHELL=1
 
           make clean
 
