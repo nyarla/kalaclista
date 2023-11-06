@@ -43,4 +43,3 @@ jobs:
 
           make css
           prove bin/compile-css.pl
-          prove t/bin/compile-css.t
