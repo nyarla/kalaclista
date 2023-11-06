@@ -38,6 +38,8 @@ jobs:
           export PATH=$(pwd)/extlib/bin:$PATH
           export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
 
+          make clean
+
           make css
           prove bin/compile-css.pl
           prove t/bin/compile-css.t
