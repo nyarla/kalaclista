@@ -18,11 +18,10 @@ my $instance = WebSite::Context->init(qr{^t$});
 sub main {
   my $path  = 'posts/2022/07/24/121254';
   my $entry = Kalaclista::Entry->new(
-    $instance->dirs->src("entries/src/${path}.md")->path,
-    URI::Fast->new("https://the.kalaclista.com/${path}/"),
+    src => $instance->entries->parent->child("precompiled/${path}.md")->get,
   );
 
-  $entry->register( sub { WebSite::Extensions::Affiliate->transform(@_) } );
+  $entry->add_transformer( sub { WebSite::Extensions::Affiliate->transform(@_) } );
   $entry->transform;
 
   my $item = $entry->dom->at('.content__card--affiliate');

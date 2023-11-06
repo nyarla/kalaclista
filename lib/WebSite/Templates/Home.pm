@@ -158,8 +158,8 @@ sub content {
 }
 
 sub render {
-  my $vars = shift;
-  return layout( $vars => content($vars) );
+  my $page = shift;
+  return layout( $page => content($page) );
 }
 
 1;

@@ -29,7 +29,7 @@ sub content {
 
   my @contents;
   my @archives;
-  my $prop = $section eq 'notes' ? 'lastmod' : 'date';
+  my $prop = $section eq 'notes' ? 'updated' : 'date';
 
   for my $entry ( $page->entries->@* ) {
     my $date = date( $entry->date );

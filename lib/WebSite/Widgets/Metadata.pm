@@ -109,7 +109,7 @@ sub in_section {
       ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
       ? $c->sections->{ $page->section }
       : $c->website;
-  my $prefix = ( $website != $c->website ) ? '/' . $page->section : q {};
+  my $prefix = ( $website != $c->website ) ? '/' . $page->section : q{};
   my @result = (
     feed(
       "@{[ $website->title ]}の RSS フィード",
@@ -167,7 +167,7 @@ sub page {
     push @ogp, (
       property( 'og:type',              'article' ),
       property( 'og:published_time',    $meta->date ),
-      property( 'og:modified_time',     $meta->lastmod ),
+      property( 'og:modified_time',     $meta->updated ),
       property( 'og:section',           $section ),
       property( 'og:author:first_name', 'Naoki' ),
       property( 'og:author:last_name',  'OKAMURA' ),
@@ -194,8 +194,8 @@ sub page {
   }
 
   my @css;
-  if ( ref( my $addon = $page->entries->[0]->addon('style') ) ) {
-    push @css, map { style( raw($_) ) } $addon->@*;
+  if ( ref( my $css = $page->entries->[0]->meta('css') ) eq 'ARRAY' ) {
+    push @css, map { style( raw($_) ) } $css->@*;
   }
 
   my @breadcrumb =

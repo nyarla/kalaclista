@@ -64,10 +64,10 @@ sub replace {
 }
 
 sub transform {
-  state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/items');
-  my ( $class, $entry, $dom ) = @_;
+  state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/items');    #FIXME
+  my ( $class, $entry ) = @_;
 
-  for my $item ( $dom->find('p > a:only-child')->@* ) {
+  for my $item ( $entry->dom->find('p > a:only-child')->@* ) {
     unless ( $item->parent->firstChild->isSameNode($item)
       && $item->parent->lastChild->isSameNode($item) ) {
       next;

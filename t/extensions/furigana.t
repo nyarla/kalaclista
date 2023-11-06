@@ -10,27 +10,25 @@ use URI::Fast;
 use Kalaclista::Path;
 use Kalaclista::Entry;
 
+use WebSite::Context;
 use WebSite::Extensions::Furigana;
 
-my $parser  = HTML5::DOM->new( { script => 1 } );
-my $content = Kalaclista::Path->detect(qr{^t$})->child('content/entries/nyarla.md');
-my $entry   = Kalaclista::Entry->new(
-  $content->path,
-  URI::Fast->new("https://the.kalaclista.com/nyarla/"),
-);
+my $c = WebSite::Context->init(qr{^t$});
 
-my $simple  = $parser->parse('<p>{無|ム}</p>')->at('body');
-my $complex = $parser->parse('<p>{夏目漱石|なつ|め|そう|せき}</p>')->at('body');
+my $entry = Kalaclista::Entry->new();
+
+my $simple  = '<p>{無|ム}</p>';
+my $complex = '<p>{夏目漱石|なつ|め|そう|せき}</p>';
 
 sub main {
-  $entry->register( sub { WebSite::Extensions::Furigana->transform(@_) } );
-  $entry->{'dom'} = $simple;
+  $entry->add_transformer( sub { WebSite::Extensions::Furigana->transform(@_) } );
+  $entry->src($simple);
 
   $entry->transform;
 
   is( $entry->dom->at('p')->html, '<p><ruby>無<rt>ム</rt></ruby></p>' );
 
-  $entry->{'dom'} = $complex;
+  $entry->src($complex);
   $entry->transform;
 
   is(

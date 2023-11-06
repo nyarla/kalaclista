@@ -66,7 +66,7 @@ sub main {
     my $year    = ( $href =~ m{posts/(\d{4})/} )[0];
     my $title   = "${year}年の記事一覧";
     my $website = "カラクリスタ・ブログ";
-    my $summary = "${website}の ${title}です";
+    my $summary = "${website}の${title}です";
 
     is( $dom->at('title')->textContent,                                "${title} - ${website}" );
     is( $dom->at('meta[name="description"]')->getAttribute('content'), $summary );

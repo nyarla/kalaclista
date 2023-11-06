@@ -13,9 +13,9 @@ my %table = (
 );
 
 sub transform {
-  my ( $class, $entry, $dom ) = @_;
+  my ( $class, $entry ) = @_;
 
-  for my $node ( $dom->find('h1, h2, h3, h4, h5, h6')->@* ) {
+  for my $node ( $entry->dom->find('h1, h2, h3, h4, h5, h6')->@* ) {
     if ( $node->tag ne 'h6' ) {
       my $tag = $table{ $node->tag };
       $node->tag($tag);

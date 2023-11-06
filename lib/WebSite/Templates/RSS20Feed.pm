@@ -36,14 +36,14 @@ sub render {
       h( managingEditor => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( webMaster      => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( copyright      => '(c) 2006-' . ( (localtime)[5] + 1900 ) . ' OKAMURA Naoki' ),
-      h( lastBuildDate  => Time::Moment->from_string( $entries[0]->lastmod )->strftime($format) ),
+      h( lastBuildDate  => Time::Moment->from_string( $entries[0]->updated )->strftime($format) ),
       (
         map {
           h(
             item => [
               h( title       => $_->title ),
               h( link        => $_->href ),
-              h( pubDate     => Time::Moment->from_string( $_->lastmod )->strftime($format) ),
+              h( pubDate     => Time::Moment->from_string( $_->updated )->strftime($format) ),
               h( guid        => $_->href ),
               h( description => $_->dom->innerHTML ),
             ]

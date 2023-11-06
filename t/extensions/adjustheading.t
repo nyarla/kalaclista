@@ -14,27 +14,20 @@ use WebSite::Extensions::AdjustHeading;
 
 my $parser  = HTML5::DOM->new( { script => 1 } );
 my $content = Kalaclista::Path->detect(qr{^t$})->child('content/entries/nyarla.md');
-my $entry   = Kalaclista::Entry->new(
-  $content->path,
-  URI::Fast->new("https://the.kalaclista.com/nyarla/"),
-);
+my $entry   = Kalaclista::Entry->new();
 
-my $target = $parser->parse(
-  q{
+sub main {
+  $entry->src(
+    q{
 <h1>h1</h1>
 <h2>h2</h2>
 <h3>h3</h3>
 <h4>h4</h4>
 <h5>h5</h5>
 <h6>h6</h6>
-}
-
-)->at('body');
-
-sub main {
-  $entry->register( sub { WebSite::Extensions::AdjustHeading->transform(@_) } );
-  $entry->{'dom'} = $target;
-
+  }
+  );
+  $entry->add_transformer( sub { WebSite::Extensions::AdjustHeading->transform(@_) } );
   $entry->transform;
 
   is( $entry->dom->at('h2')->innerText,                    'h1' );

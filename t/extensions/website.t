@@ -12,16 +12,15 @@ use WebSite::Context;
 use WebSite::Extensions::WebSite;
 
 my $context = WebSite::Context->init(qr{^t$});
-my $content = $context->dirs->src('entries/src');
 
 sub main {
   my $path  = 'notes/NERDFonts';
   my $entry = Kalaclista::Entry->new(
-    $content->child("${path}.md")->path,
-    URI::Fast->new("https://the.kalaclista.com/${path}/"),
+    src  => $context->entries->parent->child("precompiled/${path}.md")->get,
+    href => URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 
-  $entry->register( sub { WebSite::Extensions::WebSite->transform(@_) } );
+  $entry->add_transformer( sub { WebSite::Extensions::WebSite->transform(@_) } );
   $entry->transform;
 
   my $item = $entry->dom->at('.content__card--website');

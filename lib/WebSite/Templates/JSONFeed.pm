@@ -16,7 +16,7 @@ sub render {
   my $c       = WebSite::Context->instance;
   my $baseURI = $c->baseURI;
   my $section = $page->section;
-  my $prefix  = $section eq 'pages' ? ''          : "/${section}";
+  my $prefix  = $section eq 'pages' ? ''          : "${section}";
   my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
 
   my $href    = href( "${prefix}/",              $baseURI );
@@ -47,7 +47,7 @@ sub render {
           title          => $_->title,
           content_html   => $_->dom->innerHTML,
           date_published => $_->date,
-          date_modified  => $_->lastmod,
+          date_modified  => $_->updated,
           authors        => [
             {
               name   => 'OKAMURA Naoki aka nyarla',

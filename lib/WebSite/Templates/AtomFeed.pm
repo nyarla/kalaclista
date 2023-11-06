@@ -38,7 +38,7 @@ sub render {
           h( 'uri',   'https://the.kalaclista.com/nyarla/' )
         ]
       ),
-      h( 'updated', $entries[0]->lastmod ),
+      h( 'updated', $entries[0]->updated ),
 
       (
         map {
@@ -56,7 +56,7 @@ sub render {
                   h( 'uri',   'https://the.kalaclista.com/nyarla/' )
                 ]
               ),
-              h( 'updated', $_->lastmod ),
+              h( 'updated', $_->updated ),
               h( 'content', { type => 'html' }, $_->dom->innerHTML )
             ]
           )

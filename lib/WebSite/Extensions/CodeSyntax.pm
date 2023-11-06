@@ -12,23 +12,22 @@ use WebSite::Context;
 
 sub transform {
   state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/highlight');
-  my ( $class, $entry, $dom ) = @_;
+  my ( $class, $entry ) = @_;
 
   my $href = $entry->href->path;
   my $idx  = 0;
 
-  for my $block ( $dom->find('pre > code')->@* ) {
+  for my $block ( $entry->dom->find('pre > code')->@* ) {
     $idx++;
     my $file = $datadir->child("${href}${idx}.yaml");
     if ( -f $file->path ) {
       my $data = YAML::XS::LoadFile( $file->path );
 
-      if ( !ref $entry->addon('style') ) {
-        $entry->addon( style => [ $data->{'style'} ] );
+      if ( !ref $entry->meta('css') ) {
+        $entry->meta( css => [] );
       }
-      else {
-        push $entry->addon('style')->@*, $data->{'style'};
-      }
+
+      push $entry->meta('css')->@*, $data->{'style'};
 
       $block->innerHTML( $data->{'code'} );
 

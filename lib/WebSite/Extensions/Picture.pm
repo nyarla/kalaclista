@@ -16,7 +16,8 @@ sub transform {
   state $datadir ||= WebSite::Context->instance->dirs->cache('images');
   state $prefix  ||= WebSite::Context->instance->baseURI->to_string;
 
-  my ( $class, $entry, $dom, $scales ) = @_;
+  my ( $class, $entry, $scales ) = @_;
+  my $dom = $entry->dom;
 
   for my $item ( $dom->find('p > img:only-child')->@* ) {
     my $src = $item->getAttribute('src');

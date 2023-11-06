@@ -10,19 +10,23 @@ use URI::Escape qw(uri_escape_utf8);
 
 use Kalaclista::Entry;
 
+use WebSite::Context;
 use WebSite::Extensions::Picture;
 
 local $ENV{'KALACLISTA_ENV'} = 'production';
-WebSite::Context->init(qr{^t$});
+my $c = WebSite::Context->init(qr{^t$});
 
 sub entry {
-  my $path  = shift;
+  my $path    = shift;
+  my $content = $c->entries->parent->child("precompiled/${path}.md")->get;
+  utf8::encode($content);
+
   my $entry = Kalaclista::Entry->new(
-    WebSite::Context->instance->dirs->src("entries/src/${path}.md")->path,
-    URI::Fast->new("https://the.kalaclista.com/${path}/"),
+    src  => $content,
+    href => URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 
-  $entry->register( sub { WebSite::Extensions::Picture->transform( @_, [ 640, 1280 ] ) } );
+  $entry->add_transformer( sub { WebSite::Extensions::Picture->transform( @_, [ 640, 1280 ] ) } );
   $entry->transform;
 
   return $entry;

@@ -21,7 +21,7 @@ sub main {
 
   my $dom = $parser->parse($html);
 
-  is( $dom->at('title')->textContent, '404 not found - カラクリスタ' );
+  is( $dom->at('title')->textContent, 'ページが見つかりません - カラクリスタ' );
   is(
     $dom->at('meta[name="description"]')->getAttribute('content'),
     'ページが見つかりません'

@@ -192,10 +192,17 @@ sub testing_page_on_permalink {
     data => {},
   );
 
+  my $c       = WebSite::Context->instance;
+  my $content = $c->entries->parent->child("precompiled/posts/2022/01/05/131308.md")->get;
+  utf8::decode($content);
+
   my $entry = Kalaclista::Entry->new(
-    WebSite::Context->instance->dirs->rootdir->child('content/entries/posts/2022/01/05/131308.md')->path,
-    URI::Fast->new( href( '/posts/2022/01/05/131308/', WebSite::Context->instance->baseURI ) ),
+    path => $c->entries->child('posts/2022/01/05/131308.md'),
+    href => URI::Fast->new( href( '/posts/2022/01/05/131308/', $c->baseURI ) ),
   );
+
+  $entry->load if !$entry->loaded;
+  $entry->src($content);
 
   my $permalink = Kalaclista::Data::Page->new(
     title   => $entry->title,
@@ -238,7 +245,7 @@ sub testing_page_on_permalink {
 
   is( $dom->at('meta[property="og:type"]')->getAttribute('content'),           'article' );
   is( $dom->at('meta[property="og:published_time"]')->getAttribute('content'), $entry->date );
-  is( $dom->at('meta[property="og:modified_time"]')->getAttribute('content'),  $entry->lastmod );
+  is( $dom->at('meta[property="og:modified_time"]')->getAttribute('content'),  $entry->updated );
   is( $dom->at('meta[property="og:section"]')->getAttribute('content'),        'posts' );
 
   is( $dom->at('meta[name="twitter:card"]')->getAttribute('content'),        'summary' );

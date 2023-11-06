@@ -8,25 +8,26 @@ use URI::Fast;
 
 use Kalaclista::Entry;
 
+use WebSite::Helper::Hyperlink qw(href);
 use WebSite::Extensions::CodeSyntax;
 use WebSite::Context;
 
-WebSite::Context->init(qr{^t$});
+my $c = WebSite::Context->init(qr{^t$});
 
 sub main {
   my $path  = 'posts/2021/11/01/121434';
   my $entry = Kalaclista::Entry->new(
-    WebSite::Context->instance->dirs->src("entries/src/${path}.md")->path,
-    URI::Fast->new("https://the.kalaclista.com/${path}/"),
+    href => URI::Fast->new("https://the.kalaclista.com/${path}/"),
+    src  => $c->entries->parent->child("precompiled/${path}.md")->get,
   );
 
-  $entry->register( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
+  $entry->add_transformer( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
   $entry->transform;
 
   my $item = $entry->dom->at('pre > code');
 
   ok( $item->at('span.Statement') );
-  is( ref $entry->addon('style'), 'ARRAY' );
+  is( ref $entry->meta('css'), 'ARRAY' );
 
   done_testing;
 }

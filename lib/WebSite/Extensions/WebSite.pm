@@ -25,9 +25,9 @@ sub website {
 }
 
 sub transform {
-  my ( $class, $entry, $dom ) = @_;
+  my ( $class, $entry ) = @_;
 
-  for my $item ( $dom->find('ul > li:only-child > a:only-child')->@* ) {
+  for my $item ( $entry->dom->find('ul > li:only-child > a:only-child')->@* ) {
     my $href = $item->getAttribute('href');
     my $text = $item->innerText;
 

@@ -15,6 +15,7 @@ sub at {
   my $xml = shift;
   return sub {
     my $xpath = shift;
+    print $xpath, "\n";
     return $xml->find($xpath)->[0]->textContent;
   };
 }

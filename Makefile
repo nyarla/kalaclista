@@ -45,42 +45,36 @@ assets: .check
 	@echo copy assets
 	@cp -r src/assets/* public/dist/
 
-# generate assets
-_gen_assets: .check
-	@echo copy assets
-	@cp -R content/assets/* public/dist/
-
-# generate content
-_gen_sitemap_xml: .check
+sitemap_xml: .check
 	@echo generate sitemap.xml
 	@perl bin/gen.pl sitemap.xml
 
-_gen_pages: .check
+pages: .check
 	@echo generate pages
 	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(PAGES) perl bin/gen.pl permalinks {}
 
-_gen_index: .check
+index: .check
 	@echo generate index
 	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
 
-_gen_home: .check
+home: .check
 	@echo generate home
 	@perl bin/gen.pl home
 
-_gen_standalone: \
+parallel: \
 	.check \
 	css \
-	_gen_sitemap_xml \
-	_gen_pages \
-	_gen_index \
-	_gen_home
+	sitemap_xml \
+	pages \
+	index \
+	home
 
 gen: .check
 	@$(MAKE) assets
 	@$(MAKE) images
 	@$(MAKE) entries
 	@test -d public/bundle || mkdir -p public/bundle
-	@$(MAKE) _gen_standalone -j7
+	@$(MAKE) parallel -j7
 
 clean: .check
 	@test ! -d public/dist || rm -rf public/dist

@@ -15,19 +15,34 @@ class WebSite::Context : isa(Kalaclista::Context) {
     my $detect = shift;
 
     my $production = ( exists $ENV{'KALACLISTA_ENV'} && $ENV{'KALACLISTA_ENV'} eq 'production' );
-
-    Kalaclista::Context->init(
+    my $context    = WebSite::Context->new(
       production => $production,
-      baseURI    => ( $production ? 'https://the.kalaclista.com' : 'http://nixos:1313' ),
-      dirs       => {
+      baseURI    => URI::Fast->new( $production ? 'https://the.kalaclista.com' : 'http://nixos:1313' ),
+      dirs       => Kalaclista::Data::Directory->instance(
         detect => $detect,
         cache  => q{cache},
         dist   => q{public/dist},
         src    => q{src},
-      }
+      ),
     );
 
+    $class->instance($context);
     return $class->instance;
   }
 
+  method entries {
+    return $self->dirs->src('entries/src');
+  }
+
+  method datadir {
+    return $self->dirs->rootdir->child('content/data');
+  }
+
+  method distdir {
+    return $self->dirs->distdir;
+  }
+
+  method srcdir {
+    return $self->dirs->srcdir;
+  }
 }

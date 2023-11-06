@@ -5,9 +5,9 @@ use warnings;
 use utf8;
 
 sub transform {
-  my ( $class, $entry, $dom ) = @_;
+  my ( $class, $entry ) = @_;
 
-  for my $node ( $dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
+  for my $node ( $entry->dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
     my $html = $node->innerHTML;
     $html =~ s<[{]([^}]+)[}]><furigana($1)>eg;
 
