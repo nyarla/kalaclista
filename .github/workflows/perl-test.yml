@@ -35,6 +35,9 @@ jobs:
           cpm install -L extlib --cpanfile cpanfile
       - name: Run tests
         run: |
+          export PATH=$(pwd)/extlib/bin:$PATH
+          export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
+
           make css
           prove bin/compile-css.pl
           prove t/bin/compile-css.t
