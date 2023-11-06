@@ -1,0 +1,40 @@
+---
+name: Perl test for kalaclista
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/perl-test.yml"
+      - "bin/**"
+      - "lib/**"
+      - "t/**"
+      - "Makefile"
+      - "cpanfile"
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.38'
+      - name: Install dependencies
+        run: |
+          sudo apt-get udpate
+          sudo apt-get install -y \
+            esbuild \
+            make
+
+          cpm install -L extlib --cpanfile app/cpanfile
+          cpm install -L extlib --cpanfile cpanfile
+      - name: Run tests
+        run: |
+          make css
+          prove bin/compile-css.pl
+          prove t/bin/compile-css.t
