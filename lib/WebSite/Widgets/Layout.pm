@@ -32,7 +32,7 @@ my $goat   = script(
 
 sub layout {
   state $c         ||= WebSite::Context->instance;
-  state $analytics ||= [ $c->production ? ($goat) : () ];
+  state $analytics ||= [ $c->env->production ? ($goat) : () ];
   my ( $vars, $content ) = @_;
 
   my $baseURI = $c->baseURI;
