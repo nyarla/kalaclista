@@ -8,24 +8,22 @@ use WebSite::Context;
 
 sub instance {
   my ( $stage, $on ) = @_;
-  my $c;
-
   local $ENV{'KALACLISTA_ENV'} = $stage;
 
-  if ( $on eq 'ci' ) {
-    local $ENV{'CI'} = "true";
-    $c = WebSite::Context->init(qr{^t$});
-  }
-  elsif ( $on eq 'runtime' ) {
+  if ( $on eq 'runtime' ) {
+    delete $ENV{'CI'}            if exists $ENV{'CI'};
     delete $ENV{'IN_PERL_SHELL'} if exists $ENV{'IN_PERL_SHELL'};
-    $c = WebSite::Context->init(qr{^t$});
+  }
+  elsif ( $on eq 'ci' ) {
+    $ENV{'CI'} = "true";
+    delete $ENV{'IN_PERL_SHELL'} if exists $ENV{'IN_PERL_SHELL'};
   }
   else {
+    delete $ENV{'CI'} if exists $ENV{'CI'};
     $ENV{'IN_PERL_SHELL'} = 1;
-    $c = WebSite::Context->init(qr{^t$});
   }
 
-  return $c;
+  return WebSite::Context->init(qr{^t$});
 }
 
 subtest context => sub {
