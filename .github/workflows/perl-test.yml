@@ -43,3 +43,4 @@ jobs:
 
           make css
           prove bin/compile-css.pl
+          prove -lvr t/lib
