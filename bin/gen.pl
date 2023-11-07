@@ -74,7 +74,7 @@ sub filter {
   my $entry = shift;
   my $c     = WebSite::Context->instance;
 
-  return $entry->path->path !~ m{\.draft\.md$} if $c->production;
+  return $entry->path->path !~ m{\.draft\.md$} if $c->env->production;
   return true;
 }
 
@@ -207,7 +207,7 @@ sub testing {
       my $entry = Kalaclista::Entry->new( path => 'test.md' );
       my $draft = Kalaclista::Entry->new( path => 'test.draft.md' );
 
-      ok !WebSite::Context->instance->production;
+      ok !WebSite::Context->instance->env->production;
       ok filter($entry);
       ok filter($draft);
     };
@@ -219,7 +219,7 @@ sub testing {
       my $entry = Kalaclista::Entry->new( path => 'test.md' );
       my $draft = Kalaclista::Entry->new( path => 'test.draft.md' );
 
-      ok !!WebSite::Context->instance->production;
+      ok !!WebSite::Context->instance->env->production;
       ok filter($entry);
       ok !filter($draft);
     };
