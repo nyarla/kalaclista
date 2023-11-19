@@ -95,6 +95,11 @@ dev: .check
 test: .check
 	prove -j$(FULL) t/*/*.t
 
+ci:
+	@env KALACLISTA_ENV=test $(MAKE) clean
+	@env KALACLISTA_ENV=test $(MAKE) gen
+	@env KALACLISTA_ENV=test $(MAKE) test
+
 .PHONY: shell serve up
 
 # temporary solution
