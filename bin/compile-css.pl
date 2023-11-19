@@ -18,7 +18,7 @@ use WebSite::Helper::Digest qw(digest);
 
 my $dirs   = WebSite::Context->init(qr{^bin$})->dirs;
 my $digest = digest('lib/WebSite/Templates/Stylesheet.pm');
-my $dist   = $dirs->dist("main-${digest}.css")->path;
+my $dist   = $dirs->dist("main-${digest}.css");
 
 sub doing {
   my $main      = $dirs->cache("css/main-${digest}.css");
@@ -33,13 +33,14 @@ sub doing {
   my $css   = $main->path;
   my $reset = $normalize->path;
 
-  `cat "${reset}" "${css}" | esbuild --minify --loader=css >"${dist}"`;
+  $dist->parent->mkpath;
+  `cat "${reset}" "${css}" | esbuild --minify --loader=css >"@{[ $dist->path ]}"`;
   return $?;
 }
 
 sub testing {
   ok try_ok( sub { doing } ), '`doing` subroutine should be callable';
-  ok -e $dist,                'output file exists';
+  ok -e $dist->path,          'output file exists';
 
   done_testing;
 }

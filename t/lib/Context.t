@@ -33,25 +33,37 @@ subtest context => sub {
     subtest production => sub {
       my $c = instance( production => 'runtime' );
 
-      is $c->env->production, true;
+      is $c->env->production,    true;
+      is $c->baseURI->to_string, 'https://the.kalaclista.com';
+      like $c->distdir->path, qr{public/dist$};
+      like $c->entries->path, qr{src/entries/src$};
     };
 
     subtest staging => sub {
       my $c = instance( staging => 'runtime' );
 
-      is $c->env->staging, true;
+      is $c->env->staging,       true;
+      is $c->baseURI->to_string, 'http://nixos:1313';
+      like $c->distdir->path, qr{public/test$};
+      like $c->entries->path, qr{src/entries/src$};
     };
 
     subtest development => sub {
       my $c = instance( development => 'runtime' );
 
-      is $c->env->development, true;
+      is $c->env->development,   true;
+      is $c->baseURI->to_string, 'http://nixos:1313';
+      like $c->distdir->path, qr{public/dev$};
+      like $c->entries->path, qr{src/entries/src$};
     };
 
     subtest test => sub {
       my $c = instance( test => 'runtime' );
 
-      is $c->env->test, true;
+      is $c->env->test,          true;
+      is $c->baseURI->to_string, 'https://example.com';
+      like $c->distdir->path, qr{public/test$};
+      like $c->entries->path, qr{t/fixtures/entries/src$};
     };
   };
 
@@ -104,7 +116,7 @@ subtest baseURI => sub {
     my $c = instance( test => 'runtime' );
 
     isa_ok $c->baseURI, 'URI::Fast';
-    is $c->baseURI->to_string, 'http://nixos:1313';
+    is $c->baseURI->to_string, 'https://example.com';
   };
 };
 

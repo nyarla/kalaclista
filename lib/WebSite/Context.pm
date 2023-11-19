@@ -21,18 +21,31 @@ class WebSite::Context : isa(Kalaclista::Context) {
       on          => $on,
     );
 
-    my $context = WebSite::Context->new(
-      baseURI => URI::Fast->new( $env->production ? 'https://the.kalaclista.com' : 'http://nixos:1313' ),
+    my $baseURI =
+          $env->production ? 'https://the.kalaclista.com'
+        : $env->test       ? 'https://example.com'
+        :                    'http://nixos:1313';
+
+    my $cache = q{cache};
+    my $dist =
+          $env->production  ? q{public/dist}
+        : $env->development ? q{public/dev}
+        :                     q{public/test};
+
+    my $src = ( !$env->test ) ? q{src} : q{t/fixtures};
+
+    my $c = WebSite::Context->new(
+      env     => $env,
+      baseURI => URI::Fast->new($baseURI),
       dirs    => Kalaclista::Data::Directory->instance(
         detect => $detect,
-        cache  => q{cache},
-        dist   => q{public/dist},
-        src    => q{src},
+        cache  => $cache,
+        dist   => $dist,
+        src    => $src,
       ),
-      env => $env,
     );
 
-    $class->instance($context);
+    $class->instance($c);
     return $class->instance;
   }
 
