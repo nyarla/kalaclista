@@ -26,7 +26,13 @@ class WebSite::Context : isa(Kalaclista::Context) {
         : $env->test       ? 'https://example.com'
         :                    'http://nixos:1313';
 
-    my $cache = q{cache};
+    my $cache =
+          $env->production  ? 'cache/production'
+        : $env->staging     ? 'cache/staging'
+        : $env->development ? 'cache/development'
+        : $env->test        ? 'cache/test'
+        :                     'test';
+
     my $dist =
           $env->production  ? q{public/dist}
         : $env->development ? q{public/dev}
