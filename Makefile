@@ -14,6 +14,9 @@ css:
 	@echo generate css
 	@perl bin/compile-css.pl
 
+css-test:
+	@prove bin/compile-css.pl
+
 images: .check
 	@echo generate webp
 	@openssl dgst -r -sha256 $$(find "src/images" -type f | grep -v '.git') | sort >cache/images/now.sha256sum
