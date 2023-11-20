@@ -35,7 +35,7 @@ subtest context => sub {
 
       is $c->env->production,    true;
       is $c->baseURI->to_string, 'https://the.kalaclista.com';
-      like $c->distdir->path,        qr{public/dist$};
+      like $c->distdir->path,        qr{public/production$};
       like $c->entries->path,        qr{src/entries/src$};
       like $c->dirs->cachedir->path, qr{cache/production$};
     };

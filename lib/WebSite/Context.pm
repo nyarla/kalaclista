@@ -34,7 +34,7 @@ class WebSite::Context : isa(Kalaclista::Context) {
         :                     'test';
 
     my $dist =
-          $env->production  ? q{public/dist}
+          $env->production  ? q{public/production}
         : $env->development ? q{public/dev}
         :                     q{public/test};
 
