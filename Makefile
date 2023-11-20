@@ -77,10 +77,10 @@ gen: .check
 	@$(MAKE) parallel -j7
 
 clean: .check
-	@test ! -d public/dist || rm -rf public/dist
-	@mkdir -p public/dist
-	@test ! -e cache/images/latest.sha256sum || rm cache/images/latest.sha256sum
-	@test ! -e cache/images/data || rm -rf cache/images/data
+	@test ! -d public/$(KALACLISTA_ENV) || rm -rf public/$(KALACLISTA_ENV)
+	@mkdir -p public/$(KALACLISTA_ENV)
+	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
+	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
 
 reset: .check clean
 	@test ! -d public/state || rm -rf public/state
