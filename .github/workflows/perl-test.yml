@@ -28,8 +28,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            cmark-gfm \
             esbuild \
-            make
+            imagemagick \
+            make \
+            nodejs \
+            webp
 
           cpm install -L extlib --cpanfile app/cpanfile
           cpm install -L extlib --cpanfile cpanfile
