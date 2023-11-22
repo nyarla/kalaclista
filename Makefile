@@ -48,7 +48,7 @@ entries: .test-in-shell .test-set-stage
 	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*$(ROOTDIR)/entries/src/##' >$(CACHEDIR)/entries/target
-	@node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
+	@pnpm exec node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
 	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
 	@rm $(CACHEDIR)/entries/target
 
