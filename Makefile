@@ -5,6 +5,15 @@ CWD  := $(shell pwd)
 PAGES := $(shell echo '$(shell date +%Y) - 2006'  | bc)
 INDEX := 3
 
+KALACLISTA_ENV := production
+
+ROOTDIR := src
+CACHEDIR := cache/$(KALACLISTA_ENV)
+
+ifeq ($(KALACLISTA_ENV),test)
+ROOTDIR := t/fixtures
+endif
+
 .PHONY: clean build dev test
 
 .check:
@@ -19,13 +28,13 @@ css-test:
 
 images: .check
 	@echo generate webp
-	@openssl dgst -r -sha256 $$(find "src/images" -type f | grep -v '.git') | sort >cache/images/now.sha256sum
-	@touch cache/images/latest.sha256sum
-	@comm -23 cache/images/{now,latest}.sha256sum \
+	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
+	@touch $(CACHEDIR)/images/latest.sha256sum
+	@comm -23 $(CACHEDIR)/images/{now,latest}.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*src/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
-	@mv cache/images/{now,latest}.sha256sum
+	@mv $(CACHEDIR)/images/{now,latest}.sha256sum
 
 images-test: .check
 	@prove bin/compile-webp.pl
