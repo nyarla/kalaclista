@@ -35,8 +35,9 @@ subtest context => sub {
 
       is $c->env->production,    true;
       is $c->baseURI->to_string, 'https://the.kalaclista.com';
-      like $c->distdir->path, qr{public/dist$};
-      like $c->entries->path, qr{src/entries/src$};
+      like $c->distdir->path,        qr{public/production$};
+      like $c->entries->path,        qr{src/entries/src$};
+      like $c->dirs->cachedir->path, qr{cache/production$};
     };
 
     subtest staging => sub {
@@ -44,8 +45,9 @@ subtest context => sub {
 
       is $c->env->staging,       true;
       is $c->baseURI->to_string, 'http://nixos:1313';
-      like $c->distdir->path, qr{public/test$};
-      like $c->entries->path, qr{src/entries/src$};
+      like $c->distdir->path,        qr{public/test$};
+      like $c->entries->path,        qr{src/entries/src$};
+      like $c->dirs->cachedir->path, qr{cache/staging$};
     };
 
     subtest development => sub {
@@ -53,8 +55,9 @@ subtest context => sub {
 
       is $c->env->development,   true;
       is $c->baseURI->to_string, 'http://nixos:1313';
-      like $c->distdir->path, qr{public/dev$};
-      like $c->entries->path, qr{src/entries/src$};
+      like $c->distdir->path,        qr{public/dev$};
+      like $c->entries->path,        qr{src/entries/src$};
+      like $c->dirs->cachedir->path, qr{cache/development$};
     };
 
     subtest test => sub {
@@ -62,8 +65,9 @@ subtest context => sub {
 
       is $c->env->test,          true;
       is $c->baseURI->to_string, 'https://example.com';
-      like $c->distdir->path, qr{public/test$};
-      like $c->entries->path, qr{t/fixtures/entries/src$};
+      like $c->distdir->path,        qr{public/test$};
+      like $c->entries->path,        qr{t/fixtures/entries/src$};
+      like $c->dirs->cachedir->path, qr{cache/test$};
     };
   };
 

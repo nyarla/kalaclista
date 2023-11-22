@@ -13,13 +13,13 @@ const { availableParallelism } = require("node:os");
 const { loadDefaultJapaneseParser } = require("budoux");
 const { minify } = require("html-minifier");
 
-const rootdir = dirname(process.argv[1]) + "/..";
+const rootdir = process.argv[2];
 const budoux = loadDefaultJapaneseParser();
 
 const numCPUs = availableParallelism();
 
 function fullpath(path) {
-  return normalize(`${rootdir}/src/entries/src/${path}`);
+  return normalize(`${rootdir}/entries/src/${path}`);
 }
 
 function load(path) {
@@ -194,4 +194,4 @@ async function main(src) {
   }
 }
 
-main(process.argv[2]);
+main(process.argv[3]);

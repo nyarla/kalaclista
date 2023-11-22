@@ -24,12 +24,23 @@ jobs:
       - uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: '5.38'
+      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            cmark-gfm \
+            coreutils \
             esbuild \
-            make
+            findutils \
+            imagemagick \
+            make \
+            openssl \
+            sed \
+            webp
 
           cpm install -L extlib --cpanfile app/cpanfile
           cpm install -L extlib --cpanfile cpanfile
@@ -39,8 +50,5 @@ jobs:
           export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
           export IN_PERL_SHELL=1
 
-          make clean
-
-          make css
-          prove bin/compile-css.pl
-          prove -lvr t/lib
+          pnpm i
+          make ci

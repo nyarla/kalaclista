@@ -12,7 +12,7 @@ use Kalaclista::Entries;
 use WebSite::Context;
 
 my $content = Kalaclista::Path->detect(qr{^t$})->child('content');
-my $dist    = Kalaclista::Path->detect(qr{^t$})->child('public/dist');
+my $dist    = Kalaclista::Path->detect(qr{^t$})->child('public/production');
 
 sub static {
   return qw(

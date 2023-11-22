@@ -53,19 +53,19 @@ sub init {
       label     => 'ブログ',
       title     => 'カラクリスタ・ブログ',
       summary   => '『輝かしい青春』なんて失かった人のブログです',
-      permalink => href( '/posts', $c->baseURI ),
+      permalink => href( '/posts/', $c->baseURI ),
     },
     echos => {
       label     => '日記',
       title     => 'カラクリスタ・エコーズ',
       summary   => '『輝かしい青春』なんて失かった人の日記です',
-      permalink => href( '/echos', $c->baseURI ),
+      permalink => href( '/echos/', $c->baseURI ),
     },
     notes => {
       label     => 'メモ帳',
       title     => 'カラクリスタ・ノート',
       summary   => '『輝かしい青春』なんて失かった人のメモ帳です',
-      permalink => href( '/notes', $c->baseURI ),
+      permalink => href( '/notes/', $c->baseURI ),
     },
   );
 }
@@ -129,11 +129,11 @@ sub fixup {
     sub {
       my $entry = shift;
       my $path  = $entry->path->path;
-      $path =~ s{src/entries/src}{src/entries/precompiled};
+      $path =~ s{entries/src}{entries/precompiled};
       my $precompiled = Kalaclista::Path->new( path => $path )->get;
       utf8::decode($precompiled);
 
-      $entry->src($precompiled);
+      $entry->dom($precompiled);
 
       return $entry;
     }
@@ -225,100 +225,100 @@ sub testing {
     };
   };
 
-  subtest fixup => sub {
-    local $ENV{'KALACLISTA_ENV'} = 'production';
-    init;
+  if ( $ENV{'KALACLISTA_ENV'} eq 'production' ) {
+    subtest fixup => sub {
+      init;
 
-    my $c       = WebSite::Context->instance;
-    my $entries = $c->entries;
-
-    subtest posts => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child('posts/2023/10/06/155859.md') );
-
-      fixup( $entry, $entries );
-
-      is $entry->href->to_string, 'https://the.kalaclista.com/posts/2023/10/06/155859/';
-      is $entry->type,            'posts';
-    };
-
-    subtest echos => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child('echos/2023/09/02/153122.md') );
-
-      fixup( $entry, $entries );
-
-      is $entry->href->to_string, 'https://the.kalaclista.com/echos/2023/09/02/153122/';
-      is $entry->type,            'echos';
-    };
-
-    subtest notes => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child("notes/にゃるら-is-not-にゃるら.md") );
-
-      fixup( $entry, $entries );
-
-      is $entry->href->to_string, 'https://the.kalaclista.com/notes/nyarla-is-not-nyalra/';
-      is $entry->type,            'notes';
-    };
-
-    subtest pages => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child('nyarla.md') );
-
-      fixup( $entry, $entries );
-
-      is $entry->href->to_string, 'https://the.kalaclista.com/nyarla/';
-      is $entry->type,            'pages';
-    };
-  };
-
-  subtest doing => sub {
-    local $ENV{'KALACLISTA_ENV'} = 'production';
-    init;
-
-    my $c = WebSite::Context->instance;
-
-    subtest sitemap_xml => sub {
-      doing('sitemap.xml');
-
-      ok -e $c->distdir->child('sitemap.xml')->path;
-    };
-
-    subtest home => sub {
-      doing('home');
-
-      ok -e $c->distdir->child('index.html')->path;
-      ok -e $c->distdir->child('index.xml')->path;
-      ok -e $c->distdir->child('atom.xml')->path;
-      ok -e $c->distdir->child('jsonfeed.json')->path;
-    };
-
-    subtest index => sub {
-      subtest notes => sub {
-        doing(qw(index notes));
-
-        ok -e $c->distdir->child('notes/index.html')->path;
-        ok -e $c->distdir->child('notes/index.xml')->path;
-        ok -e $c->distdir->child('notes/atom.xml')->path;
-        ok -e $c->distdir->child('notes/jsonfeed.json')->path;
-      };
+      my $c       = WebSite::Context->instance;
+      my $entries = $c->entries;
 
       subtest posts => sub {
-        doing(qw(index posts));
+        my $entry = Kalaclista::Entry->new( path => $entries->child('posts/2023/10/06/155859.md') );
 
-        ok -e $c->distdir->child('posts/index.html')->path;
-        ok -e $c->distdir->child('posts/index.xml')->path;
-        ok -e $c->distdir->child('posts/atom.xml')->path;
-        ok -e $c->distdir->child('posts/jsonfeed.json')->path;
+        fixup( $entry, $entries );
+
+        is $entry->href->to_string, 'https://the.kalaclista.com/posts/2023/10/06/155859/';
+        is $entry->type,            'posts';
       };
 
       subtest echos => sub {
-        doing(qw(index echos));
+        my $entry = Kalaclista::Entry->new( path => $entries->child('echos/2023/09/02/153122.md') );
 
-        ok -e $c->distdir->child('echos/index.html')->path;
-        ok -e $c->distdir->child('echos/index.xml')->path;
-        ok -e $c->distdir->child('echos/atom.xml')->path;
-        ok -e $c->distdir->child('echos/jsonfeed.json')->path;
+        fixup( $entry, $entries );
+
+        is $entry->href->to_string, 'https://the.kalaclista.com/echos/2023/09/02/153122/';
+        is $entry->type,            'echos';
+      };
+
+      subtest notes => sub {
+        my $entry = Kalaclista::Entry->new( path => $entries->child("notes/にゃるら-is-not-にゃるら.md") );
+
+        fixup( $entry, $entries );
+
+        is $entry->href->to_string, 'https://the.kalaclista.com/notes/nyarla-is-not-nyalra/';
+        is $entry->type,            'notes';
+      };
+
+      subtest pages => sub {
+        my $entry = Kalaclista::Entry->new( path => $entries->child('nyarla.md') );
+
+        fixup( $entry, $entries );
+
+        is $entry->href->to_string, 'https://the.kalaclista.com/nyarla/';
+        is $entry->type,            'pages';
       };
     };
-  };
+
+    subtest doing => sub {
+      init;
+
+      my $c = WebSite::Context->instance;
+
+      subtest sitemap_xml => sub {
+        doing('sitemap.xml');
+
+        ok -e $c->distdir->child('sitemap.xml')->path;
+      };
+
+      subtest home => sub {
+        doing('home');
+
+        ok -e $c->distdir->child('index.html')->path;
+        ok -e $c->distdir->child('index.xml')->path;
+        ok -e $c->distdir->child('atom.xml')->path;
+        ok -e $c->distdir->child('jsonfeed.json')->path;
+      };
+
+      subtest index => sub {
+        subtest notes => sub {
+          doing(qw(index notes));
+
+          ok -e $c->distdir->child('notes/index.html')->path;
+          ok -e $c->distdir->child('notes/index.xml')->path;
+          ok -e $c->distdir->child('notes/atom.xml')->path;
+          ok -e $c->distdir->child('notes/jsonfeed.json')->path;
+        };
+
+        subtest posts => sub {
+          doing(qw(index posts));
+
+          ok -e $c->distdir->child('posts/index.html')->path;
+          ok -e $c->distdir->child('posts/index.xml')->path;
+          ok -e $c->distdir->child('posts/atom.xml')->path;
+          ok -e $c->distdir->child('posts/jsonfeed.json')->path;
+        };
+
+        subtest echos => sub {
+          doing(qw(index echos));
+
+          ok -e $c->distdir->child('echos/index.html')->path;
+          ok -e $c->distdir->child('echos/index.xml')->path;
+          ok -e $c->distdir->child('echos/atom.xml')->path;
+          ok -e $c->distdir->child('echos/jsonfeed.json')->path;
+        };
+      };
+    };
+  }
 
   done_testing;
 
@@ -378,7 +378,7 @@ sub doing {
       title   => $c->website->title,
       section => 'pages',
       kind    => 'home',
-      entries => [ @{$entries}[ 0 .. 10 ] ],
+      entries => [ grep { defined $_ } @{$entries}[ 0 .. 10 ] ],
       href    => URI::Fast->new( href( '/', $c->baseURI ) ),
     );
 
@@ -390,7 +390,7 @@ sub doing {
     make( $page, 'Home', $distdir->child('index.html') );
 
     my @entries =
-        map { $_->transform; $_ } ( $entries->@* )[ 0 .. 4 ];
+        map { $_->transform; $_ } grep { defined $_ } ( $entries->@* )[ 0 .. 4 ];
 
     my $feed = Kalaclista::Data::Page->new(
       title   => $c->website->title,
@@ -426,6 +426,8 @@ sub doing {
       sort   => sub { $_[1]->$prop() cmp $_[0]->$prop() },
     );
 
+    return 0 if $entries->@* == 0;
+
     if ( $section eq 'notes' ) {
       my $page = Kalaclista::Data::Page->new(
         title   => $c->sections->{$section}->title,
@@ -453,11 +455,11 @@ sub doing {
         summary => $c->sections->{$section}->summary,
         section => $section,
         kind    => 'home',
-        entries => [ ( sort { $b->date cmp $a->date } $entries->@* )[ 0 .. 4 ] ],
+        entries => [ ( sort { $b->date cmp $a->date } grep { defined $_ } $entries->@* )[ 0 .. 4 ] ],
         href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
       );
 
-      $_->transform for $feed->entries->@*;
+      $_->transform for grep { defined $_ } $feed->entries->@*;
 
       make( $feed, 'RSS20Feed', $distdir->child("${section}/index.xml") );
       make( $feed, 'AtomFeed',  $distdir->child("${section}/atom.xml") );
@@ -526,11 +528,11 @@ sub doing {
             summary => $c->sections->{$section}->summary,
             section => $section,
             kind    => 'home',
-            entries => [ ( sort { $b->date cmp $a->date } @contents )[ 0 .. 4 ] ],
+            entries => [ grep { defined $_ } ( sort { $b->date cmp $a->date } @contents )[ 0 .. 4 ] ],
             href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
           );
 
-          $_->transform for $feed->entries->@*;
+          $_->transform for grep { defined $_ } $feed->entries->@*;
 
           make( $feed, 'RSS20Feed', $distdir->child("${section}/index.xml") );
           make( $feed, 'AtomFeed',  $distdir->child("${section}/atom.xml") );
@@ -547,10 +549,6 @@ sub doing {
     my $entries = Kalaclista::Entries->lookup(
       @options,
     );
-
-    for my $entry ( $entries->@* ) {
-      $entry->load if !$entry->loaded;
-    }
 
     my @entries = grep { $_->date =~ m{^$year} } $entries->@*;
     for my $entry (@entries) {
@@ -576,7 +574,7 @@ sub doing {
       if ( $entry->type ne 'pages' ) {
         $page->breadcrumb->push(
           title     => $c->sections->{ $entry->type }->title,
-          permalink => $c->sections->{ $entry->type }->permalink . "/",
+          permalink => $c->sections->{ $entry->type }->permalink,
         );
       }
 
