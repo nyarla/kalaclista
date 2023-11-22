@@ -52,10 +52,10 @@ entries: .test-in-shell .test-set-stage
 	@mv $(CACHEDIR)/entries/{now,latest}.sha256sum
 	@rm $(CACHEDIR)/entries/target
 
-website: .test-in-shell
+website: .test-in-shell .test-set-stage
 	@echo generate website.json
-	@cat src/website/src/*.nix | perl -pge 's<\}\n\{><>g' >cache/website/website.nix
-	@nix eval --json --file cache/website/website.nix >cache/website/website.json
+	@cat $(ROOTDIR)/website/src/*.nix | perl -pge 's<\}\n\{><>g' >$(CACHEDIR)/website/website.nix
+	@nix eval --json --file $(CACHEDIR)/website/website.nix >$(CACHEDIR)/website/website.json
 
 assets: .test-in-shell .test-set-stage
 	@echo copy assets
