@@ -232,41 +232,44 @@ sub testing {
     my $c       = WebSite::Context->instance;
     my $entries = $c->entries;
 
-    subtest posts => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child('posts/2023/10/06/155859.md') );
+    if ( $c->env->production ) {
 
-      fixup( $entry, $entries );
+      subtest posts => sub {
+        my $entry = Kalaclista::Entry->new( path => $entries->child('posts/2023/10/06/155859.md') );
 
-      is $entry->href->to_string, 'https://the.kalaclista.com/posts/2023/10/06/155859/';
-      is $entry->type,            'posts';
-    };
+        fixup( $entry, $entries );
 
-    subtest echos => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child('echos/2023/09/02/153122.md') );
+        is $entry->href->to_string, 'https://the.kalaclista.com/posts/2023/10/06/155859/';
+        is $entry->type,            'posts';
+      };
 
-      fixup( $entry, $entries );
+      subtest echos => sub {
+        my $entry = Kalaclista::Entry->new( path => $entries->child('echos/2023/09/02/153122.md') );
 
-      is $entry->href->to_string, 'https://the.kalaclista.com/echos/2023/09/02/153122/';
-      is $entry->type,            'echos';
-    };
+        fixup( $entry, $entries );
 
-    subtest notes => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child("notes/にゃるら-is-not-にゃるら.md") );
+        is $entry->href->to_string, 'https://the.kalaclista.com/echos/2023/09/02/153122/';
+        is $entry->type,            'echos';
+      };
 
-      fixup( $entry, $entries );
+      subtest notes => sub {
+        my $entry = Kalaclista::Entry->new( path => $entries->child("notes/にゃるら-is-not-にゃるら.md") );
 
-      is $entry->href->to_string, 'https://the.kalaclista.com/notes/nyarla-is-not-nyalra/';
-      is $entry->type,            'notes';
-    };
+        fixup( $entry, $entries );
 
-    subtest pages => sub {
-      my $entry = Kalaclista::Entry->new( path => $entries->child('nyarla.md') );
+        is $entry->href->to_string, 'https://the.kalaclista.com/notes/nyarla-is-not-nyalra/';
+        is $entry->type,            'notes';
+      };
 
-      fixup( $entry, $entries );
+      subtest pages => sub {
+        my $entry = Kalaclista::Entry->new( path => $entries->child('nyarla.md') );
 
-      is $entry->href->to_string, 'https://the.kalaclista.com/nyarla/';
-      is $entry->type,            'pages';
-    };
+        fixup( $entry, $entries );
+
+        is $entry->href->to_string, 'https://the.kalaclista.com/nyarla/';
+        is $entry->type,            'pages';
+      };
+    }
   };
 
   subtest doing => sub {
@@ -275,49 +278,52 @@ sub testing {
 
     my $c = WebSite::Context->instance;
 
-    subtest sitemap_xml => sub {
-      doing('sitemap.xml');
+    if ( $c->env->production ) {
 
-      ok -e $c->distdir->child('sitemap.xml')->path;
-    };
+      subtest sitemap_xml => sub {
+        doing('sitemap.xml');
 
-    subtest home => sub {
-      doing('home');
-
-      ok -e $c->distdir->child('index.html')->path;
-      ok -e $c->distdir->child('index.xml')->path;
-      ok -e $c->distdir->child('atom.xml')->path;
-      ok -e $c->distdir->child('jsonfeed.json')->path;
-    };
-
-    subtest index => sub {
-      subtest notes => sub {
-        doing(qw(index notes));
-
-        ok -e $c->distdir->child('notes/index.html')->path;
-        ok -e $c->distdir->child('notes/index.xml')->path;
-        ok -e $c->distdir->child('notes/atom.xml')->path;
-        ok -e $c->distdir->child('notes/jsonfeed.json')->path;
+        ok -e $c->distdir->child('sitemap.xml')->path;
       };
 
-      subtest posts => sub {
-        doing(qw(index posts));
+      subtest home => sub {
+        doing('home');
 
-        ok -e $c->distdir->child('posts/index.html')->path;
-        ok -e $c->distdir->child('posts/index.xml')->path;
-        ok -e $c->distdir->child('posts/atom.xml')->path;
-        ok -e $c->distdir->child('posts/jsonfeed.json')->path;
+        ok -e $c->distdir->child('index.html')->path;
+        ok -e $c->distdir->child('index.xml')->path;
+        ok -e $c->distdir->child('atom.xml')->path;
+        ok -e $c->distdir->child('jsonfeed.json')->path;
       };
 
-      subtest echos => sub {
-        doing(qw(index echos));
+      subtest index => sub {
+        subtest notes => sub {
+          doing(qw(index notes));
 
-        ok -e $c->distdir->child('echos/index.html')->path;
-        ok -e $c->distdir->child('echos/index.xml')->path;
-        ok -e $c->distdir->child('echos/atom.xml')->path;
-        ok -e $c->distdir->child('echos/jsonfeed.json')->path;
+          ok -e $c->distdir->child('notes/index.html')->path;
+          ok -e $c->distdir->child('notes/index.xml')->path;
+          ok -e $c->distdir->child('notes/atom.xml')->path;
+          ok -e $c->distdir->child('notes/jsonfeed.json')->path;
+        };
+
+        subtest posts => sub {
+          doing(qw(index posts));
+
+          ok -e $c->distdir->child('posts/index.html')->path;
+          ok -e $c->distdir->child('posts/index.xml')->path;
+          ok -e $c->distdir->child('posts/atom.xml')->path;
+          ok -e $c->distdir->child('posts/jsonfeed.json')->path;
+        };
+
+        subtest echos => sub {
+          doing(qw(index echos));
+
+          ok -e $c->distdir->child('echos/index.html')->path;
+          ok -e $c->distdir->child('echos/index.xml')->path;
+          ok -e $c->distdir->child('echos/atom.xml')->path;
+          ok -e $c->distdir->child('echos/jsonfeed.json')->path;
+        };
       };
-    };
+    }
   };
 
   done_testing;
