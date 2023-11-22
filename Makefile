@@ -42,15 +42,15 @@ images-test: .test-in-shell .test-set-stage
 
 entries: .test-in-shell .test-set-stage
 	@echo generate precompiled entries source
-	@test -d cache/entries || mkdir -p cache/entries
-	@openssl dgst -r -sha256 $$(find "src/entries/src" -type f | grep -v '.git') | sort >cache/entries/now.sha256sum
-	@touch cache/entries/latest.sha256sum
-	@comm -23 cache/entries/{now,latest}.sha256sum \
+	@test -d $(CACHEDIR)/entries || mkdir -p $(CACHEDIR)/entries
+	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/entries/src -type f | grep -v '.git') | sort >$(CACHEDIR)/entries/now.sha256sum
+	@touch $(CACHEDIR)/entries/latest.sha256sum
+	@comm -23 $(CACHEDIR)/entries/{now,latest}.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*src/entries/src/##' >cache/entries/target
-	@node bin/gen-precompile.js cache/entries/target
-	@mv cache/entries/{now,latest}.sha256sum
-	@rm cache/entries/target
+		| sed 's#*$(ROOTDIR)/entries/src/##' >$(CACHEDIR)/entries/target
+	@node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
+	@mv $(CACHEDIR)/entries/{now,latest}.sha256sum
+	@rm $(CACHEDIR)/entries/target
 
 website: .test-in-shell
 	@echo generate website.json
