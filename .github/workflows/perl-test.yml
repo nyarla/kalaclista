@@ -24,6 +24,10 @@ jobs:
       - uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: '5.38'
+      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -34,20 +38,17 @@ jobs:
             findutils \
             imagemagick \
             make \
-            nodejs \
-            npm \
             openssl \
             sed \
             webp
 
           cpm install -L extlib --cpanfile app/cpanfile
           cpm install -L extlib --cpanfile cpanfile
-
-          npx pnpm install --lockfile-only
       - name: Run tests
         run: |
           export PATH=$(pwd)/extlib/bin:$PATH
           export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
           export IN_PERL_SHELL=1
 
+          pnpm install --lockfile-only
           make ci
