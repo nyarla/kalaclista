@@ -117,11 +117,11 @@ test-scripts: .test-in-shell .test-set-stage
 	prove bin/compile-webp.pl
 	prove bin/gen.pl
 
-ci: .test-in-shell .test-set-stage
+ci: .test-in-shell
 	@$(MAKE) KALACLISTA_ENV=test clean
-	@$(MAKE) KALACLISTA_ENV=test script-test
+	@$(MAKE) KALACLISTA_ENV=test test-scripts
 	@$(MAKE) KALACLISTA_ENV=test clean
-	@(MAKE) KALACLISTA_ENV=test gen
+	@$(MAKE) KALACLISTA_ENV=test gen
 	# TODO: wait for improve tests
 	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
 
