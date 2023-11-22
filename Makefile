@@ -27,6 +27,9 @@ images: .check
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv cache/images/{now,latest}.sha256sum
 
+images-test: .check
+	@prove bin/compile-webp.pl
+
 entries: .check
 	@echo generate precompiled entries source
 	@test -d cache/entries || mkdir -p cache/entries

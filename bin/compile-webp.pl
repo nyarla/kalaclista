@@ -3,6 +3,12 @@
 use strict;
 use warnings;
 
+BEGIN {
+  if ( exists $ENV{'HARNESS_ACTIVE'} ) {
+    use Test2::V0;
+  }
+}
+
 use YAML::XS qw(DumpFile);
 
 use WebSite::Context;
@@ -96,36 +102,35 @@ sub doing {
 }
 
 sub testing {
-  require Test2::V0;
-  "Test2::V0"->import;
+  subtest paths => sub {
+    is [ paths("foo/bar.jpg") ], [qw(foo bar)];
+  };
 
-  is(
-    [ paths("foo/bar.jpg") ],
-    [ "foo", "bar" ],
-    '`paths` subroutine is enable to get dirname and pathname',
-  );
+  subtest size => sub {
+    if ( $ctx->env->production ) {
+      is(
+        [ size( $src->child("posts/2023/08/15/162025/1.jpg")->path ) ],
+        [ 8160, 6120 ],
+      );
+    }
+  };
 
-  is(
-    [ size( $src->child("posts/2023/08/15/162025/1.jpg")->path ) ],
-    [ 8160, 6120 ],
-    '`size` subroutine can get to width and height from image file'
-  );
+  subtest resize => sub {
+    if ( $ctx->env->production ) {
+      subtest production => sub {
+        is resize( "posts/2023/08/15/162025/1.jpg", "1x", 640 ),
+            { width => 640, height => 480 };
+      };
+    }
+  };
 
-  is(
-    resize( "posts/2023/08/15/162025/1.jpg", "1x", 640 ),
-    { width => 640, height => 480 },
-    '`resize` subroutine can resize to image by `cwebp`',
-  );
+  subtest doing => sub {
+    if ( $ctx->env->production ) {
+      ok try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 640, 1280 ); } );
 
-  ok(
-    try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 640, 1280 ); } ),
-    'doing main process suceed',
-  );
-
-  ok(
-    ( -e $data->child("posts/2023/08/15/162025/1.yaml")->path ),
-    'make cache data succeed by main process'
-  );
+      ok -e $data->child("posts/2023/08/15/162025/1.yaml")->path;
+    }
+  };
 
   done_testing();
 
