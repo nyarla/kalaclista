@@ -33,7 +33,7 @@ images: .test-in-shell .test-set-stage
 	@touch $(CACHEDIR)/images/latest.sha256sum
 	@comm -23 $(CACHEDIR)/images/{now,latest}.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*src/images/##' \
+		| sed 's#*$(ROOTDIR)/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv $(CACHEDIR)/images/{now,latest}.sha256sum
 

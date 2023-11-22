@@ -378,7 +378,7 @@ sub doing {
       title   => $c->website->title,
       section => 'pages',
       kind    => 'home',
-      entries => [ @{$entries}[ 0 .. 10 ] ],
+      entries => [ grep { defined $_ } @{$entries}[ 0 .. 10 ] ],
       href    => URI::Fast->new( href( '/', $c->baseURI ) ),
     );
 
@@ -390,7 +390,7 @@ sub doing {
     make( $page, 'Home', $distdir->child('index.html') );
 
     my @entries =
-        map { $_->transform; $_ } ( $entries->@* )[ 0 .. 4 ];
+        map { $_->transform; $_ } grep { defined $_ } ( $entries->@* )[ 0 .. 4 ];
 
     my $feed = Kalaclista::Data::Page->new(
       title   => $c->website->title,
@@ -426,6 +426,8 @@ sub doing {
       sort   => sub { $_[1]->$prop() cmp $_[0]->$prop() },
     );
 
+    return 0 if $entries->@* == 0;
+
     if ( $section eq 'notes' ) {
       my $page = Kalaclista::Data::Page->new(
         title   => $c->sections->{$section}->title,
@@ -453,11 +455,11 @@ sub doing {
         summary => $c->sections->{$section}->summary,
         section => $section,
         kind    => 'home',
-        entries => [ ( sort { $b->date cmp $a->date } $entries->@* )[ 0 .. 4 ] ],
+        entries => [ ( sort { $b->date cmp $a->date } grep { defined $_ } $entries->@* )[ 0 .. 4 ] ],
         href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
       );
 
-      $_->transform for $feed->entries->@*;
+      $_->transform for grep { defined $_ } $feed->entries->@*;
 
       make( $feed, 'RSS20Feed', $distdir->child("${section}/index.xml") );
       make( $feed, 'AtomFeed',  $distdir->child("${section}/atom.xml") );
@@ -526,11 +528,11 @@ sub doing {
             summary => $c->sections->{$section}->summary,
             section => $section,
             kind    => 'home',
-            entries => [ ( sort { $b->date cmp $a->date } @contents )[ 0 .. 4 ] ],
+            entries => [ grep { defined $_ } ( sort { $b->date cmp $a->date } @contents )[ 0 .. 4 ] ],
             href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
           );
 
-          $_->transform for $feed->entries->@*;
+          $_->transform for grep { defined $_ } $feed->entries->@*;
 
           make( $feed, 'RSS20Feed', $distdir->child("${section}/index.xml") );
           make( $feed, 'AtomFeed',  $distdir->child("${section}/atom.xml") );
