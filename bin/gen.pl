@@ -129,11 +129,11 @@ sub fixup {
     sub {
       my $entry = shift;
       my $path  = $entry->path->path;
-      $path =~ s{src/entries/src}{src/entries/precompiled};
+      $path =~ s{entries/src}{entries/precompiled};
       my $precompiled = Kalaclista::Path->new( path => $path )->get;
       utf8::decode($precompiled);
 
-      $entry->src($precompiled);
+      $entry->dom($precompiled);
 
       return $entry;
     }
@@ -547,10 +547,6 @@ sub doing {
     my $entries = Kalaclista::Entries->lookup(
       @options,
     );
-
-    for my $entry ( $entries->@* ) {
-      $entry->load if !$entry->loaded;
-    }
 
     my @entries = grep { $_->date =~ m{^$year} } $entries->@*;
     for my $entry (@entries) {
