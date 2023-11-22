@@ -225,14 +225,12 @@ sub testing {
     };
   };
 
-  subtest fixup => sub {
-    local $ENV{'KALACLISTA_ENV'} = 'production';
-    init;
+  if ( $ENV{'KALACLISTA_ENV'} eq 'production' ) {
+    subtest fixup => sub {
+      init;
 
-    my $c       = WebSite::Context->instance;
-    my $entries = $c->entries;
-
-    if ( $c->env->production ) {
+      my $c       = WebSite::Context->instance;
+      my $entries = $c->entries;
 
       subtest posts => sub {
         my $entry = Kalaclista::Entry->new( path => $entries->child('posts/2023/10/06/155859.md') );
@@ -269,16 +267,12 @@ sub testing {
         is $entry->href->to_string, 'https://the.kalaclista.com/nyarla/';
         is $entry->type,            'pages';
       };
-    }
-  };
+    };
 
-  subtest doing => sub {
-    local $ENV{'KALACLISTA_ENV'} = 'production';
-    init;
+    subtest doing => sub {
+      init;
 
-    my $c = WebSite::Context->instance;
-
-    if ( $c->env->production ) {
+      my $c = WebSite::Context->instance;
 
       subtest sitemap_xml => sub {
         doing('sitemap.xml');
@@ -323,8 +317,8 @@ sub testing {
           ok -e $c->distdir->child('echos/jsonfeed.json')->path;
         };
       };
-    }
-  };
+    };
+  }
 
   done_testing;
 
