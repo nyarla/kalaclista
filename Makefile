@@ -96,19 +96,34 @@ clean: .test-in-shell .test-set-stage
 	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
 	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
 
-build: .test-in-shell
-	@env URL="https://the.kalaclista.com" KALACLISTA_ENV=production $(MAKE) gen
+production: .test-in-shell
+	@env KALACLISTA_ENV=production $(MAKE) gen
 
-dev: .test-in-shell
-	@env URL="http://nixos:1313" KALACLISTA_ENV=development $(MAKE) gen
+development: .test-in-shell
+	@env KALACLISTA_ENV=development $(MAKE) gen
+
+testing:
+	@env KALACLISTA_ENV=test $(MAKE) gen
 
 test: .test-in-shell
-	prove -j$(FULL) t/*/*.t
+	@$(MAKE) KALACLISTA_ENV=production clean
+	@$(MAKE) KALACLISTA_ENV=production test-scripts
+	@$(MAKE) KALACLISTA_ENV=production clean
+	@$(MAKE) KALACLISTA_ENV=production gen
+	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
 
-ci:
-	@env KALACLISTA_ENV=test $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) gen
-	@env KALACLISTA_ENV=test $(MAKE) test
+test-scripts: .test-in-shell .test-set-stage
+	prove bin/compile-css.pl
+	prove bin/compile-webp.pl
+	prove bin/gen.pl
+
+ci: .test-in-shell .test-set-stage
+	@$(MAKE) KALACLISTA_ENV=test clean
+	@$(MAKE) KALACLISTA_ENV=test script-test
+	@$(MAKE) KALACLISTA_ENV=test clean
+	@(MAKE) KALACLISTA_ENV=test gen
+	# TODO: wait for improve tests
+	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
 
 .PHONY: shell serve up
 
