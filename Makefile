@@ -59,7 +59,7 @@ website: .test-in-shell .test-set-stage
 
 assets: .test-in-shell .test-set-stage
 	@echo copy assets
-	@cp -r src/assets/* public/$(KALACLISTA_ENV)/
+	@cp -r $(ROOTDIR)/assets/* public/$(KALACLISTA_ENV)/
 
 sitemap_xml: .test-in-shell .test-set-stage
 	@echo generate sitemap.xml
