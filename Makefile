@@ -5,8 +5,6 @@ CWD  := $(shell pwd)
 PAGES := $(shell echo '$(shell date +%Y) - 2006'  | bc)
 INDEX := 3
 
-KALACLISTA_ENV := production
-
 ROOTDIR := src
 CACHEDIR := cache/$(KALACLISTA_ENV)
 
@@ -18,6 +16,7 @@ endif
 
 .check:
 	@test -n "$(IN_PERL_SHELL)" || (echo 'you need to enter perl shell by `make shell`' >&2 ; exit 1)
+	@test -n "$(KALACLISTA_ENV)" || (echo 'this command needs to set `KALACLISTA_ENV`.' >&2 ; exit 1)
 
 css:
 	@echo generate css
