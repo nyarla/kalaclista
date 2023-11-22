@@ -29,10 +29,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             cmark-gfm \
+            coreutils \
             esbuild \
+            findutils \
             imagemagick \
             make \
             nodejs \
+            openssl \
+            sed \
             webp
 
           cpm install -L extlib --cpanfile app/cpanfile
