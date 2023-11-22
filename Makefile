@@ -14,18 +14,20 @@ endif
 
 .PHONY: clean build dev test
 
-.check:
+.test-in-shell:
 	@test -n "$(IN_PERL_SHELL)" || (echo 'you need to enter perl shell by `make shell`' >&2 ; exit 1)
+
+.test-set-stage:
 	@test -n "$(KALACLISTA_ENV)" || (echo 'this command needs to set `KALACLISTA_ENV`.' >&2 ; exit 1)
 
-css:
+css: .test-in-shell .test-set-stage
 	@echo generate css
 	@perl bin/compile-css.pl
 
-css-test:
+css-test: .test-in-shell .test-set-stage
 	@prove bin/compile-css.pl
 
-images: .check
+images: .test-in-shell .test-set-stage
 	@echo generate webp
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
 	@touch $(CACHEDIR)/images/latest.sha256sum
@@ -35,10 +37,10 @@ images: .check
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv $(CACHEDIR)/images/{now,latest}.sha256sum
 
-images-test: .check
+images-test: .test-in-shell .test-set-stage
 	@prove bin/compile-webp.pl
 
-entries: .check
+entries: .test-in-shell .test-set-stage
 	@echo generate precompiled entries source
 	@test -d cache/entries || mkdir -p cache/entries
 	@openssl dgst -r -sha256 $$(find "src/entries/src" -type f | grep -v '.git') | sort >cache/entries/now.sha256sum
@@ -50,47 +52,46 @@ entries: .check
 	@mv cache/entries/{now,latest}.sha256sum
 	@rm cache/entries/target
 
-website: .check
+website: .test-in-shell
 	@echo generate website.json
 	@cat src/website/src/*.nix | perl -pge 's<\}\n\{><>g' >cache/website/website.nix
 	@nix eval --json --file cache/website/website.nix >cache/website/website.json
 
-assets: .check
+assets: .test-in-shell .test-set-stage
 	@echo copy assets
 	@cp -r src/assets/* public/dist/
 
-sitemap_xml: .check
+sitemap_xml: .test-in-shell .test-set-stage
 	@echo generate sitemap.xml
 	@perl bin/gen.pl sitemap.xml
 
-pages: .check
+pages: .test-in-shell .test-set-stage
 	@echo generate pages
 	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(PAGES) perl bin/gen.pl permalinks {}
 
-index: .check
+index: .test-in-shell .test-set-stage
 	@echo generate index
 	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
 
-home: .check
+home: .test-in-shell .test-set-stage
 	@echo generate home
 	@perl bin/gen.pl home
 
-parallel: \
-	.check \
+parallel: .test-in-shell .test-set-stage \
 	css \
 	sitemap_xml \
 	pages \
 	index \
 	home
 
-gen: .check
+gen: .test-in-shell .test-set-stage
 	@$(MAKE) assets
 	@$(MAKE) images
 	@$(MAKE) entries
 	@test -d public/bundle || mkdir -p public/bundle
 	@$(MAKE) parallel -j7
 
-clean: .check
+clean: .test-in-shell .test-set-stage
 	@test ! -d public/$(KALACLISTA_ENV) || rm -rf public/$(KALACLISTA_ENV)
 	@mkdir -p public/$(KALACLISTA_ENV)
 	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
@@ -100,13 +101,13 @@ reset: .check clean
 	@test ! -d public/state || rm -rf public/state
 	@mkdir -p public/state
 
-build: .check
+build: .test-in-shell
 	@env URL="https://the.kalaclista.com" KALACLISTA_ENV=production $(MAKE) gen
 
-dev: .check
+dev: .test-in-shell
 	@env URL="http://nixos:1313" KALACLISTA_ENV=development $(MAKE) gen
 
-test: .check
+test: .test-in-shell
 	prove -j$(FULL) t/*/*.t
 
 ci:
@@ -117,7 +118,7 @@ ci:
 .PHONY: shell serve up
 
 # temporary solution
-up: .check clean build
+up: .test-in-shell clean build
 	pnpm exec wrangler pages deploy public/dist
 
 shell:
@@ -125,18 +126,18 @@ shell:
 	@nix develop
 	@pkill proclet || true
 
-cpan: .check
+cpan: .test-in-shell
 	@test ! -d extlib || rm -rf extlib
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile app/cpanfile
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile cpanfile
 
-serve: .check
+serve: .test-in-shell
 	proclet start --color
 
 .PHONY: posts echos
 
-posts:
+posts: .test-in-shell
 	@bash bin/new-entry.sh posts
 
-echos:
+echos: .test-in-shell
 	@bash bin/new-entry.sh echos
