@@ -53,19 +53,19 @@ sub init {
       label     => 'ブログ',
       title     => 'カラクリスタ・ブログ',
       summary   => '『輝かしい青春』なんて失かった人のブログです',
-      permalink => href( '/posts', $c->baseURI ),
+      permalink => href( '/posts/', $c->baseURI ),
     },
     echos => {
       label     => '日記',
       title     => 'カラクリスタ・エコーズ',
       summary   => '『輝かしい青春』なんて失かった人の日記です',
-      permalink => href( '/echos', $c->baseURI ),
+      permalink => href( '/echos/', $c->baseURI ),
     },
     notes => {
       label     => 'メモ帳',
       title     => 'カラクリスタ・ノート',
       summary   => '『輝かしい青春』なんて失かった人のメモ帳です',
-      permalink => href( '/notes', $c->baseURI ),
+      permalink => href( '/notes/', $c->baseURI ),
     },
   );
 }
@@ -572,7 +572,7 @@ sub doing {
       if ( $entry->type ne 'pages' ) {
         $page->breadcrumb->push(
           title     => $c->sections->{ $entry->type }->title,
-          permalink => $c->sections->{ $entry->type }->permalink . "/",
+          permalink => $c->sections->{ $entry->type }->permalink,
         );
       }
 
