@@ -43,8 +43,7 @@ jobs:
           cpm install -L extlib --cpanfile app/cpanfile
           cpm install -L extlib --cpanfile cpanfile
 
-          npm -g pnpm
-          pnpm install --lockfile-only
+          npx pnpm install --lockfile-only
       - name: Run tests
         run: |
           export PATH=$(pwd)/extlib/bin:$PATH
