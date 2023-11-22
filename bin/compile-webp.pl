@@ -113,6 +113,10 @@ sub testing {
         [ 8160, 6120 ],
       );
     }
+
+    if ( $ctx->env->test ) {
+      is [ size( $src->child('foo/bar/avatar.png')->path ) ], [ 2048, 2048 ];
+    }
   };
 
   subtest resize => sub {
@@ -122,6 +126,10 @@ sub testing {
             { width => 640, height => 480 };
       };
     }
+
+    if ( $ctx->env->test ) {
+      is resize( 'foo/bar/avatar.png', "1x", 640 ), { width => 640, height => 640 };
+    }
   };
 
   subtest doing => sub {
@@ -129,6 +137,12 @@ sub testing {
       ok try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 640, 1280 ); } );
 
       ok -e $data->child("posts/2023/08/15/162025/1.yaml")->path;
+    }
+
+    if ( $ctx->env->test ) {
+      ok try_ok( sub { doing( 'foo/bar/avatar.png', 640, 1280 ) } );
+
+      ok -e $data->child('foo/bar/avatar.yaml')->path;
     }
   };
 
