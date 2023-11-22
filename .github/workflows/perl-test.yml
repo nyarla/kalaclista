@@ -50,5 +50,5 @@ jobs:
           export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
           export IN_PERL_SHELL=1
 
-          pnpm install --lockfile-only
+          pnpm i
           make ci
