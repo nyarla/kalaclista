@@ -31,11 +31,11 @@ images: .test-in-shell .test-set-stage
 	@echo generate webp
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
 	@touch $(CACHEDIR)/images/latest.sha256sum
-	@comm -23 $(CACHEDIR)/images/{now,latest}.sha256sum \
+	@comm -23 $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*$(ROOTDIR)/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
-	@mv $(CACHEDIR)/images/{now,latest}.sha256sum
+	@mv $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum
 
 images-test: .test-in-shell .test-set-stage
 	@prove bin/compile-webp.pl
@@ -45,11 +45,11 @@ entries: .test-in-shell .test-set-stage
 	@test -d $(CACHEDIR)/entries || mkdir -p $(CACHEDIR)/entries
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/entries/src -type f | grep -v '.git') | sort >$(CACHEDIR)/entries/now.sha256sum
 	@touch $(CACHEDIR)/entries/latest.sha256sum
-	@comm -23 $(CACHEDIR)/entries/{now,latest}.sha256sum \
+	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*$(ROOTDIR)/entries/src/##' >$(CACHEDIR)/entries/target
 	@node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
-	@mv $(CACHEDIR)/entries/{now,latest}.sha256sum
+	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
 	@rm $(CACHEDIR)/entries/target
 
 website: .test-in-shell .test-set-stage
