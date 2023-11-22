@@ -88,7 +88,6 @@ gen: .test-in-shell .test-set-stage
 	@$(MAKE) assets
 	@$(MAKE) images
 	@$(MAKE) entries
-	@test -d public/bundle || mkdir -p public/bundle
 	@$(MAKE) parallel -j7
 
 clean: .test-in-shell .test-set-stage
@@ -96,10 +95,6 @@ clean: .test-in-shell .test-set-stage
 	@mkdir -p public/$(KALACLISTA_ENV)
 	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
 	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
-
-reset: .check clean
-	@test ! -d public/state || rm -rf public/state
-	@mkdir -p public/state
 
 build: .test-in-shell
 	@env URL="https://the.kalaclista.com" KALACLISTA_ENV=production $(MAKE) gen
