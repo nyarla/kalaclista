@@ -277,44 +277,44 @@ sub testing {
       subtest sitemap_xml => sub {
         doing('sitemap.xml');
 
-        ok -e $c->distdir->child('sitemap.xml')->path;
+        ok -e $c->dist('sitemap.xml')->path;
       };
 
       subtest home => sub {
         doing('home');
 
-        ok -e $c->distdir->child('index.html')->path;
-        ok -e $c->distdir->child('index.xml')->path;
-        ok -e $c->distdir->child('atom.xml')->path;
-        ok -e $c->distdir->child('jsonfeed.json')->path;
+        ok -e $c->dist('index.html')->path;
+        ok -e $c->dist('index.xml')->path;
+        ok -e $c->dist('atom.xml')->path;
+        ok -e $c->dist('jsonfeed.json')->path;
       };
 
       subtest index => sub {
         subtest notes => sub {
           doing(qw(index notes));
 
-          ok -e $c->distdir->child('notes/index.html')->path;
-          ok -e $c->distdir->child('notes/index.xml')->path;
-          ok -e $c->distdir->child('notes/atom.xml')->path;
-          ok -e $c->distdir->child('notes/jsonfeed.json')->path;
+          ok -e $c->dist('notes/index.html')->path;
+          ok -e $c->dist('notes/index.xml')->path;
+          ok -e $c->dist('notes/atom.xml')->path;
+          ok -e $c->dist('notes/jsonfeed.json')->path;
         };
 
         subtest posts => sub {
           doing(qw(index posts));
 
-          ok -e $c->distdir->child('posts/index.html')->path;
-          ok -e $c->distdir->child('posts/index.xml')->path;
-          ok -e $c->distdir->child('posts/atom.xml')->path;
-          ok -e $c->distdir->child('posts/jsonfeed.json')->path;
+          ok -e $c->dist('posts/index.html')->path;
+          ok -e $c->dist('posts/index.xml')->path;
+          ok -e $c->dist('posts/atom.xml')->path;
+          ok -e $c->dist('posts/jsonfeed.json')->path;
         };
 
         subtest echos => sub {
           doing(qw(index echos));
 
-          ok -e $c->distdir->child('echos/index.html')->path;
-          ok -e $c->distdir->child('echos/index.xml')->path;
-          ok -e $c->distdir->child('echos/atom.xml')->path;
-          ok -e $c->distdir->child('echos/jsonfeed.json')->path;
+          ok -e $c->dist('echos/index.html')->path;
+          ok -e $c->dist('echos/index.xml')->path;
+          ok -e $c->dist('echos/atom.xml')->path;
+          ok -e $c->dist('echos/jsonfeed.json')->path;
         };
       };
     };
@@ -343,9 +343,8 @@ sub doing {
   my $c      = WebSite::Context->instance;
 
   my $contents = $c->entries;
-  my $datadir  = $c->datadir;
-  my $distdir  = $c->distdir;
-  my $srcdir   = $c->srcdir;
+  my $distdir  = $c->dist;
+  my $srcdir   = $c->src;
 
   my @options = (
     $contents->path,
