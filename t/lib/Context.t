@@ -72,7 +72,7 @@ subtest context => sub {
       is $c->test,        false;
 
       is $c->baseURI->to_string, 'http://nixos:1313';
-      like $c->dist->path,    qr{public/dev/$};
+      like $c->dist->path,    qr{public/development/$};
       like $c->data->path,    qr{src/data/$};
       like $c->deps->path,    qr{deps/$};
       like $c->entries->path, qr{src/entries/src$};
