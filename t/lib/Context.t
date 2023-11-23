@@ -35,9 +35,12 @@ subtest context => sub {
 
       is $c->env->production,    true;
       is $c->baseURI->to_string, 'https://the.kalaclista.com';
-      like $c->distdir->path,        qr{public/production$};
-      like $c->entries->path,        qr{src/entries/src$};
-      like $c->dirs->cachedir->path, qr{cache/production$};
+      like $c->cache->path,   qr{cache/production/$};
+      like $c->data->path,    qr{src/data/$};
+      like $c->deps->path,    qr{deps/$};
+      like $c->dist->path,    qr{public/production/$};
+      like $c->entries->path, qr{src/entries/src$};
+      like $c->src->path,     qr{src/$};
     };
 
     subtest staging => sub {
@@ -45,9 +48,11 @@ subtest context => sub {
 
       is $c->env->staging,       true;
       is $c->baseURI->to_string, 'http://nixos:1313';
-      like $c->distdir->path,        qr{public/test$};
-      like $c->entries->path,        qr{src/entries/src$};
-      like $c->dirs->cachedir->path, qr{cache/staging$};
+      like $c->dist->path,    qr{public/staging/$};
+      like $c->data->path,    qr{src/data/$};
+      like $c->deps->path,    qr{deps/$};
+      like $c->entries->path, qr{src/entries/src$};
+      like $c->cache->path,   qr{cache/staging/$};
     };
 
     subtest development => sub {
@@ -55,9 +60,11 @@ subtest context => sub {
 
       is $c->env->development,   true;
       is $c->baseURI->to_string, 'http://nixos:1313';
-      like $c->distdir->path,        qr{public/dev$};
-      like $c->entries->path,        qr{src/entries/src$};
-      like $c->dirs->cachedir->path, qr{cache/development$};
+      like $c->dist->path,    qr{public/dev/$};
+      like $c->data->path,    qr{src/data/$};
+      like $c->deps->path,    qr{deps/$};
+      like $c->entries->path, qr{src/entries/src$};
+      like $c->cache->path,   qr{cache/development/$};
     };
 
     subtest test => sub {
@@ -65,9 +72,11 @@ subtest context => sub {
 
       is $c->env->test,          true;
       is $c->baseURI->to_string, 'https://example.com';
-      like $c->distdir->path,        qr{public/test$};
-      like $c->entries->path,        qr{t/fixtures/entries/src$};
-      like $c->dirs->cachedir->path, qr{cache/test$};
+      like $c->dist->path,    qr{public/test/$};
+      like $c->data->path,    qr{t/fixtures/data/$};
+      like $c->deps->path,    qr{deps/$};
+      like $c->entries->path, qr{t/fixtures/entries/src$};
+      like $c->cache->path,   qr{cache/test/$};
     };
   };
 
@@ -121,34 +130,6 @@ subtest baseURI => sub {
 
     isa_ok $c->baseURI, 'URI::Fast';
     is $c->baseURI->to_string, 'https://example.com';
-  };
-};
-
-subtest dirs => sub {
-  no warnings qw(experimental);
-
-  subtest production => sub {
-    my $c = instance( production => 'runtime' );
-
-    isa_ok $c->dirs, 'Kalaclista::Data::Directory';
-  };
-
-  subtest development => sub {
-    my $c = instance( development => 'runtime' );
-
-    isa_ok $c->dirs, 'Kalaclista::Data::Directory';
-  };
-
-  subtest staging => sub {
-    my $c = instance( staging => 'runtime' );
-
-    isa_ok $c->dirs, 'Kalaclista::Data::Directory';
-  };
-
-  subtest test => sub {
-    my $c = instance( test => 'runtime' );
-
-    isa_ok $c->dirs, 'Kalaclista::Data::Directory';
   };
 };
 

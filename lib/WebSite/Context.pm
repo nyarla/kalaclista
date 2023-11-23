@@ -35,6 +35,7 @@ class WebSite::Context : isa(Kalaclista::Context) {
 
     my $dist =
           $env->production  ? q{public/production}
+        : $env->staging     ? q{public/staging}
         : $env->development ? q{public/dev}
         :                     q{public/test};
 
@@ -59,19 +60,32 @@ class WebSite::Context : isa(Kalaclista::Context) {
     return $self->env->production;
   }
 
+  method cache {
+    my $path = shift;
+    return $self->dirs->cache($path);
+  }
+
+  method data {
+    my $path = shift;
+    return $self->dirs->src('data')->child($path);
+  }
+
+  method deps {
+    my $path = shift;
+    return $self->dirs->rootdir->child('deps')->child($path);
+  }
+
+  method dist {
+    my $path = shift;
+    return $self->dirs->dist($path);
+  }
+
   method entries {
     return $self->dirs->src('entries/src');
   }
 
-  method datadir {
-    return $self->dirs->rootdir->child('content/data');
-  }
-
-  method distdir {
-    return $self->dirs->distdir;
-  }
-
-  method srcdir {
-    return $self->dirs->srcdir;
+  method src {
+    my $path = shift;
+    return $self->dirs->src($path);
   }
 }
