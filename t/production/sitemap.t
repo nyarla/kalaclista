@@ -95,7 +95,7 @@ subtest common => sub {
   }
 };
 
-if ( c->env->production ) {
+if ( c->production ) {
   subtest production => sub {
     my $posts = grep { $_ =~ m{/posts/} } Kalaclista::Files->find( c->entries->path );
     my $echos = grep { $_ =~ m{/echos/} } Kalaclista::Files->find( c->entries->path );
@@ -116,15 +116,15 @@ if ( c->env->production ) {
   };
 }
 
-if ( c->env->staging ) {
+if ( c->staging ) {
   subtest staging => sub { };
 }
 
-if ( c->env->development ) {
+if ( c->development ) {
   subtest development => sub { };
 }
 
-if ( c->env->test ) {
+if ( c->test ) {
   subtest test => sub { };
 }
 
