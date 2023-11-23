@@ -80,7 +80,7 @@ home: .test-in-shell .test-set-stage
 gen: .test-in-shell .test-set-stage
 	@$(MAKE) images
 	@$(MAKE) entries
-	@$(MAKE) -j6 assets css website sitemap_xml home index
+	@$(MAKE) -j6 assets css sitemap_xml home index
 	@$(MAKE) pages
 
 clean: .test-in-shell .test-set-stage
