@@ -77,18 +77,11 @@ home: .test-in-shell .test-set-stage
 	@echo generate home
 	@perl bin/gen.pl home
 
-parallel: .test-in-shell .test-set-stage \
-	css \
-	sitemap_xml \
-	pages \
-	index \
-	home
-
 gen: .test-in-shell .test-set-stage
-	@$(MAKE) assets
 	@$(MAKE) images
 	@$(MAKE) entries
-	@$(MAKE) parallel -j7
+	@$(MAKE) -j6 assets css sitemap_xml home index
+	@$(MAKE) pages
 
 clean: .test-in-shell .test-set-stage
 	@test ! -d public/$(KALACLISTA_ENV) || rm -rf public/$(KALACLISTA_ENV)
