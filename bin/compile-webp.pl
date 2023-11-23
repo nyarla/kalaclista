@@ -14,9 +14,9 @@ use YAML::XS qw(DumpFile);
 use WebSite::Context;
 
 my $ctx  = WebSite::Context->init(qr{^bin$});
-my $dist = $ctx->dirs->dist('images');
-my $src  = $ctx->dirs->src('images');
-my $data = $ctx->dirs->cache('images');
+my $dist = $ctx->dist('images');
+my $src  = $ctx->src('images');
+my $data = $ctx->cache('images');
 
 sub paths {
   my $path = shift;
