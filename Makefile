@@ -54,8 +54,7 @@ entries: .test-in-shell .test-set-stage
 
 website: .test-in-shell .test-set-stage
 	@echo generate website.json
-	@cat $(ROOTDIR)/website/src/*.nix | perl -pge 's<\}\n\{><>g' >$(CACHEDIR)/website/website.nix
-	@nix eval --json --file $(CACHEDIR)/website/website.nix >$(CACHEDIR)/website/website.json
+	@perl bin/compile-website-yaml.pl
 
 assets: .test-in-shell .test-set-stage
 	@echo copy assets
@@ -80,7 +79,7 @@ home: .test-in-shell .test-set-stage
 gen: .test-in-shell .test-set-stage
 	@$(MAKE) images
 	@$(MAKE) entries
-	@$(MAKE) -j6 assets css sitemap_xml home index
+	@$(MAKE) -j6 assets css website sitemap_xml home index
 	@$(MAKE) pages
 
 clean: .test-in-shell .test-set-stage
