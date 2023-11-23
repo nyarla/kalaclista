@@ -13,7 +13,7 @@ use Kalaclista::HyperScript qw(a img);
 use WebSite::Context;
 
 sub transform {
-  state $datadir ||= WebSite::Context->instance->dirs->cache('images');
+  state $datadir ||= WebSite::Context->instance->cache('images');
   state $prefix  ||= WebSite::Context->instance->baseURI->to_string;
 
   my ( $class, $entry, $scales ) = @_;
