@@ -59,19 +59,32 @@ class WebSite::Context : isa(Kalaclista::Context) {
     return $self->env->production;
   }
 
+  method cache {
+    my $path = shift;
+    return $self->dirs->cache($path);
+  }
+
   method entries {
     return $self->dirs->src('entries/src');
   }
 
-  method datadir {
-    return $self->dirs->rootdir->child('content/data');
+  method data {
+    my $path = shift;
+    return $self->dirs->rootdir->child('content/data')->child($path);    # FIXME
   }
 
-  method distdir {
-    return $self->dirs->distdir;
+  method deps {
+    my $path = shift;
+    return $self->dirs->rootdir->child('deps')->child($path);
   }
 
-  method srcdir {
-    return $self->dirs->srcdir;
+  method dist {
+    my $path = shift;
+    return $self->dirs->dist($path);
+  }
+
+  method src {
+    my $path = shift;
+    return $self->dirs->src($path);
   }
 }
