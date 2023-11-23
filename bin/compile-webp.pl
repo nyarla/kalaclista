@@ -107,43 +107,40 @@ sub testing {
   };
 
   subtest size => sub {
-    if ( $ctx->env->production ) {
-      is(
-        [ size( $src->child("posts/2023/08/15/162025/1.jpg")->path ) ],
-        [ 8160, 6120 ],
-      );
-    }
+    $ctx->production && subtest production => sub {
+      is [ size( $src->child("posts/2023/08/15/162025/1.jpg")->path ) ],
+          [ 8160, 6120 ];
+    };
 
-    if ( $ctx->env->test ) {
-      is [ size( $src->child('foo/bar/avatar.png')->path ) ], [ 2048, 2048 ];
-    }
+    $ctx->test && subtest test => sub {
+      is [ size( $src->child('foo/bar/avatar.png')->path ) ],
+          [ 2048, 2048 ];
+    };
   };
 
   subtest resize => sub {
-    if ( $ctx->env->production ) {
-      subtest production => sub {
-        is resize( "posts/2023/08/15/162025/1.jpg", "1x", 640 ),
-            { width => 640, height => 480 };
-      };
-    }
+    $ctx->production && subtest production => sub {
+      is resize( "posts/2023/08/15/162025/1.jpg", "1x", 640 ),
+          { width => 640, height => 480 };
+    };
 
-    if ( $ctx->env->test ) {
+    $ctx->test && subtest test => sub {
       is resize( 'foo/bar/avatar.png', "1x", 640 ), { width => 640, height => 640 };
-    }
+    };
   };
 
   subtest doing => sub {
-    if ( $ctx->env->production ) {
+    $ctx->production && subtest production => sub {
       ok try_ok( sub { doing( "posts/2023/08/15/162025/1.jpg", 640, 1280 ); } );
 
       ok -e $data->child("posts/2023/08/15/162025/1.yaml")->path;
-    }
+    };
 
-    if ( $ctx->env->test ) {
+    $ctx->test && subtest test => sub {
       ok try_ok( sub { doing( 'foo/bar/avatar.png', 640, 1280 ) } );
 
       ok -e $data->child('foo/bar/avatar.yaml')->path;
-    }
+    };
   };
 
   done_testing();
