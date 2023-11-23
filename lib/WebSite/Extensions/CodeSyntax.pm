@@ -11,7 +11,7 @@ use YAML::XS ();
 use WebSite::Context;
 
 sub transform {
-  state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/highlight');
+  state $datadir ||= WebSite::Context->instance->dirs->rootdir->child('content/data/highlight');    # FIXME
   my ( $class, $entry ) = @_;
 
   my $href = $entry->href->path;
