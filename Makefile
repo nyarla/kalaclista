@@ -111,8 +111,7 @@ test: .test-in-shell
 	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
 
 test-scripts: .test-in-shell .test-set-stage
-	prove bin/compile-css.pl
-	prove bin/compile-webp.pl
+	prove bin/compile-*.pl
 	prove bin/gen.pl
 
 ci: .test-in-shell
