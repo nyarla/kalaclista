@@ -22,7 +22,7 @@ sub c {
 }
 
 sub xml {
-  state $xml ||= XML::LibXML->load_xml( string => c->distdir->child('sitemap.xml')->get );
+  state $xml ||= XML::LibXML->load_xml( string => c->dist('sitemap.xml')->get );
 
   return $xml;
 }
