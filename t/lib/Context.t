@@ -33,7 +33,11 @@ subtest context => sub {
     subtest production => sub {
       my $c = instance( production => 'runtime' );
 
-      is $c->env->production,    true;
+      is $c->production,  true;
+      is $c->staging,     false;
+      is $c->development, false;
+      is $c->test,        false;
+
       is $c->baseURI->to_string, 'https://the.kalaclista.com';
       like $c->cache->path,   qr{cache/production/$};
       like $c->data->path,    qr{src/data/$};
@@ -46,7 +50,11 @@ subtest context => sub {
     subtest staging => sub {
       my $c = instance( staging => 'runtime' );
 
-      is $c->env->staging,       true;
+      is $c->production,  false;
+      is $c->staging,     true;
+      is $c->development, false;
+      is $c->test,        false;
+
       is $c->baseURI->to_string, 'http://nixos:1313';
       like $c->dist->path,    qr{public/staging/$};
       like $c->data->path,    qr{src/data/$};
@@ -58,7 +66,11 @@ subtest context => sub {
     subtest development => sub {
       my $c = instance( development => 'runtime' );
 
-      is $c->env->development,   true;
+      is $c->production,  false;
+      is $c->staging,     false;
+      is $c->development, true;
+      is $c->test,        false;
+
       is $c->baseURI->to_string, 'http://nixos:1313';
       like $c->dist->path,    qr{public/dev/$};
       like $c->data->path,    qr{src/data/$};
@@ -70,7 +82,11 @@ subtest context => sub {
     subtest test => sub {
       my $c = instance( test => 'runtime' );
 
-      is $c->env->test,          true;
+      is $c->production,  false;
+      is $c->staging,     false;
+      is $c->development, false;
+      is $c->test,        true;
+
       is $c->baseURI->to_string, 'https://example.com';
       like $c->dist->path,    qr{public/test/$};
       like $c->data->path,    qr{t/fixtures/data/$};

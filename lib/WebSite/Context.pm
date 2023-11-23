@@ -60,6 +60,18 @@ class WebSite::Context : isa(Kalaclista::Context) {
     return $self->env->production;
   }
 
+  method staging {
+    return $self->env->staging;
+  }
+
+  method development {
+    return $self->env->development;
+  }
+
+  method test {
+    return $self->env->test;
+  }
+
   method cache {
     my $path = shift;
     return $self->dirs->cache($path);
