@@ -16,13 +16,13 @@ use Kalaclista::Path;
 use WebSite::Context;
 use WebSite::Helper::Digest qw(digest);
 
-my $dirs   = WebSite::Context->init(qr{^bin$})->dirs;
+my $c      = WebSite::Context->init(qr{^bin$});
 my $digest = digest('lib/WebSite/Templates/Stylesheet.pm');
-my $dist   = $dirs->dist("main-${digest}.css");
+my $fn     = "main-${digest}.css";
 
 sub doing {
-  my $main      = $dirs->cache("css/main-${digest}.css");
-  my $normalize = $dirs->rootdir->child("deps/css/normalize.css");
+  my $main      = $c->cache("cache/main-${digest}.css");
+  my $normalize = $c->deps("css/normalize.css");
   my $template  = 'WebSite::Templates::Stylesheet';
 
   Kalaclista::Generators::Page->generate(
@@ -32,6 +32,7 @@ sub doing {
 
   my $css   = $main->path;
   my $reset = $normalize->path;
+  my $dist  = $c->dist($fn);
 
   $dist->parent->mkpath;
   `cat "${reset}" "${css}" | esbuild --minify --loader=css >"@{[ $dist->path ]}"`;
@@ -40,9 +41,11 @@ sub doing {
 
 sub testing {
   ok try_ok( sub { doing } ), '`doing` subroutine should be callable';
-  ok -e $dist->path,          'output file exists';
+  ok -e $c->dist($fn)->path,  'output file exists';
 
   done_testing;
+
+  return 0;
 }
 
 sub main {
