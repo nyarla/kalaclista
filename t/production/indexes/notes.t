@@ -17,7 +17,7 @@ use WebSite::Context;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $file = WebSite::Context->init(qr{^t$})->dirs->dist('notes/index.html');
+  my $file = WebSite::Context->init(qr{^t$})->dist('notes/index.html');
   my $href = "https://the.kalaclista.com/notes/";
 
   my $html = $file->get;

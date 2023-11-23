@@ -14,7 +14,7 @@ use Kalaclista::Files;
 
 use WebSite::Context;
 
-my $posts  = WebSite::Context->init(qr{^t$})->dirs->dist('posts')->path;
+my $posts  = WebSite::Context->init(qr{^t$})->dist('posts')->path;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
@@ -174,7 +174,7 @@ sub main {
     }
   }
 
-  my $file = WebSite::Context->init(qr{^t$})->dirs->dist('posts/index.html');
+  my $file = WebSite::Context->init(qr{^t$})->dist('posts/index.html');
   my $href = "https://the.kalaclista.com/posts/";
 
   my $html = $file->get;
