@@ -125,8 +125,8 @@ ci: .test-in-shell
 .PHONY: shell serve up
 
 # temporary solution
-up: .test-in-shell clean build
-	pnpm exec wrangler pages deploy public/dist
+up: .test-in-shell cleanup production
+	pnpm exec wrangler pages deploy public/production
 
 shell:
 	@cp /etc/nixos/flake.lock .
