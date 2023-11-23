@@ -10,8 +10,8 @@ use WebSite::Context;
 
 my $c = WebSite::Context->init(qr{^t$});
 
-my $src  = $c->dirs->src('images');
-my $dist = $c->dirs->dist('images');
+my $src  = $c->src('images');
+my $dist = $c->dist('images');
 
 subtest compiled => sub {
   my $prefix = $src->path;
