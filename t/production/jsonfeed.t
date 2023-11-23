@@ -9,7 +9,7 @@ use JSON::XS qw(decode_json);
 
 use WebSite::Context;
 
-my $dist = WebSite::Context->init(qr{^t$})->dirs->distdir;
+my $dist = WebSite::Context->init(qr{^t$})->dist;
 
 sub testing_feed {
   my ( $section, $json, $data ) = @_;
