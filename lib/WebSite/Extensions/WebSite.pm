@@ -14,7 +14,7 @@ use WebSite::Context;
 sub website {
   state $initialized;
   if ( !$initialized ) {
-    my $path = WebSite::Context->instance->cache('website/website.json')->path;
+    my $path = WebSite::Context->instance->cache('website/src.yaml')->path;
     Kalaclista::Data::WebSite->init($path);
 
     $initialized = !!1;
