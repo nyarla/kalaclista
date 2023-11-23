@@ -14,7 +14,7 @@ use Kalaclista::Files;
 
 use WebSite::Context;
 
-my $posts  = WebSite::Context->init(qr{^t$})->dirs->dist('echos')->path;
+my $posts  = WebSite::Context->init(qr{^t$})->dist('echos')->path;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
@@ -174,7 +174,7 @@ sub main {
     }
   }
 
-  my $file = WebSite::Context->init(qr{^t$})->dirs->dist('echos/index.html');
+  my $file = WebSite::Context->init(qr{^t$})->dist('echos/index.html');
   my $href = "https://the.kalaclista.com/echos/";
 
   my $html = $file->get;

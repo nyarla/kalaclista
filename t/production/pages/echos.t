@@ -15,7 +15,7 @@ use Kalaclista::Files;
 use WebSite::Context;
 local $ENV{'KALACLISTA_ENV'} = 'production';
 
-my $posts  = WebSite::Context->init(qr{^t$})->dirs->dist('echos')->path;
+my $posts  = WebSite::Context->init(qr{^t$})->dist('echos')->path;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {

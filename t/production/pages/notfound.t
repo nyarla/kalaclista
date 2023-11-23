@@ -12,7 +12,7 @@ use Kalaclista::Path;
 use WebSite::Context;
 local $ENV{'KALACLISTA_ENV'} = 'production';
 
-my $dist   = WebSite::Context->init(qr{^t$})->dirs->distdir;
+my $dist   = WebSite::Context->init(qr{^t$})->dist;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {

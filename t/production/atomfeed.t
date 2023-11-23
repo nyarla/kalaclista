@@ -9,7 +9,7 @@ use XML::LibXML;
 use Kalaclista::Path;
 use WebSite::Context;
 
-my $dist = WebSite::Context->init(qr{^t$})->dirs->distdir;
+my $dist = WebSite::Context->init(qr{^t$})->dist;
 
 sub at {
   my $xml = shift;
