@@ -96,6 +96,12 @@ clean: .test-in-shell .test-set-stage
 	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
 	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
 
+cleanup: .test-in-shell
+	@$(MAKE) KALACLISTA_ENV=production clean
+	@$(MAKE) KALACLISTA_ENV=staging clean
+	@$(MAKE) KALACLISTA_ENV=development clean
+	@$(MAKE) KALACLISTA_ENV=test clean
+
 production: .test-in-shell
 	@env KALACLISTA_ENV=production $(MAKE) gen
 
