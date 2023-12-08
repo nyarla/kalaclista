@@ -113,6 +113,8 @@ if ( c->production ) {
     is $notes, scalar( grep { $_ =~ m{/notes/} } @entries );
 
     is $pages, scalar( grep { $_ !~ m{/(?:posts|echos|notes)/} } @entries );
+
+    is $posts+ $echos + $notes + $pages, scalar(@entries);
   };
 }
 
@@ -125,7 +127,17 @@ if ( c->development ) {
 }
 
 if ( c->test ) {
-  subtest test => sub { };
+  subtest test => sub {
+    my $pages = Kalaclista::Files->find( c->entries->path );
+
+    my @entries;
+    for my $node ( xml->findnodes('//*[name()="url"]') ) {
+      my sub at { state $n ||= node($node); $n->(@_) }
+      push @entries, at('*[name()="loc"]');
+    }
+
+    is $pages, scalar(@entries);
+  };
 }
 
 done_testing;
