@@ -1,4 +1,5 @@
 use v5.38;
+use utf8;
 use builtin qw(true false);
 use feature qw(class state);
 no warnings qw(experimental);
@@ -7,6 +8,7 @@ use URI::Fast;
 
 use Kalaclista::Context;
 use Kalaclista::Data::Directory;
+use Kalaclista::Data::WebSite;
 
 class WebSite::Context : isa(Kalaclista::Context) {
 
@@ -41,6 +43,34 @@ class WebSite::Context : isa(Kalaclista::Context) {
 
     my $src = ( !$env->test ) ? q{src} : q{t/fixtures};
 
+    my $website = Kalaclista::Data::WebSite->new(
+      label     => 'カラクリスタ',
+      title     => 'カラクリスタ',
+      summary   => '『輝かしい青春』なんて失かった人の Web サイトです',
+      permalink => ( $baseURI . '/' ),
+    );
+
+    my $sections = {
+      posts => Kalaclista::Data::WebSite->new(
+        label     => 'ブログ',
+        title     => 'カラクリスタ・ブログ',
+        summary   => '『輝かしい青春』なんて失かった人のブログです',
+        permalink => ( $baseURI . '/posts/' ),
+      ),
+      echos => Kalaclista::Data::WebSite->new(
+        label     => '日記',
+        title     => 'カラクリスタ・エコーズ',
+        summary   => '『輝かしい青春』なんて失かった人の日記です',
+        permalink => ( $baseURI . '/echos/' ),
+      ),
+      notes => Kalaclista::Data::WebSite->new(
+        label     => 'メモ帳',
+        title     => 'カラクリスタ・ノート',
+        summary   => '『輝かしい青春』なんて失かった人のメモ帳です',
+        permalink => ( $baseURI . '/notes/' ),
+      ),
+    };
+
     my $c = WebSite::Context->new(
       env     => $env,
       baseURI => URI::Fast->new($baseURI),
@@ -50,6 +80,8 @@ class WebSite::Context : isa(Kalaclista::Context) {
         dist   => $dist,
         src    => $src,
       ),
+      website  => $website,
+      sections => $sections,
     );
 
     $class->instance($c);
