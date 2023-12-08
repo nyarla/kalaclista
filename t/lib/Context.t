@@ -149,4 +149,60 @@ subtest baseURI => sub {
   };
 };
 
+subtest website => sub {
+  no warnings qw(experimental);
+
+  subtest common => sub {
+    my $c = instance( production => 'runtime' );
+
+    is $c->website->label,   'カラクリスタ';
+    is $c->website->title,   'カラクリスタ';
+    is $c->website->summary, '『輝かしい青春』なんて失かった人の Web サイトです';
+
+    is $c->sections->{'posts'}->label,   'ブログ';
+    is $c->sections->{'posts'}->title,   'カラクリスタ・ブログ';
+    is $c->sections->{'posts'}->summary, '『輝かしい青春』なんて失かった人のブログです';
+
+    is $c->sections->{'echos'}->label,   '日記';
+    is $c->sections->{'echos'}->title,   'カラクリスタ・エコーズ';
+    is $c->sections->{'echos'}->summary, '『輝かしい青春』なんて失かった人の日記です';
+
+    is $c->sections->{'notes'}->label,   'メモ帳';
+    is $c->sections->{'notes'}->title,   'カラクリスタ・ノート';
+    is $c->sections->{'notes'}->summary, '『輝かしい青春』なんて失かった人のメモ帳です';
+  };
+
+  subtest production => sub {
+    my $c = instance( production => 'runtime' );
+    is $c->website->permalink,             'https://the.kalaclista.com/';
+    is $c->sections->{'posts'}->permalink, 'https://the.kalaclista.com/posts/';
+    is $c->sections->{'echos'}->permalink, 'https://the.kalaclista.com/echos/';
+    is $c->sections->{'notes'}->permalink, 'https://the.kalaclista.com/notes/';
+  };
+
+  subtest development => sub {
+    my $c = instance( development => 'runtime' );
+    is $c->website->permalink,             'http://nixos:1313/';
+    is $c->sections->{'posts'}->permalink, 'http://nixos:1313/posts/';
+    is $c->sections->{'echos'}->permalink, 'http://nixos:1313/echos/';
+    is $c->sections->{'notes'}->permalink, 'http://nixos:1313/notes/';
+  };
+
+  subtest staging => sub {
+    my $c = instance( staging => 'runtime' );
+    is $c->website->permalink,             'http://nixos:1313/';
+    is $c->sections->{'posts'}->permalink, 'http://nixos:1313/posts/';
+    is $c->sections->{'echos'}->permalink, 'http://nixos:1313/echos/';
+    is $c->sections->{'notes'}->permalink, 'http://nixos:1313/notes/';
+  };
+
+  subtest test => sub {
+    my $c = instance( test => 'runtime' );
+    is $c->website->permalink,             'https://example.com/';
+    is $c->sections->{'posts'}->permalink, 'https://example.com/posts/';
+    is $c->sections->{'echos'}->permalink, 'https://example.com/echos/';
+    is $c->sections->{'notes'}->permalink, 'https://example.com/notes/';
+  };
+};
+
 done_testing;
