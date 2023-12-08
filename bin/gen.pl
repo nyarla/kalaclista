@@ -39,35 +39,7 @@ use WebSite::Extensions::WebSite;
 use WebSite::Helper::Hyperlink qw(href);
 
 sub init {
-  my $c = WebSite::Context->init(qr{^bin$});
-
-  $c->website(
-    label     => 'カラクリスタ',
-    title     => 'カラクリスタ',
-    summary   => '『輝かしい青春』なんて失かった人の Web サイトです',
-    permalink => href( '/', $c->baseURI ),
-  );
-
-  $c->sections(
-    posts => {
-      label     => 'ブログ',
-      title     => 'カラクリスタ・ブログ',
-      summary   => '『輝かしい青春』なんて失かった人のブログです',
-      permalink => href( '/posts/', $c->baseURI ),
-    },
-    echos => {
-      label     => '日記',
-      title     => 'カラクリスタ・エコーズ',
-      summary   => '『輝かしい青春』なんて失かった人の日記です',
-      permalink => href( '/echos/', $c->baseURI ),
-    },
-    notes => {
-      label     => 'メモ帳',
-      title     => 'カラクリスタ・ノート',
-      summary   => '『輝かしい青春』なんて失かった人のメモ帳です',
-      permalink => href( '/notes/', $c->baseURI ),
-    },
-  );
+  WebSite::Context->init(qr{^bin$});
 }
 
 sub filter {
