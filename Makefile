@@ -120,6 +120,7 @@ ci: .test-in-shell
 	@$(MAKE) KALACLISTA_ENV=test clean
 	@$(MAKE) KALACLISTA_ENV=test gen
 	# TODO: wait for improve tests
+	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Context.t
 	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
 
 .PHONY: shell serve up
