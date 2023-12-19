@@ -16,7 +16,6 @@ use HTML5::DOM;
 use URI::Fast;
 use URI::Escape::XS qw(uri_unescape);
 
-use IPC::Run3      qw(run3);
 use File::Basename qw(fileparse);
 
 use YAML::XS;
@@ -147,7 +146,7 @@ sub compile {
   utf8::encode($data) if utf8::is_utf8($data);
   $in->emit($data);
 
-  my $cmd = [
+  system(
     qw(nvim --headless -es), ( -e $nvimrc ? ( '-u', $nvimrc ) : () ),
     '-c',
     join(
@@ -158,9 +157,7 @@ sub compile {
       'qa!',
     ),
     $in->path
-  ];
-
-  run3( $cmd, \undef, \undef, \undef );
+  );
 
   my $html = $out->get;
   $html =~ s{\n+}{\n}g;
@@ -301,6 +298,8 @@ print "こんにちは！こんにちは！\n";
 
       ok -e $data;
     };
+
+    ok $done;
   };
 
   done_testing;
