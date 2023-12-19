@@ -18,20 +18,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # runner environment
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           submodules: true
-      - uses: shogo82148/actions-setup-perl@v1
-        with:
-          perl-version: '5.38'
-      - uses: actions/setup-node@v4
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Install dependencies
+      - name: Install ubuntu dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get install -y --no-install-recommends \
             bc \
             cmark-gfm \
             coreutils \
@@ -43,15 +37,33 @@ jobs:
             neovim-runtime \
             openssl \
             sed \
-            webp
+            webp \
+          # done
 
-          cpm install -L extlib --cpanfile app/cpanfile
-          cpm install -L extlib --cpanfile cpanfile
-      - name: Run tests
+      - name: Concat cpanfile
+        run:
+          cat cpanfile app/cpanfile >cpanfile.test
+      # perl environment
+      - uses: shogo82148/actions-setup-perl@16c2635046967c17c139af8e8da7dd64bedf00df # v1.25.0
+        with:
+          perl-version: '5.38'
+          install-modules-with: cpm
+          install-modules-args: '-L extlib --cpanfile=cpanfile.test'
+
+      # pnpm environment
+      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
+      - uses: pnpm/action-setup@ebcfd6995dade4b0104ac774445cef8b3b4635b0 # v2.4.0-dev
+        with:
+          version: 8
+          run_install: true
+
+      # testing envionment
+      - name: CI tests
         run: |
+          # set environment variables
           export PATH=$(pwd)/extlib/bin:$PATH
           export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
           export IN_PERL_SHELL=1
 
-          pnpm i
+          # run ci test
           make ci
