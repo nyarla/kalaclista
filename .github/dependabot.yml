@@ -14,7 +14,7 @@ updates:
     commit-message:
       prefix: 'chore(github-actions): '
 
-  - package-ecosystem: pnpm
+  - package-ecosystem: npm
     directory: '/'
     schedule:
       interval: weekly
