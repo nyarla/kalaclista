@@ -38,6 +38,7 @@ jobs:
             findutils \
             imagemagick \
             make \
+            neovim \
             openssl \
             sed \
             webp
