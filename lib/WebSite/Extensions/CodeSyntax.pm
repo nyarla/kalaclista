@@ -18,7 +18,7 @@ sub transform {
   my $path = $entry->path->path;
   my $idx  = 1;
 
-  for my $block ( $entry->dom->find('pre > code')->@* ) {
+  for my $block ( $entry->dom->find('pre > code[class]')->@* ) {
     my $file = $path;
 
     $file =~ s<^$prefix/><>;
