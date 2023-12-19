@@ -39,6 +39,7 @@ jobs:
             imagemagick \
             make \
             neovim \
+            neovim-runtime \
             openssl \
             sed \
             webp
