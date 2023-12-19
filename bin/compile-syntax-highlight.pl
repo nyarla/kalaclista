@@ -137,7 +137,7 @@ sub filetype {
 }
 
 sub compile {
-  state $nvimrc = $ENV{'HOME'} . '/.config/nvim/highlight.lua';
+  state $nvimrc ||= $ENV{'HOME'} . '/.config/nvim/highlight.lua';
   my ( $data, $ftfn ) = @_;
   my $ft = filetype( splitlang($ftfn) );
 
