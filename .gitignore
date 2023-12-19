@@ -4,5 +4,4 @@ extlib
 public
 resources
 src
-t/fixtures/entries/precompiled
 t/fixtures/entries/code
