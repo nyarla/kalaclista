@@ -19,6 +19,7 @@ sub main {
   my $entry = Kalaclista::Entry->new(
     href => URI::Fast->new("https://the.kalaclista.com/${path}/"),
     src  => $c->entries->parent->child("precompiled/${path}.md")->get,
+    path => $c->entries->child("${path}.md"),
   );
 
   $entry->add_transformer( sub { WebSite::Extensions::CodeSyntax->transform(@_) } );
