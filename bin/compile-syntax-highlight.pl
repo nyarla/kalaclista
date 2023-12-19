@@ -180,7 +180,7 @@ sub doing {
   my $dom    = parser->parse( $prefix->child($entry)->get )->at('body');
 
   my $idx = 1;
-  for my $el ( $dom->find('[class^="language-"]')->@* ) {
+  for my $el ( $dom->find('pre > code[class]')->@* ) {
     my $code = $el->textContent;
     my $lang = $el->getAttribute('class');
 
