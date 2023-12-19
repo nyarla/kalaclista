@@ -49,6 +49,10 @@ entries: .test-in-shell .test-set-stage
 		| cut -d ' ' -f2 \
 		| sed 's#*$(ROOTDIR)/entries/src/##' >$(CACHEDIR)/entries/target
 	@pnpm exec node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
+	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
+		| cut -d ' ' -f2 \
+		| sed 's#*$(ROOTDIR)/entries/src/##' \
+		| xargs -I{} -P$(FULL) perl bin/compile-syntax-highlight.pl "{}"
 	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
 	@rm $(CACHEDIR)/entries/target
 
