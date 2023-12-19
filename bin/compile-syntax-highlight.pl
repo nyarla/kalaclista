@@ -141,20 +141,32 @@ sub compile {
   my ( $data, $ftfn ) = @_;
   my $ft = filetype( splitlang($ftfn) );
 
+  my $in  = Kalaclista::Path->tempfile;
+  my $out = Kalaclista::Path->tempfile;
+
   utf8::encode($data) if utf8::is_utf8($data);
+  $in->emit($data);
+
   my $cmd = [
     qw(nvim --headless -es), ( -e $nvimrc ? ( '-u', $nvimrc ) : () ),
-    qw(-c), ( defined $ft && $ft ne q{} ? "set filetype=${ft}" : q{} ) . ' | TOhtml | redir >>/dev/stderr | %p | qa!', qw(/dev/stdin),
+    '-c',
+    join(
+      ' | ',
+      ( defined $ft && $ft ne q{} ? "set ft=${ft}" : q{} ),
+      'TOhtml',
+      'w! ' . $out->path,
+      'qa!',
+    ),
+    $in->path
   ];
 
-  my $out;
+  run3( $cmd, \undef, \undef, \undef );
 
-  run3( $cmd, \$data, \undef, \$out );
+  my $html = $out->get;
+  $html =~ s{\n+}{\n}g;
 
-  $out =~ s{\n+}{\n}g;
-
-  utf8::decode($out);
-  return $out;
+  utf8::decode($html);
+  return $html;
 }
 
 sub parse {
@@ -272,6 +284,7 @@ print "こんにちは！こんにちは！\n";
 
   subtest parse => sub {
     my $html = compile( $code, 'test.pl' );
+
     my ( $style, $highlight ) = parse($html);
 
     ok $style ne q{};
