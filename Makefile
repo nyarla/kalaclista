@@ -120,7 +120,6 @@ test-scripts: .test-in-shell .test-set-stage
 
 ci: .test-in-shell
 	@$(MAKE) KALACLISTA_ENV=test clean
-	@$(MAKE) KALACLISTA_ENV=test entries
 	@$(MAKE) KALACLISTA_ENV=test test-scripts
 	@$(MAKE) KALACLISTA_ENV=test clean
 	@$(MAKE) KALACLISTA_ENV=test gen
