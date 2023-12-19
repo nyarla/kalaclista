@@ -138,7 +138,9 @@ sub filetype {
 sub compile {
   state $nvimrc ||= $ENV{'HOME'} . '/.config/nvim/highlight.lua';
   my ( $data, $ftfn ) = @_;
-  my $ft = filetype( splitlang($ftfn) );
+
+  my $ft    = filetype( splitlang($ftfn) );
+  my $ftcmd = defined $ft && $ft ne q{} ? "set ft=${ft}" : "filetype detect";
 
   my $in  = Kalaclista::Path->tempfile;
   my $out = Kalaclista::Path->tempfile;
@@ -146,18 +148,12 @@ sub compile {
   utf8::encode($data) if utf8::is_utf8($data);
   $in->emit($data);
 
-  system(
-    qw(nvim --headless -es), ( -e $nvimrc ? ( '-u', $nvimrc ) : () ),
-    '-c',
-    join(
-      ' | ',
-      ( defined $ft && $ft ne q{} ? "set ft=${ft}" : q{} ),
-      'TOhtml',
-      'w! ' . $out->path,
-      'qa!',
-    ),
-    $in->path
+  my @cmd = (
+    qw(nvim --headless -n), ( -e $nvimrc ? ( '-u', $nvimrc ) : () ),
+    qw(-c), "e @{[ $in->path ]} | ${ftcmd} | TOhtml | w! @{[ $out->path ]} | qa!"
   );
+
+  system(@cmd);
 
   my $html = $out->get;
   $html =~ s{\n+}{\n}g;
