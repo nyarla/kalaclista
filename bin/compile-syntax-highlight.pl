@@ -168,8 +168,6 @@ sub parse {
   $style =~ s{^\s*|\s*$}{}gm;
   $style =~ s<(?:pre|body|\*)[^\n]+\n><>g;
 
-  $code =~ s{^\s*|\s*$}{}gm;
-
   return ( $style, $code );
 }
 
