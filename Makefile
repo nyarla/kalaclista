@@ -112,7 +112,7 @@ test: .test-in-shell
 	@env KALACLISTA_ENV=production $(MAKE) test-scripts
 	@env KALACLISTA_ENV=production $(MAKE) clean
 	@env KALACLISTA_ENV=production $(MAKE) gen
-	@env KALACLISTA_ENV=production $(MAKE) prove -j$(FULL) -r t/
+	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
 
 test-scripts: .test-in-shell .test-set-stage
 	prove -v bin/compile-*.pl
@@ -126,7 +126,7 @@ ci: .test-in-shell
 	# TODO: wait for improve test $(MAKE)s
 	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Context.t
 	@env KALACLISTA_ENV=test prove -j$(FULL) -r t/common
-	#@env KALACLISTA_ENV=test $(MAKE) prove -j$(FULL) -r t/
+	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
 
 .PHONY: shell serve up
 
