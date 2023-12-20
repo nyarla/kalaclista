@@ -93,10 +93,10 @@ clean: .test-in-shell .test-set-stage
 	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
 
 cleanup: .test-in-shell
-	@$(MAKE) KALACLISTA_ENV=production clean
-	@$(MAKE) KALACLISTA_ENV=staging clean
-	@$(MAKE) KALACLISTA_ENV=development clean
-	@$(MAKE) KALACLISTA_ENV=test clean
+	@env KALACLISTA_ENV=production $(MAKE) clean
+	@env KALACLISTA_ENV=staging $(MAKE) clean
+	@env KALACLISTA_ENV=development $(MAKE) clean
+	@env KALACLISTA_ENV=test $(MAKE) clean
 
 production: .test-in-shell
 	@env KALACLISTA_ENV=production $(MAKE) gen
@@ -108,10 +108,10 @@ testing:
 	@env KALACLISTA_ENV=test $(MAKE) gen
 
 test: .test-in-shell
-	@$(MAKE) KALACLISTA_ENV=production clean
-	@$(MAKE) KALACLISTA_ENV=production test-scripts
-	@$(MAKE) KALACLISTA_ENV=production clean
-	@$(MAKE) KALACLISTA_ENV=production gen
+	@env KALACLISTA_ENV=production $(MAKE) clean
+	@env KALACLISTA_ENV=production $(MAKE) test-scripts
+	@env KALACLISTA_ENV=production $(MAKE) clean
+	@env KALACLISTA_ENV=production $(MAKE) gen
 	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
 
 test-scripts: .test-in-shell .test-set-stage
@@ -119,11 +119,11 @@ test-scripts: .test-in-shell .test-set-stage
 	prove -v bin/gen.pl
 
 ci: .test-in-shell
-	@$(MAKE) KALACLISTA_ENV=test clean
-	@$(MAKE) KALACLISTA_ENV=test test-scripts
-	@$(MAKE) KALACLISTA_ENV=test clean
-	@$(MAKE) KALACLISTA_ENV=test gen
-	# TODO: wait for improve tests
+	@env KALACLISTA_ENV=test $(MAKE) clean
+	@env KALACLISTA_ENV=test $(MAKE) test-scripts
+	@env KALACLISTA_ENV=test $(MAKE) clean
+	@env KALACLISTA_ENV=test $(MAKE) gen
+	# TODO: wait for improve test $(MAKE)s
 	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Context.t
 	@env KALACLISTA_ENV=test prove -j$(FULL) -r t/common
 	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
