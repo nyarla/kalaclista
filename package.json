@@ -3,6 +3,6 @@
     "budoux": "^0.6.1",
     "html-minifier": "^4.0.0",
     "normalize.css": "^8.0.1",
-    "wrangler": "^3.21.0"
+    "wrangler": "^3.22.1"
   }
 }
