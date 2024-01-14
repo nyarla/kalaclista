@@ -37,9 +37,11 @@ sub layout {
 
   my $baseURI = $c->baseURI;
 
-  return document(
+  return qq(<!DOCTYPE html>\n) . html(
+    { lang => 'ja' },
     metadata($vars),
-    [
+    body(
+      { class => q|container mx-auto max-w-2xl py-8 px-4| },
       banner($vars),
       main(
         nav(
@@ -54,7 +56,7 @@ sub layout {
       profile,
       siteinfo,
       $analytics->@*,
-    ]
+    )
   );
 }
 
