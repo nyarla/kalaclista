@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>the.kalaclista.com color scheme</title>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+      }
+
+      body {
+        display: flex;
+        margin: 0 auto;
+      }
+
+      div.color {
+        height: 12.5%;
+        font-size: 3em ;
+        text-align: center;
+        line-height: 2em;
+      }
+  
+      div[class^="theme"] {
+        padding: 6.25% 0;
+        width: 30%;
+      }
+
+      div.theme-light {
+        padding-left: 15%;
+        padding-right: 5%;
+        background-color: #FFF;
+      }
+
+      div.theme-dark {
+        padding-right: 15%;
+        padding-left: 5%;
+        background-color: #000;
+      }
+
+      /* colors */
+      :root {
+        --color-notify: #FC3 ;
+        --color-info: #3CF ;
+        --color-warn: #F63 ;
+      }
+
+      div.theme-light {
+        --color-text: #333 ;
+        --color-touchable: #797979 ;
+        --color-untouchable: #E0E0E0 ;
+        --color-background: #F9F9F9 ;
+      }
+
+      div.theme-dark {
+        --color-text: #F0F0F0 ;
+        --color-touchable: #CCC ;
+        --color-untouchable: #666 ;
+        --color-background: #333 ;
+      }
+
+      div[class^="theme"] > div.text { color : var(--color-background) ;  }
+      div[class^="theme"] > div.touchable { color : var(--color-background) ;  }
+      div[class^="theme"] > div.untouchable { color: var(--color-touchable) ;  } 
+      div[class^="theme"] > div.background { color: var(--color-touchable) ;  } 
+
+      div.notify { background-color: var(--color-notify); }
+      div.info { background-color: var(--color-info); }
+      div.warn { background-color: var(--color-warn); }
+      div.text { background-color: var(--color-text); }
+      div.touchable { background-color: var(--color-touchable); }
+      div.untouchable { background-color: var(--color-untouchable); }
+      div.background { background-color: var(--color-background); }
+    </style>
+  </head>
+  <body>
+    <div class="theme-light">
+      <div class="color notify">notify</div>
+      <div class="color info">info</div>
+      <div class="color warn">warn</div>
+      <div class="color text">text</div>
+      <div class="color touchable">touchable</div>
+      <div class="color untouchable">untouchable</div>
+      <div class="color background">background</div>
+    </div>
+    <div class="theme-dark">
+      <div class="color notify">notify</div>
+      <div class="color info">info</div>
+      <div class="color warn">warn</div>
+      <div class="color text">text</div>
+      <div class="color touchable">touchable</div>
+      <div class="color untouchable">untouchable</div>
+      <div class="color background">background</div>
+    </div>
+  </body>
+</html>
