@@ -154,3 +154,6 @@ posts: .test-in-shell
 
 echos: .test-in-shell
 	@bash bin/new-entry.sh echos
+
+notes:
+	@bash bin/new-entry.sh notes
