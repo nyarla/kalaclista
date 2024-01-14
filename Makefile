@@ -21,11 +21,7 @@ endif
 	@test -n "$(KALACLISTA_ENV)" || (echo 'this command needs to set `KALACLISTA_ENV`.' >&2 ; exit 1)
 
 css: .test-in-shell .test-set-stage
-	@echo generate css
-	@perl bin/compile-css.pl
-
-css-test: .test-in-shell .test-set-stage
-	@prove bin/compile-css.pl
+	pnpm exec tailwindcss -i ./deps/css/main.css -o ./public/$(KALACLISTA_ENV)/main.css
 
 images: .test-in-shell .test-set-stage
 	@echo generate webp
