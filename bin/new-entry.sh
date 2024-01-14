@@ -1,21 +1,45 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
+cd "$(dirname "${0}")/.."
+entries="$(pwd)/src/entries/src"
+export entries
+
 main() {
-  local types=$1;
-  local datetime="$(date +%Y-%m-%dT%H:%M:%S)"
-  local fn="$(pwd)/content/entries/${types}/$(echo "$datetime" | sed 's![-T]!/!g' | sed 's!:!!g').md"
+  kind="${1:-posts}"
 
-  local dir="$(dirname "${fn}")"
+  now="$(date +%H:%M:%S)"
+  day="$(date +%Y-%m-%d)"
 
-  test -d "${dir}" || mkdir -p "${dir}"
-  cat <<... >${fn}
+  created_at="${day}T${now}+09:00"
+
+  if [[ "${kind}" == "notes" ]]; then
+    echo -e "Title: "
+    read -r title
+    fullpath="${entries}/${kind}/${title}.md"
+    export fullpath
+  else
+    fullpath="${entries}/${kind}/${day//-/\/}/${now//:/}.md"
+    export fullpath
+  fi
+
+  mkdir -p "$(dirname "${fullpath}")"
+  cat <<... >"${fullpath}"
 ---
-title: ''
-type: ${types}
-date: ${datetime}+09:00
+title: ""
+summary: ""
+type: ${kind}
+date: "${created_at}"
+lastmod: "${created_at}"
+kind:
+  - 
 ---
 
 ...
+
+  echo "${fullpath}"
+  nvim "${fullpath}"
 }
 
-main $1
+main "$@"
