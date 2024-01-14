@@ -13,7 +13,6 @@ our @EXPORT = qw(metadata);
 use Kalaclista::HyperScript;
 
 use WebSite::Helper::Hyperlink qw(href);
-use WebSite::Helper::Digest    qw(digest);
 
 use WebSite::Context;
 
@@ -71,7 +70,7 @@ sub global {
   state $result;
   return $result->@* if ( defined $result );
 
-  my $digest  = digest("lib/WebSite/Templates/Stylesheet.pm");
+  my $digest  = time;
   my $baseURI = WebSite::Context->instance->baseURI;
 
   $result ||= [];
@@ -90,7 +89,7 @@ sub global {
 
     link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } ),
 
-    link_( { rel => 'stylesheet', href => href( "/main-${digest}.css", $baseURI ) } ),
+    link_( { rel => 'stylesheet', href => href( "/main.css", $baseURI ) } ),
   );
 
   return $result->@*;
