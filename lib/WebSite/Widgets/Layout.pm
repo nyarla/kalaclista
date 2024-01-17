@@ -14,10 +14,11 @@ use WebSite::Helper::Hyperlink qw(hyperlink href);
 
 use WebSite::Context;
 
+use WebSite::Widgets::Navigation;
+
 use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;
-use WebSite::Widgets::Title;
 use WebSite::Widgets::Metadata;
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
@@ -42,17 +43,8 @@ sub layout {
     metadata($vars),
     body(
       { class => q|container mx-auto max-w-2xl py-8 px-4| },
-      banner($vars),
-      main(
-        nav(
-          { id => 'section' },
-          hyperlink( 'ブログ', href( '/posts/', $baseURI ) ),
-          hyperlink( '日記',  href( '/echos/', $baseURI ) ),
-          hyperlink( 'メモ帳', href( '/notes/', $baseURI ) ),
-          a( { href => $search, 'aria-label' => 'Google カスタム検索ページへのリンクです' }, '検索' ),
-        ),
-        $content
-      ),
+      navigation($vars),
+      main($content),
       profile,
       siteinfo,
       $analytics->@*,
