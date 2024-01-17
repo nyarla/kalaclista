@@ -20,4 +20,25 @@ module.exports = {
       },
     },
   },
+  theme: {
+    colors: {
+      notify: "#FFCC33",
+      info: "#33CCFF",
+      warn: "#FF6633",
+
+      text: "#333333",
+      actionable: "#003399",
+      unactionable: "#E9E9E9",
+      background: "#F9F9F9",
+
+      darkmodeText: "#F0F0F0",
+      darkmodeActionable: "#D0E0FF",
+      darkmodeUnactionable: "#003366",
+      darkmodeBackground: "#333333",
+    },
+    fontFamily: {
+      serif: [["serif"], { fontFeatureSettings: '"palt"' }],
+      sans: [["sans-serif"], { fontFeatureSettings: '"palt"' }],
+    },
+  },
 };
