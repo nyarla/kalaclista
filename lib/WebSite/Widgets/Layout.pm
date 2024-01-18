@@ -42,7 +42,7 @@ sub layout {
     { lang => 'ja' },
     metadata($vars),
     body(
-      { class => q|container mx-auto max-w-2xl py-8 px-4| },
+      { class => q|container mx-auto max-w-2xl px-4| },
       navigation($vars),
       main($content),
       profile,

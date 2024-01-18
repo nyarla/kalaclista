@@ -58,15 +58,8 @@ sub href {
 sub title_ok ($) {
   my $dom = shift;
 
-  is $dom->at('nav > a')->getAttribute('href'), href('/');
-  is $dom->at('nav > a > span')->textContent,   'カラクリスタ';
-}
-
-sub home_ok ($) {
-  my $dom = shift;
-
-  is $dom->at('nav > p > a:first-child')->textContent,          'ホーム';
-  is $dom->at('nav > p > a:first-child')->getAttribute('href'), href('/');
+  is $dom->at('nav > p:first-child > a')->getAttribute('href'), href('/');
+  is $dom->at('nav > p:first-child > a')->textContent,          'カラクリスタ';
 }
 
 subtest navigation => sub {
@@ -76,18 +69,15 @@ subtest navigation => sub {
         my $dom = page( qw(pages home), undef );
 
         title_ok $dom;
-        home_ok $dom;
 
-        is $dom->at('nav > p > a:nth-child(2)')->textContent,          'ブログ';
-        is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/posts/');
+        is $dom->at('nav > p:nth-child(3) > a:nth-child(1)')->textContent,          'ブログ';
+        is $dom->at('nav > p:nth-child(3) > a:nth-child(1)')->getAttribute('href'), href('/posts/');
 
-        is $dom->at('nav > p > a:nth-child(3)')->textContent,          '日記';
-        is $dom->at('nav > p > a:nth-child(3)')->getAttribute('href'), href('/echos/');
+        is $dom->at('nav > p:nth-child(3) > a:nth-child(3)')->textContent,          '日記';
+        is $dom->at('nav > p:nth-child(3) > a:nth-child(3)')->getAttribute('href'), href('/echos/');
 
-        is $dom->at('nav > p > a:nth-child(4)')->textContent,          'メモ帳';
-        is $dom->at('nav > p > a:nth-child(4)')->getAttribute('href'), href('/notes/');
-
-        is $dom->at('nav > p')->textContent, 'ホーム→ブログ/日記/メモ帳';
+        is $dom->at('nav > p:nth-child(3) > a:nth-child(5)')->textContent,          'メモ帳';
+        is $dom->at('nav > p:nth-child(3) > a:nth-child(5)')->getAttribute('href'), href('/notes/');
       };
     };
 
@@ -96,30 +86,27 @@ subtest navigation => sub {
         my $dom = page(qw(pages permalink nyarla));
 
         title_ok $dom;
-        home_ok $dom;
 
-        is $dom->at('nav > p > a:nth-child(2)')->textContent,          'プロフィール';
-        is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/nyarla/');
+        is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          'プロフィール';
+        is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/nyarla/');
       };
 
       subtest '/policies/' => sub {
         my $dom = page(qw(pages permalink policies));
 
         title_ok $dom;
-        home_ok $dom;
 
-        is $dom->at('nav > p > a:nth-child(2)')->textContent,          '運営ポリシー';
-        is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/policies/');
+        is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          '運営ポリシー';
+        is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/policies/');
       };
 
       subtest '/licenses/' => sub {
         my $dom = page(qw(pages permalink licenses));
 
         title_ok $dom;
-        home_ok $dom;
 
-        is $dom->at('nav > p > a:nth-child(2)')->textContent,          'ライセンスなど';
-        is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/licenses/');
+        is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          'ライセンスなど';
+        is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/licenses/');
       };
     };
   };
@@ -135,12 +122,9 @@ subtest navigation => sub {
           my $dom = page( qw(posts index), qq(posts/${path}) );
 
           title_ok $dom;
-          home_ok $dom;
 
-          is $dom->at('nav > p > a:nth-child(2)')->textContent,          'ブログ';
-          is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/posts/');
-
-          is $dom->at('nav > p')->textContent, 'ホーム→ブログ';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          'ブログ';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/posts/');
         };
       }
     };
@@ -151,10 +135,9 @@ subtest navigation => sub {
           my $dom = page( qw(posts permalink), $path );
 
           title_ok $dom;
-          home_ok $dom;
 
-          is $dom->at('nav > p > a:nth-child(2)')->textContent,          'ブログ';
-          is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/posts/');
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          'ブログ';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/posts/');
         };
       }
     };
@@ -171,12 +154,9 @@ subtest navigation => sub {
           my $dom = page( qw(echos index), qq(echos/${path}) );
 
           title_ok $dom;
-          home_ok $dom;
 
-          is $dom->at('nav > p > a:nth-child(2)')->textContent,          '日記';
-          is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/echos/');
-
-          is $dom->at('nav > p')->textContent, 'ホーム→日記';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          '日記';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/echos/');
         };
       }
     };
@@ -187,10 +167,9 @@ subtest navigation => sub {
           my $dom = page( qw(echos permalink), $path );
 
           title_ok $dom;
-          home_ok $dom;
 
-          is $dom->at('nav > p > a:nth-child(2)')->textContent,          '日記';
-          is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/echos/');
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          '日記';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/echos/');
         };
       }
     };
@@ -201,10 +180,9 @@ subtest navigation => sub {
       my $dom = page( qw(notes index), '' );
 
       title_ok $dom;
-      home_ok $dom;
 
-      is $dom->at('nav > p > a:nth-child(2)')->textContent,          'メモ帳';
-      is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/notes/');
+      is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          'メモ帳';
+      is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/notes/');
     };
 
     subtest permalink => sub {
@@ -213,10 +191,9 @@ subtest navigation => sub {
           my $dom = page( qw(notes permalink), $path );
 
           title_ok $dom;
-          home_ok $dom;
 
-          is $dom->at('nav > p > a:nth-child(2)')->textContent,          'メモ帳';
-          is $dom->at('nav > p > a:nth-child(2)')->getAttribute('href'), href('/notes/');
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->textContent,          'メモ帳';
+          is $dom->at('nav > p:nth-child(3) > a:first-child')->getAttribute('href'), href('/notes/');
         };
       }
     };

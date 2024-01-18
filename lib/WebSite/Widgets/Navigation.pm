@@ -10,9 +10,10 @@ use Exporter::Lite;
 
 our @EXPORT = qw(navigation);
 
-use Kalaclista::HyperScript qw(nav p a img hr span br);
+use Kalaclista::HyperScript qw(nav p div span a);
 
 use WebSite::Context;
+use WebSite::Helper::TailwindCSS;
 
 sub href {
   my $path = shift;
@@ -24,79 +25,102 @@ sub href {
 
 sub c { state $c ||= WebSite::Context->instance; $c }
 
-sub title {
-  state $title ||= a(
-    {
-      href  => href('/'),
-      class => q|block text-3xl align-middle mx-auto text-center my-8 pb-4|,
-    },
-    span( { class => q|block align-middle font-serif font-bold scale-x-50| }, "カラクリスタ" ),
-  );
+sub label {
+  state $style ||= apply(qw(link)) . custom(q||);
 
-  return $title;
+  my $label = shift;
+  my $path  = href(shift);
+  my $attrs = shift // {};
+
+  if ( exists $attrs->{'class'} ) {
+    $attrs->{'class'} .= " " . $style;
+  }
+  else {
+    $attrs->{'class'} = $style;
+  }
+
+  $attrs->{'href'} = $path;
+
+  return a( $attrs, $label );
 }
 
-sub section {
-  state $common    ||= q|inline-block |;
-  state $underline ||= q| |;
+sub title {
+  state $home ||= p( label( c->website->label => '/', { class => classes(qw(p-name u-url site-title)), aria => { current => 'page' } }, ) );
+  state $tree ||= p( label( c->website->label => '/' ) );
 
-  state $home  ||= a( { class => $common . $underline . q|pr-1|, href => href('/'), },       'ホーム' );
-  state $posts ||= a( { class => $common . $underline . q|px-1|, href => href('/posts/'), }, c->sections->{posts}->label );
-  state $echos ||= a( { class => $common . $underline . q|px-1|, href => href('/echos/'), }, c->sections->{echos}->label );
-  state $notes ||= a( { class => $common . $underline . q|pl-1|, href => href('/notes/'), }, c->sections->{notes}->label );
+  my $current = shift // !!0;
+  return $current ? $home : $tree;
+}
 
-  state $profile  ||= a( { class => $common . $underline . q|px-1|, href => href('/nyarla/'), },   'プロフィール' );
-  state $policy   ||= a( { class => $common . $underline . q|px-1|, href => href('/policies/'), }, '運営ポリシー' );
-  state $licenses ||= a( { class => $common . $underline . q|px-1|, href => href('/licenses/'), }, 'ライセンスなど' );
+sub breadcrumb {
+  state $tree ||= div( { class => custom(q|my-2 text-md |), aria => { hidden => 'true' } }, '・' );
+  state $sep  ||= span( { class => custom(q|mx-2 text-xs |), aria => { hidden => 'true' } }, '/' );
 
   my $section = shift;
   my $kind    = shift;
   my $href    = shift;
 
-  my @breadcrumb;
+  my @breadcrumb = ( title( $section eq q{pages} && $kind eq q{home} ), $tree );
   if ( $section eq 'pages' ) {
     if ( $kind eq 'home' ) {
-      @breadcrumb = ( '→', $posts, '/', $echos, '/', $notes );
+      push @breadcrumb, p(
+        label( c->sections->{posts}->label => '/posts/' ),
+        $sep,
+        label( c->sections->{echos}->label => '/echos/' ),
+        $sep,
+        label( c->sections->{notes}->label => '/notes/' ),
+      );
     }
     elsif ( $kind eq 'permalink' ) {
       if ( $href eq 'nyarla' ) {
-        @breadcrumb = ( '→', $profile );
+        push @breadcrumb, p( label( 'プロフィール' => '/nyarla/', { aria => { current => 'page' } } ) );
       }
       elsif ( $href eq 'policies' ) {
-        @breadcrumb = ( '→', $policy );
+        push @breadcrumb, p( label( '運営ポリシー' => '/policies/', { aria => { current => 'page' } } ) );
       }
       elsif ( $href eq 'licenses' ) {
-        @breadcrumb = ( '→', $licenses );
+        push @breadcrumb, p( label( 'ライセンスなど' => '/licenses/', { aria => { current => 'page' } } ) );
       }
     }
   }
   else {
     if ( $section eq 'posts' ) {
-      @breadcrumb = ( '→', $posts );
+      push @breadcrumb,
+          p(
+            label(
+              c->sections->{posts}->label => '/posts/',
+              { class => classes(qw(p-name u-url site-title)), aria => { current => 'page' } }
+            )
+          );
     }
     elsif ( $section eq 'echos' ) {
-      @breadcrumb = ( '→', $echos );
+      push @breadcrumb,
+          p(
+            label(
+              c->sections->{echos}->label => '/echos/',
+              { class => classes(qw(p-name u-url site-title)), aria => { current => 'page' } }
+            )
+          );
     }
     elsif ( $section eq 'notes' ) {
-      @breadcrumb = ( '→', $notes );
+      push @breadcrumb,
+          p(
+            label(
+              c->sections->{notes}->label => '/notes/',
+              { class => classes(qw(p-name u-url site-title)), aria => { current => 'page' } }
+            )
+          );
     }
   }
 
-  return p(
-    {
-      class => q|pb-4|,
-    },
-    $home,
-    @breadcrumb,
-  );
+  return @breadcrumb;
 }
 
 sub navigation {
   my $page = shift;
-
   return nav(
-    title,
-    section( $page->section, $page->kind, ( defined $page->href ? $page->href->path : undef ) ),
+    { class => custom(q|my-24 text-center|) },
+    breadcrumb( $page->section, $page->kind, ( defined $page->href ? $page->href->path : undef ) ),
   );
 }
 
