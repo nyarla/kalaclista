@@ -123,6 +123,7 @@ ci: .test-in-shell
 	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Context.t
 	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Helper/TailwindCSS.t
 	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Widgets/Navigation.t
+	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Widgets/Profile.t
 	@env KALACLISTA_ENV=test prove -j$(FULL) -r t/common
 	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
 

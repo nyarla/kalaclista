@@ -12,7 +12,8 @@ our @EXPORT = qw(apply classes custom);
 
 sub preset {
   state $presets ||= {
-    link => q|text-actionable underline|,
+    link  => q|text-actionable underline|,
+    frame => q|border-8 border-unactionable rounded-2xl|,
   };
 
   my $name = shift;
