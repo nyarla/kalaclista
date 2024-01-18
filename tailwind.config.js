@@ -34,11 +34,13 @@ module.exports = {
       actionable: "#003399",
       unactionable: "#E9E9E9",
       background: "#F9F9F9",
+      bright: "#FFFFFF",
 
       darkmodeText: "#F0F0F0",
       darkmodeActionable: "#D0E0FF",
       darkmodeUnactionable: "#003366",
       darkmodeBackground: "#333333",
+      darkmodeBright: "#000000",
     },
     fontFamily: {
       serif: [["serif"], { fontFeatureSettings: '"palt"' }],
