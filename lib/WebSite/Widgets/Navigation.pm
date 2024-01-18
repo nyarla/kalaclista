@@ -26,18 +26,9 @@ sub href {
 sub c { state $c ||= WebSite::Context->instance; $c }
 
 sub label {
-  state $style ||= apply(qw(link)) . custom(q||);
-
   my $label = shift;
   my $path  = href(shift);
   my $attrs = shift // {};
-
-  if ( exists $attrs->{'class'} ) {
-    $attrs->{'class'} .= " " . $style;
-  }
-  else {
-    $attrs->{'class'} = $style;
-  }
 
   $attrs->{'href'} = $path;
 
