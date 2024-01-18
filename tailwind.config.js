@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: {
-    files: ["./lib/WebSite/Widgets/*.pm", "./lib/WebSite/Templates/*.pm"],
+    files: [
+      "./lib/WebSite/Helper/TailwindCSS.pm",
+      "./lib/WebSite/Templates/*.pm",
+      "./lib/WebSite/Widgets/*.pm",
+    ],
     extract: {
       pm: (content) => {
         const matched = content.match(/q[|][^|]+[|]/g);
