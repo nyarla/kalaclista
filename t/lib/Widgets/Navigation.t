@@ -58,8 +58,13 @@ sub href {
 sub title_ok ($) {
   my $dom = shift;
 
-  is $dom->at('nav > p:first-child > a')->getAttribute('href'), href('/');
-  is $dom->at('nav > p:first-child > a')->textContent,          'カラクリスタ';
+  is $dom->at('nav > p:first-child > a:first-child')->getAttribute('href'),        href('/');
+  is $dom->at('nav > p:first-child > a:first-child')->getAttribute('aria-hidden'), 'true';
+  is $dom->at('nav > p:first-child > a:first-child img')->getAttribute('src'),     href('/assets/avatar.svg');
+  is $dom->at('nav > p:first-child > a:first-child img')->getAttribute('alt'),     q{};
+
+  is $dom->at('nav > p:first-child > a:nth-child(2)')->getAttribute('href'), href('/');
+  is $dom->at('nav > p:first-child > a:nth-child(2)')->textContent,          'カラクリスタ';
 }
 
 subtest navigation => sub {

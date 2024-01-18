@@ -10,7 +10,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(navigation);
 
-use Kalaclista::HyperScript qw(nav p div span a);
+use Kalaclista::HyperScript qw(nav p div span a img);
 
 use WebSite::Context;
 use WebSite::Helper::TailwindCSS;
@@ -36,8 +36,25 @@ sub label {
 }
 
 sub title {
-  state $home ||= p( label( c->website->label => '/', { class => classes(qw(p-name u-url site-title)), aria => { current => 'page' } }, ) );
-  state $tree ||= p( label( c->website->label => '/' ) );
+  state $icon ||= a(
+    { href => href('/'), class => custom(q|block mx-auto mb-4|), aria => { hidden => 'true' } },
+    img(
+      {
+        class  => custom(q|inline-block border-4 border-unactionable rounded-xl bg-bright|), src => href('/assets/avatar.svg'),
+        height => 48,
+        width  => 48,
+        alt    => ''
+      }
+    )
+  );
+  state $home ||= p(
+    $icon,
+    label( c->website->label => '/', { class => classes(qw(p-name u-url site-title)), aria => { current => 'page' } }, )
+  );
+  state $tree ||= p(
+    $icon,
+    label( c->website->label => '/' )
+  );
 
   my $current = shift // !!0;
   return $current ? $home : $tree;
