@@ -10,13 +10,12 @@ use Exporter::Lite;
 our @EXPORT = qw( layout );
 
 use Kalaclista::HyperScript;
-use WebSite::Helper::Hyperlink qw(hyperlink href);
 
 use WebSite::Context;
 
 use WebSite::Widgets::Navigation;
+use WebSite::Widgets::Information;
 
-use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;
 use WebSite::Widgets::Metadata;
@@ -46,7 +45,7 @@ sub layout {
       navigation($vars),
       main($content),
       profile,
-      siteinfo,
+      footer( information, copyright ),
       $analytics->@*,
     )
   );
