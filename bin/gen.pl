@@ -426,7 +426,7 @@ sub doing {
         summary => $c->sections->{$section}->summary,
         section => $section,
         kind    => 'home',
-        entries => [ ( sort { $b->date cmp $a->date } grep { defined $_ } $entries->@* )[ 0 .. 4 ] ],
+        entries => [ grep { defined $_ } ( sort { $b->date cmp $a->date } $entries->@* )[ 0 .. 4 ] ],
         href    => URI::Fast->new( href( "/${section}/", $c->baseURI ) ),
       );
 
