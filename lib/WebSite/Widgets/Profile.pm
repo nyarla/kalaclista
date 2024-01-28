@@ -37,7 +37,7 @@ sub profile {
   state $profile ||= address(
     {
       class =>
-          join( q{ }, classes(qw(h-card)), apply('frame'), custom(q|text-center bg-bright md:text-left not-italic my-16 px-4 py-2|) )
+          join( q{ }, classes(qw(h-card)), apply('frame'), custom(q|text-center bg-bright sm:text-left not-italic my-16 px-4 py-2|) )
     },
     p(
       a(
@@ -48,47 +48,47 @@ sub profile {
             height => 96,
             width  => 96,
             alt    => '',
-            class  => join( q{ }, classes(qw(u-logo)), custom(q|block mx-auto md:float-left md:ml-2 md:mr-6|) ),
+            class  => join( q{ }, classes(qw(u-logo)), custom(q|block mx-auto sm:float-left sm:ml-2 sm:mr-6|) ),
           },
           span( { class => classes(qw(p-nickname)) }, 'にゃるら（カラクリスタ）' ),
         ),
       )
     ),
     nav(
-      { class => join( q{ }, classes(qw(p-note)), custom(q|my-4 md:my-3|) ) },
-      p( { class => custom(q|block md:mb-2 md:ml-32|) }, "『輝かしい青春』なんて失かった人。", br( { class => custom(q|md:hidden|) } ), "次に備えて準備中。" ),
-      p( { class => custom(q|block md:mb-2 md:ml-32|) }, "今は趣味でプログラミングをして",   br( { class => custom(q|md:hidden|) } ), "生活しています。" ),
+      { class => join( q{ }, classes(qw(p-note)), custom(q|my-4 sm:my-3|) ) },
+      p( { class => custom(q|block sm:mb-2 sm:ml-32|) }, "『輝かしい青春』なんて失かった人。", br( { class => custom(q|sm:hidden|) } ), "次に備えて準備中。" ),
+      p( { class => custom(q|block sm:mb-2 sm:ml-32|) }, "今は趣味でプログラミングをして",   br( { class => custom(q|sm:hidden|) } ), "生活しています。" ),
       ul(
-        { class => custom(q|my-4 md:ml-32 md:my-3|) },
+        { class => custom(q|my-4 sm:ml-32 sm:my-3|) },
         li(
-          { class => custom(q|mb-4 md:mb-0 md:inline md:mr-3|) },
+          { class => custom(q|mb-4 sm:mb-0 sm:inline sm:mr-3|) },
           hlink( Email => 'mailto:nyarla@kalaclista.com', qw(u-email) ),
         ),
         li(
-          { class => custom(q|mb-4 md:mb-0 md:inline md:mr-3|) },
+          { class => custom(q|mb-4 sm:mb-0 sm:inline sm:mr-3|) },
           hlink( GoToSocial => 'https://kalaclista.com/@nyarla', qw(u-url) ),
         ),
         li(
-          { class => custom(q|mb-4 md:mb-0 md:inline|) },
+          { class => custom(q|mb-4 sm:mb-0 sm:inline|) },
           hlink( 'Misskey.io' => 'https://misskey.io/@nyarla', qw(u-url) ),
         ),
       ),
       ul(
-        { class => custom(q|my-4 md:ml-32 md:my-3|) },
+        { class => custom(q|my-4 sm:ml-32 sm:my-3|) },
         li(
-          { class => custom(q|mb-4 md:mb-0 md:inline md:mr-3|) },
+          { class => custom(q|mb-4 sm:mb-0 sm:inline sm:mr-3|) },
           hlink( GitHub => 'https://github.com/nyarla/', qw(u-url) ),
         ),
         li(
-          { class => custom(q|mb-4 md:mb-4 md:inline md:mr-3|) },
+          { class => custom(q|mb-4 sm:mb-4 sm:inline sm:mr-3|) },
           hlink( Zenn => 'https://zenn.dev/nyarla/', qw(u-url) ),
         ),
         li(
-          { class => custom(q|mb-4 md:mb-4 md:inline md:mr-3|) },
+          { class => custom(q|mb-4 sm:mb-4 sm:inline sm:mr-3|) },
           hlink( 'しずかなインターネット' => 'https://sizu.me/nyarla/', qw(u-url) ),
         ),
         li(
-          { class => custom(q|mb-4 md:mb-4 md:inline|) },
+          { class => custom(q|mb-4 sm:mb-4 sm:inline|) },
           hlink( note => 'https://note.com/kalaclista/', qw(u-url) ),
         ),
       ),
