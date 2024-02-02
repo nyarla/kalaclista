@@ -7,3 +7,22 @@
     @apply text-actionable underline;
   }
 }
+
+@layer utilities {
+  .card {
+    @apply relative pl-2;
+  }
+
+  .card::before {
+    @apply block absolute top-0 bottom-0 left-0 w-1 rounded;
+    content: "";
+  }
+
+  .card-notify {
+    @apply card;
+  }
+
+  .card-notify::before {
+    @apply bg-notify;
+  }
+}
