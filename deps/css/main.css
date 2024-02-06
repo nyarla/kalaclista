@@ -25,4 +25,8 @@
   .card-notify::before {
     @apply bg-notify;
   }
+
+  .card-frame {
+    @apply border-8 border-unactionable rounded-2xl;
+  }
 }

@@ -10,6 +10,7 @@ use Exporter::Lite;
 our @EXPORT = qw( layout );
 
 use Kalaclista::HyperScript;
+use WebSite::Helper::TailwindCSS;
 
 use WebSite::Context;
 
@@ -41,7 +42,7 @@ sub layout {
     { lang => 'ja' },
     metadata($vars),
     body(
-      { class => q|container mx-auto max-w-2xl px-4| },
+      classes(q|container mx-auto max-w-2xl px-4|),
       navigation($vars),
       main($content),
       profile,

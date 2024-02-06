@@ -45,19 +45,19 @@ sub headers {
   my $entry = shift;
 
   my $title = h1(
-    { class => join( q{ }, classes(qw(p-name)), custom(q|text-3xl font-bold my-4|) ) },
-    a( { href => $entry->href->to_string, class => classes(qw(u-url)) }, $entry->title ),
+    classes( qw(p-name), q|text-3xl font-bold my-4| ),
+    a( classes(qw(u-url)), { href => $entry->href->to_string }, $entry->title ),
   );
 
   my $published_at = $entry->date;
   my $updated_at   = $entry->lastmod // $published_at;
 
   my $date = p(
-    { class => custom(q|text-left w-1/2|) },
+    classes(q|text-left w-1/2|),
     span(
       time_(
+        classes(q|dt-published|),
         {
-          class    => classes(qw(dt-published)),
           datetime => $published_at,
           title    => qq<この記事は@{[ date($published_at) ]}に公開されました>,
         },
@@ -67,12 +67,12 @@ sub headers {
     (
       $updated_at ne $published_at
       ? (
-        br( { class => custom(q|sm:hidden|) } ),
-        span( { class => custom(q|mr-1 sm:ml-1|), aria => { hidden => 'true' } }, '→' ),
+        br( classes(q|sm:hidden|) ),
+        span( classes(q|mr-1 sm:ml-1|), { aria => { hidden => 'true' } }, '→' ),
         span(
           time_(
+            classes(qw(dt-updated)),
             {
-              class    => classes(qw(dt-updated)),
               datetime => $updated_at,
               title    => qq<また@{[ date($updated_at) ]}に更新されています>
             },
@@ -85,12 +85,12 @@ sub headers {
   );
 
   my $readtime = p(
-    { class => custom(q|text-right w-1/2|) },
+    classes(q|text-right w-1/2|),
     qq|この記事は@{[ readtime($entry->dom->innerHTML) ]}分で読めそう|,
   );
 
   my $meta = div(
-    { class => custom(q|text-xs flex|) },
+    classes(q|text-xs flex|),
     $date, $readtime,
   );
 
@@ -99,7 +99,7 @@ sub headers {
   if ( defined $entry->dom->at('.content__card--affiliate') ) {
     ## FIXME: add comment to about ads in this message.
     push @notice, p(
-      { class => custom(q|card-notify text-sm|) },
+      classes(q|card-notify text-sm|),
       "この記事はアフィリエイト広告を含んでいます。"
     );
   }
@@ -117,7 +117,7 @@ sub content {
 
   my $header  = headers($entry);
   my $article = article(
-    { class => classes(qw(h-entry)) },
+    classes(qw(h-entry)),
     $header,
   );
 
