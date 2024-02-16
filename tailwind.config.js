@@ -38,8 +38,9 @@ module.exports = {
       brightest: "#FBFBFB",
     },
     fontFamily: {
-      serif: [["serif"], { fontFeatureSettings: '"palt"' }],
-      sans: [["sans-serif"], { fontFeatureSettings: '"palt"' }],
+      serif: [["serif"], { }],
+      sans: [["sans-serif"], {  }],
+      mono: [["monospace"], {  }],
     },
   },
 };
