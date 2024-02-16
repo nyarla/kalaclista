@@ -40,7 +40,7 @@ sub title {
     classes(q|block mx-auto mb-4|),
     { href => href('/'), aria => { hidden => 'true' } },
     img(
-      classes(q|inline-block border-4 border-unactionable rounded-xl bg-bright|),
+      classes(q|inline-block border-4 border-bright rounded-xl bg-brightest|),
       {
         src    => href('/assets/avatar.svg'),
         height => 48,

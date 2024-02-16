@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    @apply bg-brighter text-darkest;
+  }
+
   a {
-    @apply text-actionable underline;
+    @apply text-teal underline;
   }
 }
 
@@ -23,10 +27,10 @@
   }
 
   .card-notify::before {
-    @apply bg-notify;
+    @apply bg-yellow;
   }
 
   .card-frame {
-    @apply border-8 border-unactionable rounded-2xl;
+    @apply border-8 border-bright bg-brightest rounded-2xl;
   }
 }

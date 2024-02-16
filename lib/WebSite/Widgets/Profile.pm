@@ -35,7 +35,7 @@ sub hlink {
 
 sub profile {
   state $profile ||= address(
-    classes( qw(h-card), q|card-frame text-center bg-bright sm:text-left not-italic my-16 px-4 py-2| ),
+    classes( qw(h-card), q|card-frame text-center sm:text-left not-italic my-16 px-4 py-2| ),
     p(
       a(
         classes(qw(u-url)),

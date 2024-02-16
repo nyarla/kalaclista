@@ -99,7 +99,7 @@ sub headers {
   if ( defined $entry->dom->at('.content__card--affiliate') ) {
     ## FIXME: add comment to about ads in this message.
     push @notice, p(
-      classes(q|card-notify text-sm|),
+      classes(q|card-yellow text-sm|),
       "この記事はアフィリエイト広告を含んでいます。"
     );
   }

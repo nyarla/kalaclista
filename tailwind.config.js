@@ -26,21 +26,16 @@ module.exports = {
   },
   theme: {
     colors: {
-      notify: "#FFCC33",
-      info: "#33CCFF",
-      warn: "#FF6633",
+      red: "#FF6633",
+      yellow: "#FFCC33",
+      teal: "#005588",
 
-      text: "#333333",
-      actionable: "#003399",
-      unactionable: "#E9E9E9",
-      background: "#F9F9F9",
-      bright: "#FFFFFF",
+      darkest: "#000000",
+      darker: "#333333",
 
-      darkmodeText: "#F0F0F0",
-      darkmodeActionable: "#D0E0FF",
-      darkmodeUnactionable: "#003366",
-      darkmodeBackground: "#333333",
-      darkmodeBright: "#000000",
+      bright: "#E9E9E9",
+      brighter: "#F9F9F9",
+      brightest: "#FBFBFB",
     },
     fontFamily: {
       serif: [["serif"], { fontFeatureSettings: '"palt"' }],
