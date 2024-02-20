@@ -41,7 +41,7 @@ sub transform {
 
     if ( !$web->gone ) {
       $html = a(
-        classes(q|border-4 rounded-xl hover:border-cyan border-bright block px-6 py-4 bg-[#FFF] text-darkest|),
+        classes(q|border-4 rounded-xl hover:border-cyan border-bright block mb-4 px-6 py-4 bg-[#FFF] text-darkest|),
         { href => $web->permalink },
         p( classes(q|text-lg font-bold !mb-4 !leading-6 truncate|), $web->title ),
         p(
@@ -53,7 +53,7 @@ sub transform {
               width => 16, height => 16, alt => '',
             }
           ),
-          cite( classes(q|not-italic|), $web->cite )
+          cite( classes(q|not-italic !text-darker|), $web->cite )
         ),
       );
     }
