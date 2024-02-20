@@ -36,7 +36,7 @@ subtest blog => sub {
   my $path  = 'posts/2022/03/09/184033';
   my $entry = entry($path);
 
-  my $item = $entry->dom->at('.content__card--thumbnail');
+  my $item = $entry->dom->at('.h-item');
 
   is(
     $item->getAttribute('href'),
@@ -72,7 +72,7 @@ subtest notes => sub {
   my $path  = '自作キーボード';
   my $entry = entry("notes/${path}");
 
-  my $item = $entry->dom->at('.content__card--thumbnail');
+  my $item = $entry->dom->at('.h-item');
   my $fn   = uri_escape_utf8($path);
 
   is(

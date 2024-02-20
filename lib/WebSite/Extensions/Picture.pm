@@ -69,6 +69,7 @@ sub transform {
           $src = "${prefix}/images/${path}_1x.webp";
           $img = img(
             {
+              class  => q|border-4 rounded-xl border-bright|,
               alt    => $item->getAttribute('alt'),
               title  => $item->getAttribute('alt'),
               srcset => join( q{, }, @srcset ),
@@ -82,7 +83,7 @@ sub transform {
 
         my $link = $dom->tree->createElement('a');
         $link->setAttribute( href  => $src );
-        $link->setAttribute( class => 'content__card--thumbnail' );
+        $link->setAttribute( class => 'h-item' );
         $link->innerHTML("${img}");
 
         $item->replace($link);
