@@ -105,6 +105,7 @@ sub headers {
   }
 
   return header(
+    classes(q|my-1|),
     $meta,
     $title,
     @notice,
