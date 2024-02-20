@@ -23,13 +23,11 @@ sub main {
   $entry->add_transformer( sub { WebSite::Extensions::WebSite->transform(@_) } );
   $entry->transform;
 
-  my $item = $entry->dom->at('.content__card--website');
+  my $item = $entry->dom->at('.h-item');
 
   is( $item->at('a')->getAttribute('href'), "https://www.nerdfonts.com/" );
 
-  ok( $item->at('a > h2') );
-  ok( $item->at('a > p') );
-  ok( $item->at('a > blockquote') );
+  is scalar( $item->find('a > p')->@* ), 2;
 
   done_testing;
 }

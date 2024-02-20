@@ -29,7 +29,8 @@ module.exports = {
     colors: {
       red: "#FF6633",
       yellow: "#FFCC33",
-      teal: "#005588",
+      teal: "#005599",
+      cyan: "#22BBFF",
       pink: "#CC99CC",
 
       darkest: "#000000",

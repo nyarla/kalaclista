@@ -6,10 +6,13 @@ use utf8;
 
 use feature qw(state);
 
+use URI::Fast;
+
 use Kalaclista::Data::WebSite;
-use Kalaclista::HyperScript qw(a div h2 p cite blockquote small);
+use Kalaclista::HyperScript qw(a div h2 p cite blockquote small img);
 
 use WebSite::Context;
+use WebSite::Helper::TailwindCSS;
 
 sub website {
   state $initialized;
@@ -38,10 +41,20 @@ sub transform {
 
     if ( !$web->gone ) {
       $html = a(
+        classes(q|border-4 rounded-xl hover:border-cyan border-bright block px-6 py-4 bg-[#FFF] text-darkest|),
         { href => $web->permalink },
-        h2( $web->title ),
-        p( cite( $web->cite ) ),
-        blockquote( p( $web->summary ) )
+        p( classes(q|text-lg font-bold !mb-4 !leading-6 truncate|), $web->title ),
+        p(
+          classes(q|leading-4 !mb-0 truncate text-sm|),
+          img(
+            classes(q|inline-block mr-1.5 align-middle|),
+            {
+              src   => "https://www.google.com/s2/favicons?sz=64&domain_url=@{[ URI::Fast->new($web->permalink)->host ]}&size=32",
+              width => 16, height => 16, alt => '',
+            }
+          ),
+          cite( classes(q|not-italic|), $web->cite )
+        ),
       );
     }
     else {
@@ -53,7 +66,7 @@ sub transform {
     }
 
     my $article = $item->tree->createElement('aside');
-    $article->setAttribute( class => 'content__card--website' . ( $web->gone ? ' gone' : q{} ) );
+    $article->setAttribute( class => 'h-item' . ( $web->gone ? ' gone' : q{} ) );
     $article->innerHTML( $html->to_string );
     $item->parent->parent->replace($article);
   }
