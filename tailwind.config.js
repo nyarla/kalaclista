@@ -2,6 +2,7 @@
 module.exports = {
   content: {
     files: [
+      "./lib/WebSite/Extensions/*.pm",
       "./lib/WebSite/Helper/TailwindCSS.pm",
       "./lib/WebSite/Templates/*.pm",
       "./lib/WebSite/Widgets/*.pm",
