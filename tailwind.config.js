@@ -29,6 +29,7 @@ module.exports = {
       red: "#FF6633",
       yellow: "#FFCC33",
       teal: "#005588",
+      pink: "#CC99CC",
 
       darkest: "#000000",
       darker: "#333333",
@@ -38,9 +39,9 @@ module.exports = {
       brightest: "#FBFBFB",
     },
     fontFamily: {
-      serif: [["serif"], { }],
-      sans: [["sans-serif"], {  }],
-      mono: [["monospace"], {  }],
+      serif: [["serif"], {}],
+      sans: [["sans-serif"], {}],
+      mono: [["monospace"], {}],
     },
   },
 };

@@ -44,7 +44,7 @@ sub layout {
     body(
       classes(q|container mx-auto max-w-2xl px-4|),
       navigation($vars),
-      main($content),
+      main( classes(q|card-frame px-4 py-2 bg-bright|), $content ),
       profile,
       footer( information, copyright ),
       $analytics->@*,

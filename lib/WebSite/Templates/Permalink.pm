@@ -8,7 +8,7 @@ use feature qw(state);
 
 use URI::Fast;
 
-use Kalaclista::HyperScript qw(h1 a article time_ p header span raw button div br);
+use Kalaclista::HyperScript qw(h1 a article time_ p header span raw button div br section);
 
 use WebSite::Widgets::Layout;
 use WebSite::Helper::TailwindCSS;
@@ -99,7 +99,7 @@ sub headers {
   if ( defined $entry->dom->at('.content__card--affiliate') ) {
     ## FIXME: add comment to about ads in this message.
     push @notice, p(
-      classes(q|card-yellow text-sm|),
+      classes(q|card-notify text-sm font-bold|),
       "この記事はアフィリエイト広告を含んでいます。"
     );
   }
@@ -119,6 +119,7 @@ sub content {
   my $article = article(
     classes(qw(h-entry)),
     $header,
+    section( classes(q|e-content|), raw( $entry->dom->innerHTML ) ),
   );
 
   return $article;
