@@ -9,9 +9,10 @@ use feature qw(state);
 use Kalaclista::Shop::Amazon;
 use Kalaclista::Shop::Rakuten;
 
-use Kalaclista::HyperScript;
+use Kalaclista::HyperScript qw(aside h2 ul li a img);
 
 use WebSite::Context;
+use WebSite::Helper::TailwindCSS;
 
 sub key {
   my $key = shift;
@@ -27,15 +28,37 @@ sub linkify {
 
   if ( ref $shop eq 'Kalaclista::Shop::Amazon' ) {
     return li(
-      { class => 'amazon' },
-      a( { href => $shop->link }, 'Amazon.co.jp で探す' ),
+      classes(q|list-none|),
+      a(
+        classes(q|text-darker text-sm|),
+        { href => $shop->link },
+        img(
+          classes(q|inline mr-1 align-middle|),
+          {
+            src   => "https://www.google.com/s2/favicons?sz=64&domain_url=amazon.co.jp&size=32",
+            width => 16, height => 16, alt => ''
+          }
+        ),
+        'Amazon.co.jp で探す'
+      ),
     );
   }
 
   if ( ref $shop eq 'Kalaclista::Shop::Rakuten' ) {
     return li(
-      { class => 'rakuten' },
-      a( { href => $shop->link, class => 'rakuten' }, '楽天で探す' )
+      classes(q|list-none|),
+      a(
+        classes(q|text-darker text-sm|),
+        { href => $shop->link },
+        img(
+          classes(q|inline mr-1 align-middle|),
+          {
+            src   => "https://www.google.com/s2/favicons?sz=64&domain_url=rakuten.co.jp&size=32",
+            width => 16, height => 16, alt => ''
+          }
+        ),
+        '楽天で探す'
+      )
     );
   }
 
@@ -43,24 +66,25 @@ sub linkify {
 }
 
 sub replace {
-  my $el    = shift;
-  my @shops = @_;
+  my $target = shift;
+  my @shops  = @_;
 
   my $primary = $shops[0];
-
-  my $aside = $el->tree->createElement('aside');
-  $aside->setAttribute( 'class', 'content__card--affiliate' );
-
-  my $html = q{};
-  $html .= h2( a( { href => $primary->link }, $primary->label ) );
-  $html .= p(
-    raw( $primary->image ),
+  my $title   = h2(
+    classes(q|!mb-4 !mt-0 !leading-6 truncate|),
+    a(
+      classes(q|text-lg font-bold text-darkest|),
+      { href => $primary->link }, $primary->label
+    ),
   );
-  $html .= ul( map { linkify($_) } @shops );
 
-  $aside->innerHTML($html);
+  my $out = aside(
+    classes( qw(is-affiliate), q|border-4 rounded-xl border-green block mb-4 px-6 py-4 bg-[#FFF] text-darkest| ),
+    $title,
+    ul( classes(q|!ml-0|), ( map { linkify($_) } @shops ) )
+  );
 
-  $el->parent->replace($aside);
+  $target->innerHTML("$out");
 }
 
 sub transform {

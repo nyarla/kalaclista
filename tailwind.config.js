@@ -32,6 +32,7 @@ module.exports = {
       teal: "#005599",
       cyan: "#22BBFF",
       pink: "#CC99CC",
+      green: "#669900",
 
       darkest: "#000000",
       darker: "#333333",

@@ -24,10 +24,9 @@ sub main {
   $entry->add_transformer( sub { WebSite::Extensions::Affiliate->transform(@_) } );
   $entry->transform;
 
-  my $item = $entry->dom->at('.content__card--affiliate');
+  my $item = $entry->dom->at('.is-affiliate');
 
   ok( $item->at('h2 > a') );
-  ok( $item->at('p > a > img') );
   ok( scalar( $item->find('ul > li > a')->@* ), 2 );
 
   done_testing;

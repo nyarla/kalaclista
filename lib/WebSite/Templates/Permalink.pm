@@ -94,10 +94,8 @@ sub headers {
     $date, $readtime,
   );
 
-  ## TODO: change webcard class when the class of affiliate webcard renamed
   my @notice = ();
-  if ( defined $entry->dom->at('.content__card--affiliate') ) {
-    ## FIXME: add comment to about ads in this message.
+  if ( defined $entry->dom->at('.is-affiliate') || defined $entry->meta('has-affiliate') ) {
     push @notice, p(
       classes(q|card-notify text-sm font-bold|),
       "この記事はアフィリエイト広告を含んでいます。"

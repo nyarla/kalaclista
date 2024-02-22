@@ -98,7 +98,7 @@ subtest templates => sub {
           lastmod => '2024-01-02T00:00:00Z',
         },
         src => 'hello, world!',
-        dom => $parser->parse('<div class="content__card--affiliate">hello, world!</div>')->body,
+        dom => $parser->parse('<div class="is-affiliate">hello, world!</div>')->body,
       );
 
       my $html = WebSite::Templates::Permalink::headers($entry);
