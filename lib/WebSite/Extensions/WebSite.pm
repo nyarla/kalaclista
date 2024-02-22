@@ -9,7 +9,7 @@ use feature qw(state);
 use URI::Fast;
 
 use Kalaclista::Data::WebSite;
-use Kalaclista::HyperScript qw(a div h2 p cite blockquote small img);
+use Kalaclista::HyperScript qw(a div h2 p cite blockquote em img);
 
 use WebSite::Context;
 use WebSite::Helper::TailwindCSS;
@@ -59,9 +59,13 @@ sub transform {
     }
     else {
       $html = div(
-        h2( $web->title ),
-        p( cite( $web->cite ), small('（無効なリンクです）') ),
-        blockquote( p( $web->summary ) )
+        classes(q|border-4 rounded-xl border-bright bg-bright block mb-4 px-6 py-4|),
+        p( classes(q|text-lg font-bold !mb-4 !leading-6 truncate|), $web->title ),
+        p(
+          classes(q|leading-4 !mb-0 truncate text-sm|),
+          em( classes(q|!not-italic|), '無効なリンク：' ),
+          cite( classes(q|not-italic !text-darker|), $web->cite )
+        ),
       );
     }
 
