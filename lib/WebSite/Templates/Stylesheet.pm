@@ -313,6 +313,8 @@ sub content {
       ],
 
       '.logs' => [
+        overflowWrap => 'anywhere',
+
         [qw/ strong a /] => [ margin => '0 .25em' ],
       ],
 
