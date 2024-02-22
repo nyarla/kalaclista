@@ -53,6 +53,20 @@
     & ol {
       @apply list-decimal leading-7 ml-4;
     }
+    & dl {
+      @apply leading-7;
+    }
+
+    & dl > dt {
+      @apply mt-2;
+    }
+
+    & dl > dd {
+      @apply ml-4;
+      display: list-item;
+      list-style-type: square;
+    }
+
     & > ul,
     & > ol {
       @apply mb-4;
