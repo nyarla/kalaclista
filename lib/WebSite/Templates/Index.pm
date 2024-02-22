@@ -12,8 +12,18 @@ use WebSite::Helper::Hyperlink qw(href);
 use WebSite::Context;
 use WebSite::Widgets::Layout;
 
+use WebSite::Helper::TailwindCSS;
+
 sub date {
-  return ( split qr{T}, shift )[0];
+  my $datetime = shift;
+  my $date     = ( split qr{T}, $datetime )[0];
+  my ( $year, $month, $day ) = split qr{-}, $date;
+
+  $year  = int($year);
+  $month = int($month);
+  $day   = int($day);
+
+  return qq<${year}年${month}月${day}日>;
 }
 
 sub content {
@@ -21,49 +31,86 @@ sub content {
   my $c    = WebSite::Context->instance;
 
   my $section = $page->section;
-  my $baseURI = $c->baseURI;
-  my $data    = $c->sections->{$section};
-  my $website = $data->title;
-  my $summary = $data->summary;
-  my $year    = ( split qr{-}, date( $page->entries->[0]->date ) )[0];
+  my $href    = $c->baseURI->clone;
+  $href->path("/$section/");
+
+  my $data = $c->sections->{$section};
+
+  my $header = header(
+    h1(
+      classes( qw(p-name), q|text-xl sm:text-3xl font-bold mt-2 mb-4| ),
+      a( classes(qw(u-url)), { href => $href->to_string }, $data->title )
+    ),
+    p( classes(q|card before:bg-green text-xs sm:text-sm !pl-0.5|), $data->summary ),
+  );
 
   my @contents;
-  my @archives;
-  my $prop = $section eq 'notes' ? 'updated' : 'date';
-
   for my $entry ( $page->entries->@* ) {
-    my $date = date( $entry->date );
-    push @contents,
-        li(
-          time_( { datetime => $date }, "${date}：" ),
-          a( { href => $entry->href->to_string, class => 'title' }, $entry->title )
-        );
+    my $published = date( $entry->date );
+    my $updated   = date( $entry->lastmod // $entry->date );
+
+    my $datetime = dt(
+      classes(q|text-xs !mt-6|),
+      time_( { datetime => $entry->date }, $published ),
+      ( $published ne $updated ? ( span( classes(q|mx-1|), '→' ), time_( { datetime => $entry->lastmod }, $updated ) ) : () ),
+    );
+
+    push @contents, $datetime;
+
+    my $headline = dd(
+      classes(q|!block !ml-0|),
+      h2(
+        classes(q|!text-base !mb-0 !mt-1|),
+        a(
+          { href => $entry->href->to_string },
+          $entry->title,
+        )
+      ),
+    );
+
+    push @contents, $headline;
   }
 
-  if ( $section ne 'notes' ) {
-    for my $yr ( sort { $b <=> $a } $page->vars->{'start'} .. $page->vars->{'end'} ) {
-      if ( $yr == $year ) {
-        push @archives, strong($year);
-        next;
-      }
+  my @years;
+  if ( $section ne q{notes} ) {
+    my $begin = $section eq q{posts} ? 2006 : 2018;
+    my $end   = (localtime)[5] + 1900;
+    my $year  = ( split qr{-}, ( split( qr{T}, $page->entries->[0]->date ) )[0] )[0];
 
-      push @archives, a( { href => href( "/${section}/${yr}/", $baseURI ) }, $yr );
+    for my $yr ( sort { $b <=> $a } $begin .. $end ) {
+      my $href = $c->baseURI->clone;
+      $href->path( $yr eq $end ? "/${section}/" : "/${section}/${yr}/" );
+      push @years, (
+        a(
+          classes(q|block mr-4|),
+          {
+            href => $href,
+            ( $yr == $year ? ( aria => { current => 'date' } ) : () ),
+          },
+          "${yr}年",
+        )
+      );
     }
   }
 
   return article(
-    { class => [qw( entry entry__archives )] },
-
-    header( h1( a( { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
-
+    classes(qw(h-entry)),
+    $header,
     section(
-      { class => 'entry__content' },
-      p($summary),
-      hr,
-      ( $section ne 'notes' ? strong("${year}年：") : () ),
-      ul( { class => 'archives' }, @contents ),
-      ( $section ne 'notes' ? ( hr, p( { class => 'logs' }, "過去ログ：", raw( join q{/}, @archives ) ) ) : () ),
-    )
+      classes(q|e-content mb-6|),
+      dl(@contents),
+    ),
+    (
+      @years > 0
+      ? (
+        p( classes(q|card before:bg-green text-xs sm:text-sm !pl-2 !mb-2|), "過去ログ" ),
+        p(
+          classes(q|flex flex-wrap leading-8 justify-start|),
+          @years
+        )
+          )
+      : ()
+    ),
   );
 }
 
