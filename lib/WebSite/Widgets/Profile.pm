@@ -58,9 +58,10 @@ sub profile {
       p( classes(q|block sm:mb-2 sm:ml-32|), "今は趣味でプログラミングをして",   br( classes(q|sm:hidden|) ), "生活しています。" ),
       ul(
         classes(q|my-4 sm:ml-32 sm:my-3|),
-        li( classes(q|mb-4 sm:mb-0 sm:inline sm:mr-3|), hlink( Email        => 'mailto:nyarla@kalaclista.com',   qw(u-email) ) ),
-        li( classes(q|mb-4 sm:mb-0 sm:inline sm:mr-3|), hlink( GoToSocial   => 'https://kalaclista.com/@nyarla', qw(u-url) ) ),
-        li( classes(q|mb-4 sm:mb-0 sm:inline|),         hlink( 'Misskey.io' => 'https://misskey.io/@nyarla',     qw(u-url) ) ),
+        li( classes(q|mb-4 sm:mb-0 sm:inline sm:mr-3|), hlink( Email        => 'mailto:nyarla@kalaclista.com',            qw(u-email) ) ),
+        li( classes(q|mb-4 sm:mb-0 sm:inline sm:mr-3|), hlink( GoToSocial   => 'https://kalaclista.com/@nyarla',          qw(u-url) ) ),
+        li( classes(q|mb-4 sm:mb-0 sm:inline sm:mr-3|), hlink( 'Misskey.io' => 'https://misskey.io/@nyarla',              qw(u-url) ) ),
+        li( classes(q|mb-4 sm:mb-0 sm:inline|),         hlink( Bluesky      => 'https://bsky.app/profile/kalaclista.com', qw(u-url) ) ),
       ),
       ul(
         classes(q|my-4 sm:ml-32 sm:my-3|),
