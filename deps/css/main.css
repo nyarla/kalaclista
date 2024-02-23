@@ -67,6 +67,13 @@
       list-style-type: square;
     }
 
+    & dl > dd:has(>ul),
+    & dl > dd:has(>ol) {
+      @apply !ml-0.5;
+      display: block;
+      list-style-type: none;
+    }
+
     & > ul,
     & > ol {
       @apply mb-4;
