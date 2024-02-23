@@ -73,50 +73,34 @@ sub breadcrumb {
   my $href    = shift;
 
   my @breadcrumb = ( title( $section eq q{pages} && $kind eq q{home} ), $tree );
-  if ( $section eq 'pages' ) {
-    if ( $kind eq 'home' ) {
-      push @breadcrumb, p(
-        a( { href => href('/posts/') }, c->sections->{posts}->label ),
-        $sep,
-        a( { href => href('/echos/') }, c->sections->{echos}->label ),
-        $sep,
-        a( { href => href('/notes/') }, c->sections->{notes}->label ),
-      );
+  if ( $section eq 'pages' && $kind eq 'permalink' ) {
+    if ( $href eq 'nyarla' ) {
+      push @breadcrumb, p( a( { href => href('/nyarla/'), aria => { current => 'page' } }, 'プロフィール' ) );
     }
-    elsif ( $kind eq 'permalink' ) {
-      if ( $href eq 'nyarla' ) {
-        push @breadcrumb, p( a( { href => href('/nyarla/'), aria => { current => 'page' } }, 'プロフィール' ) );
-      }
-      elsif ( $href eq 'policies' ) {
-        push @breadcrumb, p( a( { href => href('/policies/'), aria => { current => 'page' } }, '運営ポリシー' ) );
-      }
-      elsif ( $href eq 'licenses' ) {
-        push @breadcrumb, p( a( { href => href('/licenses/'), aria => { current => 'page' } }, 'ライセンスなど' ) );
-      }
+    elsif ( $href eq 'policies' ) {
+      push @breadcrumb, p( a( { href => href('/policies/'), aria => { current => 'page' } }, '運営ポリシー' ) );
     }
+    elsif ( $href eq 'licenses' ) {
+      push @breadcrumb, p( a( { href => href('/licenses/'), aria => { current => 'page' } }, 'ライセンスなど' ) );
+    }
+
+    return @breadcrumb;
   }
-  else {
-    if ( $section eq 'posts' ) {
-      push @breadcrumb,
-          p(
-            classes(q|p-name u-url site-title|),
-            a( { href => href('/posts/'), aria => { current => 'page' } }, c->sections->{posts}->label )
-          );
+
+  if ( $kind eq '404' ) {
+    push @breadcrumb, p('404 Not Found');
+    return @breadcrumb;
+  }
+
+  for my $type (qw(posts echos notes)) {
+    my @attrs = ( href => href("/${type}/") );
+    if ( $type eq $section ) {
+      push @attrs, ( aria  => { current => 'page' } );
+      push @attrs, ( class => q|font-bold| );
     }
-    elsif ( $section eq 'echos' ) {
-      push @breadcrumb,
-          p(
-            classes(q|p-name u-url site-title|),
-            a( { href => href('/echos/'), aria => { current => 'page' } }, c->sections->{echos}->label )
-          );
-    }
-    elsif ( $section eq 'notes' ) {
-      push @breadcrumb,
-          p(
-            classes(q|p-name u-url site-title|),
-            a( { href => href('/notes/'), aria => { current => 'page' } }, c->sections->{notes}->label )
-          );
-    }
+
+    push @breadcrumb, a( {@attrs}, c->sections->{$type}->label );
+    push @breadcrumb, $sep if $type ne q{notes};
   }
 
   return @breadcrumb;
