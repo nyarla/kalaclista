@@ -4,14 +4,25 @@ use strict;
 use warnings;
 use utf8;
 
+use feature q(state);
+
 use Kalaclista::HyperScript;
 use WebSite::Helper::Hyperlink qw(href);
 
 use WebSite::Context;
 use WebSite::Widgets::Layout;
+use WebSite::Helper::TailwindCSS;
 
 sub date {
-  return ( split qr{T}, shift )[0];
+  my $datetime = shift;
+  my $date     = ( split qr{T}, $datetime )[0];
+  my ( $year, $month, $day ) = split qr{-}, $date;
+
+  $year  = int($year);
+  $month = int($month);
+  $day   = int($day);
+
+  return qq<${year}年${month}月${day}日>;
 }
 
 sub content {
@@ -19,139 +30,115 @@ sub content {
   my $c       = WebSite::Context->instance;
   my $baseURI = $c->baseURI;
 
+  state $header ||= header(
+    h1(
+      classes(q|text-xl sm:text-3xl font-bold mt-2 mb-4|),
+      a( { href => $baseURI->to_string }, 'カラクリスタ' )
+    ),
+    p( classes(q|card before:bg-green text-xs sm:text-sm !pl-0.5|), '『輝かしい青春』なんて失かった人のWebSiteです。' ),
+  );
+
+  my @entries;
+  for my $entry ( $page->entries->@* ) {
+    my $published = date( $entry->date );
+    my $updated   = date( $entry->lastmod // $entry->date );
+
+    my $datetime = dt(
+      classes(q|text-xs !mt-6|),
+      time_( { datetime => $entry->date }, $published ),
+      ( $published ne $updated ? ( span( classes(q|mx-1|), '→' ), time_( { datetime => $entry->lastmod }, $updated ) ) : () ),
+      span( ' - ', $c->sections->{ $entry->type }->label, )
+    );
+
+    push @entries, $datetime;
+
+    my $headline = dd(
+      classes(q|!block !ml-0|),
+      h2(
+        classes(q|!text-base !mb-0 !mt-1|),
+        a( { href => $entry->href->to_string }, $entry->title ),
+      ),
+    );
+
+    push @entries, $headline;
+  }
+
   return article(
-    { class => 'entry entry__home' },
-    header( h1('カラクリスタとは？') ),
+    $header,
     section(
-      hr( { class => 'sep' } ),
-      { class => 'entry__content' },
-      p(
-        'カラクリスタとは',
-        a(
-          { href => 'https://the.kalaclista.com/nyarla/' },
-          'にゃるらとかカラクリスタと名乗っている岡村直樹'
-        ),
-        'によって運営されているブログとメモ帳サイトです。',
-        '長年ブログをあっちこっちで書いては移転を繰り返し、今の形に落ち着きました。'
-      ),
-
-      p(
-        '元々色々なホスティング先に引越したり記事を思うがまま書き散らしていたので、',
-        '今見返すと『何言ってんだコイツ』みたいな記事や表示が乱れている記事もあります。'
-      ),
-
-      p(
-        'しかし最近ではその様な行動も落ち着き、今は定期的な週報と月報ブログになっているほか、',
-        'また時々誰かの役に立つかもしれない記事を公開を不定期に公開しています。'
-      ),
-
+      classes(q|e-content mb-6|),
       h2('最近の更新'),
-      ul(
-        { class => 'archives' },
-        (
-          map {
-            li(
-              time_(
-                { datetime => date( $_->date ) },
-                date( $_->date ),
-                '：（',
-                a(
-                  { href => href( "/@{[ $_->type ]}/", $baseURI ) },
-                  $c->sections->{ $_->type }->label,
-                ),
-                '）'
-              ),
-              a( { href => $_->href, class => 'title' }, $_->title )
-            )
-          } $page->entries->@*
-        )
+      dl(@entries),
+
+      h2('更新の講読'),
+      p('このWebサイトでは下記の Feed で最新の更新を受け取ることが出来ます：'),
+      dl(
+        dt('ブログ'),
+        dd(
+          ul(
+            li( a( { href => 'https://the.kalaclista.com/posts/index.xml' },     'RSS 2.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/posts/atom.xml' },      'Atom 1.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/posts/jsonfeed.json' }, 'JSONFeed 1.1' ) ),
+          ),
+        ),
+        dt('日記'),
+        dd(
+          ul(
+            li( a( { href => 'https://the.kalaclista.com/echos/index.xml' },     'RSS 2.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/echos/atom.xml' },      'Atom 1.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/echos/jsonfeed.json' }, 'JSONFeed 1.1' ) ),
+          ),
+        ),
+        dt('メモ帳'),
+        dd(
+          ul(
+            li( a( { href => 'https://the.kalaclista.com/notes/index.xml' },     'RSS 2.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/notes/atom.xml' },      'Atom 1.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/notes/jsonfeed.json' }, 'JSONFeed 1.1' ) ),
+          )
+        ),
+        dt('Webサイト全体'),
+        dd(
+          ul(
+            li( a( { href => 'https://the.kalaclista.com/index.xml' },     'RSS 2.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/atom.xml' },      'Atom 1.0' ) ),
+            li( a( { href => 'https://the.kalaclista.com/jsonfeed.json' }, 'JSONFeed 1.1' ) ),
+          )
+        ),
       ),
 
-      h2('提供されるコンテンツ'),
-
-      p('カラクリスタで提供されるコンテンツは次の通りとなります：'),
-
-      ul(
-        li(
-          a( { href => href( '/posts/', $baseURI ) }, 'ブログ' ),
-          '：一般的なブログ。しっかりした記事を書いている'
-        ),
-        li(
-          a( { href => href( '/echos/', $baseURI ) }, '日記' ),
-          '：いわゆる日記。週報と月報、あと割とラフな記事を載せている'
-        ),
-        li(
-          a( { href => href( '/notes/', $baseURI ) }, 'メモ帳' ),
-          '：個人的なメモっぽいもの。Wiki 感を出したかった（つもり）'
-        ),
+      h2('カラクリスタについて'),
+      p(
+        'カラクリスタは',
+        a( { href => 'https://the.kalaclista.com/nyarla/' }, '『にゃるら』とか『カラクリスタ』と名乗っている岡村直樹' ),
+        'によって運営されているブログや日記、メモ帳をまとめた Web サイトです。'
       ),
-
-      p('またこれらのコンテンツは更新情報を RSS 2.0 や Atom 、 JSONFeed として購読可能なので、良かったら購読をお願いします。'),
-
-      ul(
-        li(
-          'カラクリスタ全体：',
-          '  ',
-          a( { href => href( '/index.xml', $baseURI ) }, 'RSS 2.0' ),
-          '  ',
-          a( { href => href( '/atom.xml', $baseURI ) }, 'Atom' ),
-          '  ',
-          a( { href => href( '/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
-        ),
-
-        li(
-          'ブログ：',
-          '  ',
-          a( { href => href( '/posts/index.xml', $baseURI ) }, 'RSS 2.0' ),
-          '  ',
-          a( { href => href( '/posts/atom.xml', $baseURI ) }, 'Atom' ),
-          '  ',
-          a( { href => href( '/posts/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
-        ),
-
-        li(
-          '日記：',
-          '  ',
-          a( { href => href( '/echos/index.xml', $baseURI ) }, 'RSS 2.0' ),
-          '  ',
-          a( { href => href( '/echos/atom.xml', $baseURI ) }, 'Atom' ),
-          '  ',
-          a( { href => href( '/echos/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
-        ),
-
-        li(
-          'メモ帳：',
-          '  ',
-          a( { href => href( '/notes/index.xml', $baseURI ) }, 'RSS2.0' ),
-          '  ',
-          a( { href => href( '/notes/atom.xml', $baseURI ) }, 'Atom' ),
-          '  ',
-          a( { href => href( '/notes/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
-        )
+      p(
+        'この Web サイトは、過去にあちこちで書き散らしていたコンテンツを一つにまとめにまとめる事によって誕生しました。',
       ),
-
-      h2('運営方針と著作権の云々'),
-      p('このブログの運営方針と著作権やライセンスの云々は次のページで確認できます：'),
-      ul(
-        li( a( { href => href( '/policies/', $baseURI ) }, 'カラクリスタの運営ポリシー' ) ),
-        li( a( { href => href( '/licenses/', $baseURI ) }, 'この Web サイトでのライセンスなどについて' ) ),
+      p('そのため、この Web サイトの記事によっては内容が古くなっていたり、今の時世では適切ではない表現が含まれている場合があります。'),
+      p(
+        'またこの Web サイトが現在の形に至るまでに、ホスティング先の変更やドメインの移動などを繰り返していたため、',
+        'その影響による表示の乱れや崩れなどを確認していますが、現状では修正し切れていないためその点はご了承ください。',
       ),
 
       h2('連絡先'),
-      p('あとこの WebSite も含め私の連絡先は次の通りとなりますが、場合によっては返信しない可能性もあるのでその点はご了承ください。'),
+      p(
+        'このWebサイトについて何か連絡がある際には、下記の連絡先までご連絡ください。',
+        '問合せの内容に基づき対応したいと考えています：',
+      ),
       ul(
-        li(
-          'Email:  ',
-          a(
-            { href => 'mailto:nyarla@kalaclista.com' },
-            'nyarla@kalaclista.com'
-          ),
-        ),
-
-        li(
-          'GoToSocial:  ',
-          a( { href => 'https://kalaclista.com/@nyarla' }, '@nyarla' ),
-        ),
+        li( 'メール - ',       a( { href => 'mailto:nyarla@kalaclista.com' },            'nyarla@kalaclista.com' ) ),
+        li( 'Fediverse - ', a( { href => 'https://kalaclista.com/@nyarla' },          '@nyarla@kalaclista.com' ), ),
+        li( 'Bluesky - ',   a( { href => 'https://bsky.app/profile/kalaclista.com' }, '@kalaclista.com' ) ),
+      ),
+      p(
+        'なお一般的な問合せについては適切に対応したいと考えていますが、',
+        'その時々の体調や問合せの内容によって応答をしない場合もありますので、その点、ご了承ください。'
+      ),
+      p(
+        'また簡易的な連絡は Fediverse か Bluesky を経由した方が早くお答えできる可能性がありますが、',
+        'Fediverse や Bluesky で応答がない、もしくは非公開の連絡を望む場合にはメールでの問合せをお願いします。'
       ),
     ),
   );
