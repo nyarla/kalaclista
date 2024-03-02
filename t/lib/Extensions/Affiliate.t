@@ -27,7 +27,6 @@ sub main {
   my $item = $entry->dom->at('.content__card--affiliate');
 
   ok( $item->at('h2 > a') );
-  ok( $item->at('p > a > img') );
   ok( scalar( $item->find('ul > li > a')->@* ), 2 );
 
   done_testing;

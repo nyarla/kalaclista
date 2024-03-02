@@ -340,7 +340,6 @@ sub content {
       '.content__card--affiliate' => [
         position => 'relative',
         padding  => '0 0 0 1em',
-        height   => '10em',
 
         h2 => [
           fontSize => '1em',
@@ -350,7 +349,8 @@ sub content {
         ],
 
         ul => [
-          paddingLeft => '2em',
+          paddingLeft   => '2em',
+          paddingBottom => '1em',
         ],
 
         p => [
@@ -537,28 +537,6 @@ ${desktop}
   }
 }
 
-\@media (max-width: 460px) {
-  .entry__content .content__card--affiliate {
-    height: 100%;
-  }
-
-  .entry__content .content__card--affiliate p {
-    display: block;
-    float: none;
-    margin: 1em 0;
-    text-align: center;
-    width: 100%;
-  }
-
-  .entry__content .content__card--affiliate ul {
-    text-align: center;
-    padding: 0;
-  }
-
-  .entry__content .content__card--affiliate ul li {
-    list-style: none;
-  }
-}
 
 \@media (max-width: 360px) {
   main #section {

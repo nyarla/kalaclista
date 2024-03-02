@@ -16,6 +16,7 @@ use WebSite::Context;
 sub key {
   my $key = shift;
 
+  $key =~ s{​}{}g;
   $key =~ s{[^\p{InHiragana}\p{InKatakana}\p{InCJKUnifiedIdeographs}a-zA-Z0-9\-_]}{_}g;
   $key =~ s{_+}{_}g;
 
@@ -53,9 +54,6 @@ sub replace {
 
   my $html = q{};
   $html .= h2( a( { href => $primary->link }, $primary->label ) );
-  $html .= p(
-    raw( $primary->image ),
-  );
   $html .= ul( map { linkify($_) } @shops );
 
   $aside->innerHTML($html);
