@@ -18,7 +18,7 @@ sub main {
   my $path  = 'posts/2021/11/01/121434';
   my $entry = Kalaclista::Entry->new(
     href => URI::Fast->new("https://the.kalaclista.com/${path}/"),
-    src  => $c->entries->parent->child("precompiled/${path}.md")->get,
+    src  => $c->entries->parent->child("precompiled/${path}.md")->load,
     path => $c->entries->child("${path}.md"),
   );
 

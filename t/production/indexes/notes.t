@@ -20,7 +20,7 @@ sub main {
   my $file = WebSite::Context->init(qr{^t$})->dist('notes/index.html');
   my $href = "https://the.kalaclista.com/notes/";
 
-  my $html = $file->get;
+  my $html = $file->load;
   utf8::decode($html);
 
   my $dom = $parser->parse($html);

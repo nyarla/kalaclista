@@ -193,7 +193,7 @@ sub testing_page_on_permalink {
   );
 
   my $c       = WebSite::Context->instance;
-  my $content = $c->entries->parent->child("precompiled/posts/2022/01/05/131308.md")->get;
+  my $content = $c->entries->parent->child("precompiled/posts/2022/01/05/131308.md")->load;
   utf8::decode($content);
 
   my $entry = Kalaclista::Entry->new(

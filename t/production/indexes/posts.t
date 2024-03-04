@@ -27,7 +27,7 @@ sub main {
     $href =~ s{.+?(\d{4})/index\.html$}{https://the.kalaclista.com/posts/$1/};
 
     my $file = Kalaclista::Path->new( path => $path );
-    my $html = $file->get;
+    my $html = $file->load;
     utf8::decode($html);
 
     my $dom = $parser->parse($html);
@@ -177,7 +177,7 @@ sub main {
   my $file = WebSite::Context->init(qr{^t$})->dist('posts/index.html');
   my $href = "https://the.kalaclista.com/posts/";
 
-  my $html = $file->get;
+  my $html = $file->load;
   utf8::decode($html);
 
   my $dom = $parser->parse($html);

@@ -155,7 +155,7 @@ sub compile {
 
   system(@cmd);
 
-  my $html = $out->get;
+  my $html = $out->load;
   $html =~ s{\n+}{\n}g;
 
   utf8::decode($html);
@@ -180,7 +180,7 @@ sub doing {
   my $entry  = shift;
   my $prefix = c->entries->parent->child('precompiled');
   my $data   = c->entries->parent->child('code');
-  my $dom    = parser->parse( $prefix->child($entry)->get )->at('body');
+  my $dom    = parser->parse( $prefix->child($entry)->load )->at('body');
 
   my $idx = 1;
   for my $el ( $dom->find('pre > code[class]')->@* ) {

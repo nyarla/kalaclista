@@ -26,7 +26,7 @@ sub main {
     $href =~ s{.+?/([^/]+)/index\.html$}{https://the.kalaclista.com/$1/};
 
     my $file = Kalaclista::Path->new( path => $path );
-    my $html = $file->get;
+    my $html = $file->load;
     utf8::decode($html);
 
     my $dom = $parser->parse($html);

@@ -18,7 +18,7 @@ my $instance = WebSite::Context->init(qr{^t$});
 sub main {
   my $path  = 'posts/2022/07/24/121254';
   my $entry = Kalaclista::Entry->new(
-    src => $instance->entries->parent->child("precompiled/${path}.md")->get,
+    src => $instance->entries->parent->child("precompiled/${path}.md")->load,
   );
 
   $entry->add_transformer( sub { WebSite::Extensions::Affiliate->transform(@_) } );

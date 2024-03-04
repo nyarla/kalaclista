@@ -86,12 +86,12 @@ sub main {
 
   for my $section (qw(posts echos notes)) {
     my $feed = $dist->child("${section}/index.xml");
-    my $xml  = XML::LibXML->load_xml( string => $feed->get );
+    my $xml  = XML::LibXML->load_xml( string => $feed->load );
 
     testing_feed( $section, $xml, $data->{$section} );
   }
 
-  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/index.xml')->get ), $data->{'pages'} );
+  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/index.xml')->load ), $data->{'pages'} );
 
   done_testing;
 }

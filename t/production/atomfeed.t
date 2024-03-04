@@ -117,11 +117,11 @@ sub main {
   };
 
   for my $section (qw(posts echos notes)) {
-    my $xml = XML::LibXML->load_xml( string => $dist->child("${section}/atom.xml")->get );
+    my $xml = XML::LibXML->load_xml( string => $dist->child("${section}/atom.xml")->load );
     testing_feed( $section, $xml, $data->{$section} );
   }
 
-  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/atom.xml')->get ), $data->{'pages'} );
+  testing_feed( 'pages', XML::LibXML->load_xml( string => $dist->child('/atom.xml')->load ), $data->{'pages'} );
 
   done_testing;
 }

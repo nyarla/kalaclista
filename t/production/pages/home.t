@@ -16,7 +16,7 @@ local $ENV{'KALACLISTA_ENV'} = 'production';
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $html = WebSite::Context->init(qr{^t$})->dist('index.html')->get;
+  my $html = WebSite::Context->init(qr{^t$})->dist('index.html')->load;
   utf8::decode($html);
   my $dom = $parser->parse($html);
 

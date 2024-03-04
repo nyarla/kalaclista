@@ -16,7 +16,7 @@ my $dist   = WebSite::Context->init(qr{^t$})->dist;
 my $parser = HTML5::DOM->new( { scripts => 1 } );
 
 sub main {
-  my $html = $dist->child('404.html')->get;
+  my $html = $dist->child('404.html')->load;
   utf8::decode($html);
 
   my $dom = $parser->parse($html);

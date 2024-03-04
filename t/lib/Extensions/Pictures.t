@@ -18,7 +18,7 @@ my $c = WebSite::Context->init(qr{^t$});
 
 sub entry {
   my $path    = shift;
-  my $content = $c->entries->parent->child("precompiled/${path}.md")->get;
+  my $content = $c->entries->parent->child("precompiled/${path}.md")->load;
   utf8::encode($content);
 
   my $entry = Kalaclista::Entry->new(

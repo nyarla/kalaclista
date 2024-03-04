@@ -100,13 +100,13 @@ sub main {
   };
 
   for my $section (qw(posts echos notes)) {
-    my $jsonfeed = $dist->child("${section}/jsonfeed.json")->get;
+    my $jsonfeed = $dist->child("${section}/jsonfeed.json")->load;
     my $json     = decode_json($jsonfeed);
 
     testing_feed( $section, $json, $data->{$section} );
   }
 
-  testing_feed( 'pages', decode_json( $dist->child("/jsonfeed.json")->get ), $data->{'pages'} );
+  testing_feed( 'pages', decode_json( $dist->child("/jsonfeed.json")->load ), $data->{'pages'} );
 
   done_testing;
 }

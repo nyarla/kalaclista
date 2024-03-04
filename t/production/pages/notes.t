@@ -28,7 +28,7 @@ sub main {
     $href =~ s{.+?notes/([^/]+)/index\.html$}{"https://the.kalaclista.com/notes/" . uri_escape_utf8($1) . "/"}e;
 
     my $file = Kalaclista::Path->new( path => $path );
-    my $html = $file->get;
+    my $html = $file->load;
     utf8::decode($html);
 
     my $dom = $parser->parse($html);

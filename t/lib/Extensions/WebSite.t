@@ -16,7 +16,7 @@ my $context = WebSite::Context->init(qr{^t$});
 sub main {
   my $path  = 'notes/NERDFonts';
   my $entry = Kalaclista::Entry->new(
-    src  => $context->entries->parent->child("precompiled/${path}.md")->get,
+    src  => $context->entries->parent->child("precompiled/${path}.md")->load,
     href => URI::Fast->new("https://the.kalaclista.com/${path}/"),
   );
 
