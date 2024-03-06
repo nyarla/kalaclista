@@ -1,43 +1,57 @@
 package WebSite::Extensions::Furigana;
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
-sub transform {
-  my ( $class, $entry ) = @_;
+use Exporter::Lite;
 
-  for my $node ( $entry->dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
-    my $html = $node->innerHTML;
-    $html =~ s<[{]([^}]+)[}]><furigana($1)>eg;
+our @EXPORT_OK = qw(furigana apply);
 
-    $node->innerHTML($html);
-  }
-
-  return $entry;
-}
-
-sub furigana {
+sub furigana : prototype($) {
   my $src = shift;
-  $src =~ s{<wbr>}{}g;
+  $src =~ s{​}{}g;
 
   my @text = split qr([|]), $src;
 
   my $rb = shift @text;
   if ( @text == 1 ) {
-    return qq(<ruby>$rb<rt>@text</rt></ruby>);
+    return qq|<ruby>$rb<rt>@text</rt></ruby>|;
   }
 
-  my @rb  = split qr{}, $rb;
-  my $out = q{};
+  my @rb = split qr{}, $rb;
+  my $out;
   while ( @rb > 0 ) {
     my $t = shift @rb;
     my $r = shift @text // q{};
 
-    $out .= qq{$t<rp>（</rp><rt>$r</rt><rp>）</rp>};
+    $out .= qq|$t<rp>（</rp><rt>$r</rt><rp>）</rp>|;
   }
 
-  return "<ruby>${out}</ruby>";
+  return qq|<ruby>${out}</ruby>|;
+}
+
+sub apply {
+  my $dom = shift;
+
+  for my $node ( $dom->find('h1, h2, h3, h4, h5, h6, p, li, dt, dd')->@* ) {
+    my $html = $node->innerHTML;
+    $html =~ s<[{]([^}]+)[}]><furigana($1)>eg;
+
+    $node->innerHTML($html);
+  }
+}
+
+sub transform {
+  my ( $class, $entry ) = @_;
+
+  if ( defined $entry->dom && $entry->dom isa 'HTML5::DOM::Element' ) {
+    my $dom = $entry->dom->clone(1);
+    apply($dom);
+
+    return $entry->clone( dom => $dom );
+  }
+
+  return $entry;
 }
 
 1;
