@@ -17,10 +17,10 @@ use WebSite::Context::Path qw(srcdir);
 use WebSite::Context::URI  qw(href);
 
 use WebSite::Extensions::AdjustHeading;
-use WebSite::Extensions::Affiliate;
-use WebSite::Extensions::CodeSyntax;
+use WebSite::Extensions::CodeHighlight;
 use WebSite::Extensions::Furigana;
 use WebSite::Extensions::Picture;
+use WebSite::Extensions::Products;
 use WebSite::Extensions::WebSite;
 
 our @EXPORT    = qw(prop entry entries);
@@ -28,11 +28,11 @@ our @EXPORT_OK = ( @EXPORT, qw(fixup) );
 
 my @transformers = qw(
   WebSite::Extensions::AdjustHeading
-  WebSite::Extensions::CodeSyntax
+  WebSite::Extensions::CodeHighlight
   WebSite::Extensions::Picture
   WebSite::Extensions::Furigana
   WebSite::Extensions::WebSite
-  WebSite::Extensions::Affiliate
+  WebSite::Extensions::Products
 );
 
 my sub dom : prototype($) { state $p ||= HTML5::DOM->new; $p->parse(shift)->body }
@@ -109,10 +109,9 @@ sub entry : prototype($) {
 
   $entry = $entry->clone( src => $content, dom => $dom );
 
-  # TODO: Temporary comment out by fix to extensions
-  # for my $transformer (@transformers) {
-  #   $entry = $transformer->transform($entry);
-  # }
+  for my $transformer (@transformers) {
+    $entry = $transformer->transform($entry);
+  }
 
   return $entry;
 }
