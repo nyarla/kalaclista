@@ -5,11 +5,7 @@ use utf8;
 
 use feature qw(state);
 
-BEGIN {
-  if ( exists $ENV{'HARNESS_ACTIVE'} ) {
-    use Test2::V0;
-  }
-}
+use Test2::V0;
 
 use YAML::XS qw(DumpFile LoadFile);
 
