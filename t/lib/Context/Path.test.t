@@ -14,7 +14,7 @@ subtest $stage => sub {
 
   diag rootdir->to_string;
 
-  subtest distdir  => sub { is distdir->path,  rootdir->child("dist/${stage}")->to_string };
+  subtest distdir  => sub { is distdir->path,  rootdir->child("public/${stage}")->to_string };
   subtest cachedir => sub { is cachedir->path, rootdir->child("cache/${stage}")->to_string };
 
   subtest srcdir => sub {

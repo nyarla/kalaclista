@@ -15,10 +15,10 @@ our @EXPORT = qw( rootdir distdir cachedir srcdir);
 
 sub distdir {
   state $dir ||=
-        env->production  ? rootdir->child('dist/production')
-      : env->development ? rootdir->child('dist/development')
-      : env->staging     ? rootdir->child('dist/staging')
-      :                    rootdir->child('dist/test');
+        env->production  ? rootdir->child('public/production')
+      : env->development ? rootdir->child('public/development')
+      : env->staging     ? rootdir->child('public/staging')
+      :                    rootdir->child('public/test');
 
   return $dir;
 }
