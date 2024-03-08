@@ -1,74 +1,45 @@
 #!/usr/bin/env perl
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
 use Test2::V0;
-use URI::Fast;
 use HTML5::DOM;
 
 use Kalaclista::Data::Page;
 
-use WebSite::Widgets::Title;
-
 use WebSite::Context;
-local $ENV{'KALACLISTA_ENV'} = 'production';
-WebSite::Context->init(qr{^t$});
-WebSite::Context->instance->sections(
-  posts => { label => 'ブログ' },
-  echos => { label => '日記' },
-  notes => { label => 'メモ帳' },
-);
+use WebSite::Context::URI   qw(href);
+use WebSite::Widgets::Title qw(banner);
 
-my $parser = HTML5::DOM->new();
+my sub dom : prototype($) { state $dom ||= HTML5::DOM->new; $dom->parse(shift)->body }
 
-sub parse {
-  my $html = shift;
-  utf8::decode($html);
-  return $parser->parse($html)->at('body');
-}
+subtest title => sub {
+  my $c = WebSite::Context->init(qr{^t$});
 
-sub main {
-  my $page   = Kalaclista::Data::Page->new;
-  my $banner = banner($page);
-  my $dom    = parse($banner);
+  for my $section (qw(posts echos notes home)) {
+    my $page = Kalaclista::Data::Page->new( section => $section );
+    my $html = banner($page);
+    utf8::decode($html);
+    my $dom  = dom $html;
+    my $path = $section ne q{home} ? "${section}/" : "";
 
-  is( $dom->at('nav')->getAttribute('id'),      'global' );
-  is( scalar $dom->find('#global > p > a')->@*, 1 );
+    is $dom->at('nav')->attr('id'), 'global';
 
-  is(
-    $dom->at('#global > p > a')->getAttribute('href'),
-    'https://the.kalaclista.com/'
-  );
+    is $dom->at('#global > p > a')->attr('href'),         href('/')->to_string;
+    is $dom->at('#global > p > a > img')->attr('src'),    href('/assets/avatar.svg')->to_string;
+    is $dom->at('#global > p > a > img')->attr('width'),  50;
+    is $dom->at('#global > p > a > img')->attr('height'), 50;
 
-  is(
-    $dom->at('#global > p > a > img')->getAttribute('src'),
-    'https://the.kalaclista.com/assets/avatar.svg'
-  );
-
-  is( $dom->at('#global > p > a > img')->getAttribute('width'),  50 );
-  is( $dom->at('#global > p > a > img')->getAttribute('height'), 50 );
-
-  for my $section (qw(posts echos notes)) {
-    $page = Kalaclista::Data::Page->new( section => $section );
-
-    $dom = parse( banner($page) );
-
-    is( $dom->at('#global > p > span')->innerText, '→' );
-
-    is(
-      $dom->at('#global > p > a:last-child')->getAttribute('href'),
-      "https://the.kalaclista.com/${section}/",
-    );
-
-    is(
-      $dom->at('#global > p > a:last-child')->innerText,
-      Kalaclista::Context->instance->sections->{$section}->label,
-    );
+    if ( $section ne q{home} ) {
+      is $dom->at('#global > p > span')->textContent,          '→';
+      is $dom->at('#global > p > a:last-child')->attr('href'), href("/${path}")->to_string;
+      is $dom->at('#global > p > a:last-child')->textContent,  $c->sections->{$section}->label;
+    }
+    else {
+      is scalar( $dom->find('#global > p a')->@* ), 1;
+    }
   }
+};
 
-  done_testing;
-}
-
-main;
+done_testing;
