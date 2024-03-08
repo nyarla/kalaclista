@@ -1,7 +1,6 @@
 package WebSite::Widgets::Info;
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
 use feature qw(state);
@@ -10,26 +9,20 @@ use Exporter::Lite;
 
 our @EXPORT = qw(siteinfo);
 
-use Kalaclista::HyperScript    qw(p footer raw);
-use WebSite::Helper::Hyperlink qw(hyperlink href);
+use Kalaclista::HyperScript qw(p footer a);
 
-use WebSite::Context;
+use WebSite::Context::URI qw(href);
 
 sub siteinfo {
-  state $result;
-  return $result if ( defined $result );
-
-  my $baseURI = WebSite::Context->instance->baseURI;
-
-  $result = footer(
+  state $info ||= footer(
     { id => 'copyright' },
     p(
-      '(c) 2006-' . ( (localtime)[5] + 1900 ) . ' ',
-      hyperlink( 'OKAMURA Naoki aka nyarla', href( '/nyarla/', $baseURI ) )
-    )
+      "(c) 2006-@{[ (localtime)[5] + 1900 ]} ",
+      a( { href => href('/nyarla/')->to_string }, 'OKAMURA Naoki aka nyarla' ),
+    ),
   );
 
-  return $result;
+  return $info;
 }
 
 1;
