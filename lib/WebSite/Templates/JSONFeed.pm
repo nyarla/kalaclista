@@ -7,20 +7,19 @@ use utf8;
 use JSON::XS;
 
 use WebSite::Context;
-use WebSite::Helper::Hyperlink qw(href);
+use WebSite::Context::URI qw(href);
 
 my $jsonify = JSON::XS->new->utf8->canonical(1);
 
 sub render {
   my $page    = shift;
   my $c       = WebSite::Context->instance;
-  my $baseURI = $c->baseURI;
   my $section = $page->section;
   my $prefix  = $section eq 'pages' ? ''          : "${section}";
   my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
 
-  my $href    = href( "${prefix}/",              $baseURI );
-  my $feed    = href( "${prefix}/jsonfeed.json", $baseURI );
+  my $href    = href "${prefix}/";
+  my $feed    = href "${prefix}/jsonfeed.json";
   my @entries = $page->entries->@*;
 
   my $data = {
@@ -37,13 +36,13 @@ sub render {
       }
     ],
     language      => 'ja_JP',
-    home_page_url => $href,
-    feed_url      => $feed,
+    home_page_url => $href->to_string,
+    feed_url      => $feed->to_string,
     items         => [
       map {
         +{
-          id             => $_->href . '',
-          url            => $_->href . '',
+          id             => $_->href->to_string,
+          url            => $_->href->to_string,
           title          => $_->title,
           content_html   => $_->dom->innerHTML,
           date_published => $_->date,
