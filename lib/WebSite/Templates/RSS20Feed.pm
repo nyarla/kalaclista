@@ -8,20 +8,20 @@ use Kalaclista::HyperScript qw(h);
 use Time::Moment;
 
 use WebSite::Context;
-use WebSite::Helper::Hyperlink qw(href);
+use WebSite::Context::URI qw(href);
 
 my $format = '%a %m %b %Y %T %z';
 
 sub render {
   my $page    = shift;
   my $c       = WebSite::Context->instance;
-  my $baseURI = $c->baseURI;
   my $section = $page->section;
   my $prefix  = $section eq 'pages' ? ''          : "/${section}";
   my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
 
-  my $href    = href( "${prefix}/",          $baseURI );
-  my $feed    = href( "${prefix}/index.xml", $baseURI );
+  my $href = href "${prefix}/";
+  my $feed = href "${prefix}/index.xml";
+
   my @entries = $page->entries->@*;
 
   return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . h(
@@ -30,8 +30,8 @@ sub render {
     h(
       channel => h( title => $website->title ),
       h( link => $feed ),
-      h( 'atom:link', { href => $href, type => 'application/rss+xml' } ),
-      h( 'atom:link', { href => $feed, rel  => 'self' } ),
+      h( 'atom:link', { href => $href->to_string, type => 'application/rss+xml' } ),
+      h( 'atom:link', { href => $feed->to_string, rel  => 'self' } ),
       h( description    => $website->summary ),
       h( managingEditor => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
       h( webMaster      => 'OKAMURA Naoki aka nyarla (nyarla@kalaclista.com)' ),
@@ -42,9 +42,9 @@ sub render {
           h(
             item => [
               h( title       => $_->title ),
-              h( link        => $_->href ),
+              h( link        => $_->href->to_string ),
               h( pubDate     => Time::Moment->from_string( $_->updated )->strftime($format) ),
-              h( guid        => $_->href ),
+              h( guid        => $_->href->to_string ),
               h( description => $_->dom->innerHTML ),
             ]
           )
