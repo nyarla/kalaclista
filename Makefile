@@ -24,9 +24,6 @@ css: .test-in-shell .test-set-stage
 	@echo generate css
 	@perl bin/compile-css.pl
 
-css-test: .test-in-shell .test-set-stage
-	@prove bin/compile-css.pl
-
 images: .test-in-shell .test-set-stage
 	@echo generate webp
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
@@ -36,9 +33,6 @@ images: .test-in-shell .test-set-stage
 		| sed 's#*$(ROOTDIR)/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum
-
-images-test: .test-in-shell .test-set-stage
-	@prove bin/compile-webp.pl
 
 entries: .test-in-shell .test-set-stage
 	@echo generate precompiled entries source
@@ -55,10 +49,6 @@ entries: .test-in-shell .test-set-stage
 		| xargs -I{} -P$(FULL) perl bin/compile-syntax-highlight.pl "{}"
 	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
 	@rm $(CACHEDIR)/entries/target
-
-website: .test-in-shell .test-set-stage
-	@echo generate website.json
-	@perl bin/compile-website-yaml.pl
 
 assets: .test-in-shell .test-set-stage
 	@echo copy assets
@@ -123,10 +113,8 @@ ci: .test-in-shell
 	@env KALACLISTA_ENV=test $(MAKE) test-scripts
 	@env KALACLISTA_ENV=test $(MAKE) clean
 	@env KALACLISTA_ENV=test $(MAKE) gen
-	# TODO: wait for improve test $(MAKE)s
-	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Context.t
-	@env KALACLISTA_ENV=test prove -j$(FULL) -r t/common
-	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
+	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/lib
+	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/common
 
 .PHONY: shell serve up
 
