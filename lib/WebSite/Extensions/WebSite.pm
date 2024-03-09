@@ -59,7 +59,7 @@ sub apply : prototype($) {
 
 sub transform {
   my ( $class, $entry ) = @_;
-  return $entry unless defined $entry->dom && $entry isa 'HTML5::DOM::Element';
+  return $entry unless defined $entry->dom && $entry->dom isa 'HTML5::DOM::Element';
 
   my $dom = $entry->dom->clone(1);
   apply $dom;

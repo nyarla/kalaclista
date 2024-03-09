@@ -87,6 +87,24 @@ subtest apply => sub {
   is $dom->at('.content__card--website.gone div > p > cite')->textContent, 'https://example.com/foo/bar';
 };
 
-subtest transform => sub { ok(1) };
+subtest transform => sub {
+  my $entry  = entry;
+  my $expect = WebSite::Extensions::WebSite->transform($entry);
+
+  is $entry, $expect;
+
+  $entry = $entry->clone( dom => dom(<<'...') );
+<ul>
+  <li><a href="https://example.com">これはテストです</a></li>
+</ul>
+...
+  $entry = WebSite::Extensions::WebSite->transform($entry);
+
+  isnt $entry, $expect;
+
+  is $entry->dom->at('.content__card--website a > h2')->textContent, 'これはテストです';
+  is $entry->dom->at('.content__card--website a')->attr('href'),     'https://example.com';
+
+};
 
 done_testing;
