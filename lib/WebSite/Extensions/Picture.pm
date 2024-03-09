@@ -17,6 +17,9 @@ our @EXPORT_OK = qw(file src mkGif mkWebP apply);
 
 my sub load {
   my $path = cachedir->child('images')->child(shift)->path;
+
+  utf8::decode($path);
+
   return undef if !-e $path;
   return LoadFile($path);
 }
