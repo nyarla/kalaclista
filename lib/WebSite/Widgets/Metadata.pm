@@ -108,6 +108,9 @@ sub cardinfo : prototype($$$) {
       ? join( q{ - }, $page->title, $website->title )
       : $website->title;
 
+  my $jsonld = encode_json( jsonld( $page->kind, $page, $website ) );
+  utf8::decode($jsonld);
+
   return (
     title($title),
     meta( { name => 'description', content => ( $kind eq 'permalink' ? $page->summary : $website->summary ) } ),
@@ -141,7 +144,7 @@ sub cardinfo : prototype($$$) {
     meta( { name => 'twitter:description', content => ( $kind eq 'permalink' ? $page->summary : $website->summary ) } ),
     meta( { name => 'twitter:image',       content => $avatar } ),
 
-    script( { type => 'application/ld+json' }, raw( encode_json( jsonld( $page->kind, $page, $website ) ) ) ),
+    script( { type => 'application/ld+json' }, raw($jsonld) ),
   );
 
 }
