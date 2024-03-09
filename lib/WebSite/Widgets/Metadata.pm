@@ -8,7 +8,7 @@ use feature qw(state);
 use Exporter::Lite;
 use JSON::XS qw(encode_json);
 
-use Kalaclista::HyperScript qw|meta link_ title script raw|;
+use Kalaclista::HyperScript qw|head meta link_ title script style raw|;
 
 use WebSite::Context;
 use WebSite::Context::URI qw(href);
@@ -154,7 +154,7 @@ sub common {
     rel( icon       => href('/favicon.ico')->to_string ),
     rel( icon       => href('/icon.svg')->to_string, 'image/svg+xml' ),
     rel( author     => 'http://www.hatena.ne.jp/nyarla-net/' ),
-    rel( stylesheet => href("/main-@{[ digest('lib/WebSite/Templates/Stylesheet.pm') ]}")->to_string )
+    rel( stylesheet => href("/main-@{[ digest('lib/WebSite/Templates/Stylesheet.pm') ]}.css")->to_string )
   ];
 
   return $html->@*;
@@ -215,12 +215,18 @@ sub headers {
       ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
       ? $c->sections->{ $page->section }
       : $c->website;
-  my $title = ( $page->kind eq q|permalink| ) ? $page->titke : $website->title;
+  my $title = ( $page->kind eq q|permalink| ) ? $page->title : $website->title;
   my $href  = $page->href;
+
+  my @css;
+  if ( $page->kind eq 'permalink' && exists $page->entries->[0]->meta->{'css'} && $page->entries->[0]->meta->{'css'} ) {
+    push @css, $page->entries->[0]->meta->{'css'}->@*;
+  }
 
   return (
     cardinfo( $page->kind, $page, $website ),
     feeds( $page->section ),
+    ( @css > 0 ? style( raw(@css) ) : () ),
   );
 }
 

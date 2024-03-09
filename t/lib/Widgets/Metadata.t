@@ -296,7 +296,8 @@ subtest common => sub {
   is $dom->at('link[rel="icon"][type]')->attr('href'),       href('/icon.svg')->to_string;
   is $dom->at('link[rel="icon"][type]')->attr('type'),       'image/svg+xml';
   is $dom->at('link[rel="author"]')->attr('href'),           'http://www.hatena.ne.jp/nyarla-net/';
-  is $dom->at('link[rel="stylesheet"]')->attr('href'), href(qq|/main-@{[ digest("lib/WebSite/Templates/Stylesheet.pm") ]}|)->to_string;
+  is $dom->at('link[rel="stylesheet"]')->attr('href'),
+      href(qq|/main-@{[ digest("lib/WebSite/Templates/Stylesheet.pm") ]}.css|)->to_string;
 };
 
 subtest feeds => sub {
