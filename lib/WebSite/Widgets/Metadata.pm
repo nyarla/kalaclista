@@ -108,18 +108,24 @@ sub cardinfo : prototype($$$) {
       ? join( q{ - }, $page->title, $website->title )
       : $website->title;
 
+  my $summary =
+      $kind eq 'permalink'
+      ? ( $page->summary ne q{} ? $page->summary : ( $page->entries->[0]->dom->at('*:first-child')->text =~ m{^(.{,70})} )[0] . '……' )
+      : $website->summary;
+  $summary =~ s{​}{}g;
+
   my $jsonld = encode_json( jsonld( $page->kind, $page, $website ) );
   utf8::decode($jsonld);
 
   return (
     title($title),
-    meta( { name => 'description', content => ( $kind eq 'permalink' ? $page->summary : $website->summary ) } ),
+    meta( { name => 'description', content => $summary } ),
 
     meta( { property => 'og:title',       content => $page->title } ),
     meta( { property => 'og:site_name',   content => $website->title } ),
     meta( { property => 'og:image',       content => $avatar } ),
     meta( { property => 'og:url',         content => $page->href->to_string } ),
-    meta( { property => 'og:description', content => ( $kind eq 'permalink' ? $page->summary : $website->summary ) } ),
+    meta( { property => 'og:description', content => $summary } ),
     meta( { property => 'og:locale',      content => 'ja_JP' } ),
 
     (
@@ -141,7 +147,7 @@ sub cardinfo : prototype($$$) {
     meta( { name => 'twitter:card',        content => 'summary' } ),
     meta( { name => 'twitter:site',        content => '@kalaclista' } ),
     meta( { name => 'twitter:title',       content => $title } ),
-    meta( { name => 'twitter:description', content => ( $kind eq 'permalink' ? $page->summary : $website->summary ) } ),
+    meta( { name => 'twitter:description', content => $summary } ),
     meta( { name => 'twitter:image',       content => $avatar } ),
 
     script( { type => 'application/ld+json' }, raw($jsonld) ),
