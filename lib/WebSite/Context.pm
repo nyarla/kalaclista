@@ -19,8 +19,8 @@ class WebSite::Context : isa(Kalaclista::Context) {
     my $stage = exists $ENV{'KALACLISTA_ENV'} ? $ENV{'KALACLISTA_ENV'} : exists $ENV{'HARNESS_ACTIVE'} ? 'test'  : 'development';
     my $on    = exists $ENV{'CI'}             ? 'ci'                   : exists $ENV{'IN_PERL_SHELL'}  ? 'local' : 'runtime';
     my $env   = Kalaclista::Context::Environment->new(
-      environment => $stage,
-      on          => $on,
+      stage => $stage,
+      on    => $on,
     );
 
     my $baseURI =
@@ -43,31 +43,38 @@ class WebSite::Context : isa(Kalaclista::Context) {
 
     my $src = ( !$env->test ) ? q{src} : q{t/fixtures};
 
+    my $href = URI::Fast->new($baseURI);
+    my sub href {
+      my $new = $href->clone;
+      $new->path(shift);
+      return $new;
+    }
+
     my $website = Kalaclista::Data::WebSite->new(
-      label     => 'カラクリスタ',
-      title     => 'カラクリスタ',
-      summary   => '『輝かしい青春』なんて失かった人の Web サイトです',
-      permalink => ( $baseURI . '/' ),
+      label   => 'カラクリスタ',
+      title   => 'カラクリスタ',
+      summary => '『輝かしい青春』なんて失かった人の Web サイトです',
+      href    => href(''),
     );
 
     my $sections = {
       posts => Kalaclista::Data::WebSite->new(
-        label     => 'ブログ',
-        title     => 'カラクリスタ・ブログ',
-        summary   => '『輝かしい青春』なんて失かった人のブログです',
-        permalink => ( $baseURI . '/posts/' ),
+        label   => 'ブログ',
+        title   => 'カラクリスタ・ブログ',
+        summary => '『輝かしい青春』なんて失かった人のブログです',
+        href    => href('/posts/'),
       ),
       echos => Kalaclista::Data::WebSite->new(
-        label     => '日記',
-        title     => 'カラクリスタ・エコーズ',
-        summary   => '『輝かしい青春』なんて失かった人の日記です',
-        permalink => ( $baseURI . '/echos/' ),
+        label   => '日記',
+        title   => 'カラクリスタ・エコーズ',
+        summary => '『輝かしい青春』なんて失かった人の日記です',
+        href    => href('/echos/'),
       ),
       notes => Kalaclista::Data::WebSite->new(
-        label     => 'メモ帳',
-        title     => 'カラクリスタ・ノート',
-        summary   => '『輝かしい青春』なんて失かった人のメモ帳です',
-        permalink => ( $baseURI . '/notes/' ),
+        label   => 'メモ帳',
+        title   => 'カラクリスタ・ノート',
+        summary => '『輝かしい青春』なんて失かった人のメモ帳です',
+        href    => href('/notes/'),
       ),
     };
 
