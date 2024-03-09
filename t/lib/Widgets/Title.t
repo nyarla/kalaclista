@@ -17,7 +17,7 @@ my sub dom : prototype($) { state $dom ||= HTML5::DOM->new; $dom->parse(shift)->
 subtest title => sub {
   my $c = WebSite::Context->init(qr{^t$});
 
-  for my $section (qw(posts echos notes home)) {
+  for my $section (qw(posts echos notes pages)) {
     my $page = Kalaclista::Data::Page->new( section => $section );
     my $html = banner($page);
     utf8::decode($html);
@@ -31,7 +31,7 @@ subtest title => sub {
     is $dom->at('#global > p > a > img')->attr('width'),  50;
     is $dom->at('#global > p > a > img')->attr('height'), 50;
 
-    if ( $section ne q{home} ) {
+    if ( $section ne q{pages} ) {
       is $dom->at('#global > p > span')->textContent,          '→';
       is $dom->at('#global > p > a:last-child')->attr('href'), href("/${path}")->to_string;
       is $dom->at('#global > p > a:last-child')->textContent,  $c->sections->{$section}->label;
