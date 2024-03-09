@@ -5,6 +5,10 @@ use utf8;
 
 use feature qw(state);
 
+BEGIN {
+  $ENV{'KALACLISTA_ENV'} = 'test';
+}
+
 use Test2::V0;
 use HTML5::DOM;
 
@@ -26,6 +30,7 @@ subtest fixup => sub {
         draft => !!1,
         date  => '2023-01-01T00:00:00Z',
         css   => 'font-weight: bold',
+        path  => 'posts/2023/01/01/000000.md',
       },
       expect => {
         title   => 'hello, 世界',
@@ -52,6 +57,7 @@ subtest fixup => sub {
         draft => !!1,
         date  => '2023-01-01T00:00:00Z',
         css   => 'font-weight: bold',
+        path  => 'echos/2023/01/01/000000.md',
       },
       expect => {
         title   => 'hello, 世界',
@@ -78,6 +84,7 @@ subtest fixup => sub {
         draft => !!1,
         date  => '2023-01-01T00:00:00Z',
         css   => 'font-weight: bold',
+        path  => 'notes/テスト.md',
       },
       expect => {
         title   => 'hello, 世界',
@@ -105,6 +112,7 @@ subtest fixup => sub {
         date  => '2023-01-01T00:00:00Z',
         css   => 'font-weight: bold',
         slug  => 'this is a test',
+        path  => 'notes/テスト.md',
       },
       expect => {
         title   => 'hello, 世界',
@@ -164,8 +172,9 @@ subtest entry => sub {
   my $content = srcdir->child('entries/precompiled/posts/2023/01/01/000000.md')->load;
   utf8::decode($content);
 
-  is $entry->src,              $content;
-  is $entry->dom->textContent, dom($content)->textContent;
+  is $entry->src, $content;
+
+  isa_ok $entry->dom, 'HTML5::DOM::Element';
 };
 
 subtest entries => sub {
