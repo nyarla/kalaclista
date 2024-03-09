@@ -26,7 +26,7 @@ sub type : prototype($$) {
     return q|Article|     if $section eq q|notes|;
     return q|WebPage|;
   }
-  elsif ( $kind eq q|index| ) {
+  elsif ( $kind eq q|index| || $kind eq q|home| ) {
     return q|Blog| if $section eq q|posts| || $section eq q|echos|;
     return q|WebSite|;
   }
@@ -184,7 +184,7 @@ sub jsonld {
     image      => href('/assets/avatar.png')->to_string,
   };
 
-  if ( $kind eq 'permalink' ) {
+  if ( $kind ne 'home' ) {
     $self->{'mainEntityOfPage'} = $website->href->to_string;
   }
 

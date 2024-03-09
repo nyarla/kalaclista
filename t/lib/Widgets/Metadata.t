@@ -37,6 +37,11 @@ subtest type => sub {
     { kind => 'index', section => 'echos', expect => 'Blog' },
     { kind => 'index', section => 'notes', expect => 'WebSite' },
     { kind => 'index', section => 'pages', expect => 'WebSite' },
+
+    { kind => 'home', section => 'posts', expect => 'Blog' },
+    { kind => 'home', section => 'echos', expect => 'Blog' },
+    { kind => 'home', section => 'notes', expect => 'WebSite' },
+    { kind => 'home', section => 'pages', expect => 'WebSite' },
   ];
 
   for my $test ( $tests->@* ) {
@@ -159,10 +164,12 @@ subtest cardinfo => sub {
         [qw|permalink echos /2023/01/01/000000/|],
         [qw|permalink notes /this-is-a-test/|],
         [qw|permalink pages /nyarla/|],
-        [qw|index posts /posts/|],
-        [qw|index echos /echos/|],
-        [qw|index notes /notes/|],
-        [qw|index pages /|],
+        [qw|index posts /2024/|],
+        [qw|index echos /2024/|],
+        [qw|home posts /posts/|],
+        [qw|home echos /echos/|],
+        [qw|home notes /notes/|],
+        [qw|home pages /|],
       )
     )
   ];
@@ -220,7 +227,7 @@ subtest cardinfo => sub {
       },
       image => href('/assets/avatar.png')->to_string,
 
-      ( $kind eq 'permalink' ) ? ( mainEntityOfPage => href($prefix)->to_string ) : (),
+      ( $kind ne 'home' ) ? ( mainEntityOfPage => href($prefix)->to_string ) : (),
     };
 
     my @breadcrumb = (

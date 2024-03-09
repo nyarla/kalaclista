@@ -115,7 +115,7 @@ sub doing {
         title   => $c->sections->{$section}->title,
         summary => $c->sections->{$section}->summary,
         section => $section,
-        kind    => 'index',
+        kind    => 'home',
         href    => href("/${section}/"),
         entries => [@entries],
       );
