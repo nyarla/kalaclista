@@ -50,7 +50,7 @@ subtest linkify => sub {
   subtest rakuten => sub {
     my $item = Kalaclista::Data::WebSite->new(
       title => '',
-      href  => URI::Fast->new('https://a.r10n.to/XXXXXX'),
+      href  => URI::Fast->new('https://a.r10.to/XXXXXX'),
       gone  => !!0,
     );
 
@@ -94,7 +94,7 @@ subtest apply => sub {
   is $dom->at('aside h2 a')->getAttribute('href'),                 'https://amzn.to/XXXXXX';
   is $dom->at('aside ul li:nth-child(1) a')->getAttribute('href'), 'https://amzn.to/XXXXXX';
   is $dom->at('aside ul li:nth-child(1) a')->textContent,          "Amazon.co.jp で探す";
-  is $dom->at('aside ul li:nth-child(2) a')->getAttribute('href'), 'https://a.r10n.to/XXXXXX';
+  is $dom->at('aside ul li:nth-child(2) a')->getAttribute('href'), 'https://a.r10.to/XXXXXX';
   is $dom->at('aside ul li:nth-child(2) a')->textContent,          "楽天で探す";
 };
 

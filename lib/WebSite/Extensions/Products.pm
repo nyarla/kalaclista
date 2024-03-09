@@ -32,6 +32,7 @@ sub cardify : prototype($) {
 
   $html .= h2( a( { href => $data->description->[0]->href->to_string }, $data->title ) );
   $html .= ul( map { linkify($_) } $data->description->@* );
+
   return $html;
 }
 
@@ -42,7 +43,7 @@ sub linkify : prototype($) {
     return li( { class => 'amazon' }, a( { href => $link->href->to_string }, 'Amazon.co.jp で探す' ) );
   }
 
-  if ( $link->href->host eq 'a.r10n.to' ) {
+  if ( $link->href->host eq 'a.r10.to' ) {
     return li( { class => 'rakuten' }, a( { href => $link->href->to_string }, '楽天で探す' ) );
   }
 
@@ -67,7 +68,7 @@ sub apply : prototype($) {
     $aside->attr( class => 'content__card--affiliate' );
     $aside->innerHTML($html);
 
-    $item->replace($aside);
+    $item->parent->replace($aside);
   }
 }
 
