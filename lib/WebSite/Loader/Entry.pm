@@ -83,9 +83,8 @@ sub fixup : prototype($$) {
     dom     => undef,
   };
 
-  $data->{'lastmod'}        = delete $header->{'lastmod'} // $data->{'date'};
-  $data->{'meta'}           = $header;
-  $data->{'meta'}->{'path'} = $path;
+  $data->{'lastmod'} = delete $header->{'lastmod'} // $data->{'date'};
+  $data->{'meta'}    = $header;
 
   return Kalaclista::Data::Entry->new( $data->%* );
 }
@@ -95,12 +94,24 @@ sub prop : prototype($) {
   my $src    = src->child($file);
   my $header = header $src->path;
 
+  $header->{'path'} = $file;
+
   return fixup $src => $header;
 }
 
 sub entry : prototype($) {
-  my $file  = shift;
-  my $entry = prop $file;
+  my $data = shift;
+  my $entry;
+  my $file;
+
+  if ( !ref $data ) {
+    $file  = $data;
+    $entry = prop $data;
+  }
+  else {
+    $entry = $data;
+    $file  = $data->meta->{'path'};
+  }
 
   my $content = precompiled->child($file)->load;
   utf8::decode($content);

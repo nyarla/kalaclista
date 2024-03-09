@@ -175,6 +175,14 @@ subtest entry => sub {
   is $entry->src, $content;
 
   isa_ok $entry->dom, 'HTML5::DOM::Element';
+
+  my $prop = prop 'posts/2023/01/01/000000.md';
+  is $prop->dom, undef;
+  is $prop->src, q{};
+
+  my $entry2 = entry $prop;
+  isa_ok $entry2->dom, 'HTML5::DOM::Element';
+  isnt $entry2->src, q{};
 };
 
 subtest entries => sub {
