@@ -21,10 +21,6 @@ use WebSite::Loader::Entry;
 
 use WebSite::Context;
 
-sub testing {
-  return 0;
-}
-
 sub make {
   my ( $page, $tmpl, $dist ) = @_;
   my $template = "WebSite::Templates::${tmpl}";
@@ -36,7 +32,7 @@ sub make {
   );
 }
 
-sub doing {
+sub main {
   my $action  = shift;
   my $c       = WebSite::Context->init(qr{^bin$});
   my $distdir = distdir;
@@ -284,10 +280,6 @@ sub doing {
 
     return 0;
   }
-}
-
-sub main {
-  exit( !exists $ENV{'HARNESS_ACTIVE'} ? doing(@_) : testing );
 }
 
 main(@ARGV);

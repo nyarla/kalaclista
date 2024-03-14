@@ -106,7 +106,6 @@ test: .test-in-shell
 
 test-scripts: .test-in-shell .test-set-stage
 	prove -v bin/compile-*.pl
-	prove -v bin/gen.pl
 
 ci: .test-in-shell
 	@env KALACLISTA_ENV=test $(MAKE) clean
