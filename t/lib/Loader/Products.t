@@ -20,12 +20,12 @@ subtest exists => sub {
 
     is $product->type,                              'product';
     is $product->title,                             'テスト・製品！';
-    is $product->thumbnail,                         undef;                        # TODO: support to thumbnail
+    is $product->thumbnail,                         undef;                       # TODO: support to thumbnail
     is $product->description->[0]->title,           'テスト・製品！';
     is $product->description->[0]->href->to_string, 'https://amzn.to/XXXXXX';
     is $product->description->[0]->gone,            !!0;
     is $product->description->[1]->title,           'テスト・製品！';
-    is $product->description->[1]->href->to_string, 'https://a.r10n.to/XXXXXX';
+    is $product->description->[1]->href->to_string, 'https://a.r10.to/XXXXXX';
     is $product->description->[1]->gone,            !!0;
   };
 
