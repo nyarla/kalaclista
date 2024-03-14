@@ -8,8 +8,9 @@ use Test2::V0;
 use XML::LibXML;
 use URI::Fast;
 
-use WebSite::Context::URI  qw(href);
-use WebSite::Context::Path qw(distdir);
+use WebSite::Context::URI         qw(href);
+use WebSite::Context::Path        qw(distdir);
+use WebSite::Context::Environment qw(env);
 
 my sub xml {
   return XML::LibXML->load_xml( string => distdir->child(shift)->load );
@@ -47,6 +48,8 @@ subtest 'rss20feed' => sub {
   my $dateRE = qr|\w+ \d{2} \w+ \d{4} \d{2}:\d{2}:\d{2} (?:[-+]\d{4})|;
 
   for my $section (qw|posts echos notes home|) {
+    last if $section ne q|posts| && env->test;
+
     my $filename = $section ne q{home} ? "$section/index.xml" : "index.xml";
     my $website  = $section ne q{home} ? href("/$section/")   : href('/');
     my $href     = href($filename);

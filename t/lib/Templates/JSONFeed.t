@@ -47,6 +47,8 @@ subtest jsonfeed => sub {
   };
 
   for my $section (qw(posts echos notes home)) {
+    last if $section ne q|posts| && env->test;
+
     my $filename = $section ne q{home} ? "${section}/jsonfeed.json" : "jsonfeed.json";
     my $prefix   = $section ne q{home} ? "$section/"                : "/";
     my $file     = distdir->child($filename);

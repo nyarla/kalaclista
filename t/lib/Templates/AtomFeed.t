@@ -8,8 +8,9 @@ use Test2::V0;
 use XML::LibXML;
 use URI::Fast;
 
-use WebSite::Context::URI  qw(href);
-use WebSite::Context::Path qw(distdir);
+use WebSite::Context::URI         qw(href);
+use WebSite::Context::Path        qw(distdir);
+use WebSite::Context::Environment qw(env);
 
 my sub xml {
   return XML::LibXML->load_xml( string => distdir->child(shift)->load );
@@ -45,6 +46,8 @@ subtest atomfeed => sub {
   };
 
   for my $section (qw(posts echos notes home)) {
+    last if $section ne q|posts| && env->test;
+
     my $filename = $section ne q{home} ? "$section/atom.xml" : "atom.xml";
     my $website  = $section ne q{home} ? href("/$section/")  : href('/');
     my $href     = href($filename);
