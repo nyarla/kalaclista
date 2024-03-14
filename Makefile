@@ -64,7 +64,7 @@ pages: .test-in-shell .test-set-stage
 
 index: .test-in-shell .test-set-stage
 	@echo generate index
-	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
+	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
 
 home: .test-in-shell .test-set-stage
 	@echo generate home
