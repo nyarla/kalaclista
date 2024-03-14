@@ -1,38 +1,26 @@
 #!/usr/bin/env perl
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
 use Test2::V0;
 use URI::Fast;
 use HTML5::DOM;
 
-use WebSite::Context;
-local $ENV{'KALACLISTA_ENV'} = 'production';
-WebSite::Context->init(qr{^t$});
+use WebSite::Context::URI qw(href);
 
-use WebSite::Widgets::Info;
+use WebSite::Widgets::Info qw(siteinfo);
 
-my $parser = HTML5::DOM->new;
+my sub dom : prototype($) { state $p ||= HTML5::DOM->new; $p->parse(shift)->body }
 
-sub main {
-  my $info = siteinfo;
-  utf8::decode($info);
+subtest footer => sub {
+  my $footer = siteinfo;
+  utf8::decode($footer);
 
-  my $dom = $parser->parse($info)->at('body');
+  my $dom = dom($footer)->at('footer#copyright');
 
-  is( $dom->at('footer')->getAttribute('id'),           'copyright' );
-  is( $dom->at('footer > p > a')->getAttribute('href'), 'https://the.kalaclista.com/nyarla/' );
+  is $dom->at('p')->textContent,      "(c) 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla";
+  is $dom->at('p > a')->attr('href'), href('/nyarla/')->to_string;
+};
 
-  is( $dom->at('footer > p')->textContent, qq{(c) 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla} );
-
-  my $info2 = siteinfo;
-  utf8::decode($info2);
-
-  is( $info, $info2 );
-
-  done_testing;
-}
-
-main;
+done_testing;

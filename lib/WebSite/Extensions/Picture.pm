@@ -1,98 +1,126 @@
 package WebSite::Extensions::Picture;
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
-use feature qw(state);
+use feature qw(isa);
 
-use YAML::XS;
-use URI::Escape;
-use Kalaclista::HyperScript qw(a img);
+use Exporter::Lite;
+use YAML::XS qw(LoadFile);
 
-use WebSite::Context;
+use Kalaclista::HyperScript qw(img);
 
-sub transform {
-  state $datadir ||= WebSite::Context->instance->cache('images');
-  state $prefix  ||= WebSite::Context->instance->baseURI->to_string;
+use WebSite::Context::Path qw(cachedir);
+use WebSite::Context::URI  qw(href baseURI);
 
-  my ( $class, $entry, $scales ) = @_;
-  my $dom = $entry->dom;
+our @EXPORT_OK = qw(file src mkGif mkWebP apply);
 
-  for my $item ( $dom->find('p > img:only-child')->@* ) {
-    my $src = $item->getAttribute('src');
+my sub load {
+  my $path = cachedir->child('images')->child(shift)->path;
 
-    utf8::decode($src);
-    $src = uri_unescape($src);
+  utf8::decode($path);
 
-    if ( $src =~ m{^\d+$} ) {
-      my $path = join q{/}, $entry->href->path, $src;
-      $path =~ s{^/}{};
+  return undef if !-e $path;
+  return LoadFile($path);
+}
 
-      my $yaml = $datadir->child("${path}.yaml");
-      if ( -f $yaml->path ) {
-        my $data = YAML::XS::LoadFile( $yaml->path );
+sub file : prototype($$) {
+  my ( $file, $idx ) = @_;
+  $file =~ s{\.md$}{/${idx}.yaml};
+  return $file;
+}
 
-        my $img;
-        my $src;
+sub src : prototype($$$$) {
+  my ( $href, $idx, $scale, $extension ) = @_;
+  my $link = baseURI->clone;
 
-        if ( exists $data->{'gif'} ) {
-          $src = "${prefix}/images/${path}.gif";
-          $img = img(
-            {
-              alt    => $item->getAttribute('alt'),
-              title  => $item->getAttribute('alt'),
-              src    => $src,
-              width  => $data->{'gif'}->{'width'},
-              height => $data->{'gif'}->{'height'},
-            }
-          );
-        }
-        else {
-          my @srcset;
-          my @sizes;
+  my $path = $href->path;
+  $path =~ s{^/|/$}{}g;
 
-          for my $scale ( $scales->@* ) {
-            push @sizes, "(max-width: ${scale}px) ${scale}px";
-          }
+  $link->path("/images/${path}/${idx}_${scale}.${extension}");
 
-          if ( $path =~ m{^notes/([^/]+)/(.+)$} ) {
-            my ( $fn, $idx ) = ( $1, $2 );
-            utf8::decode($fn);
-            $path = "notes/@{[ uri_escape_utf8($fn) ]}/${idx}";
-          }
+  return $link;
+}
 
-          for my $size (qw(1x 2x)) {
-            push @srcset, "${prefix}/images/${path}_${size}.webp " . $data->{$size}->{'width'} . "w";
-          }
-
-          $src = "${prefix}/images/${path}_1x.webp";
-          $img = img(
-            {
-              alt    => $item->getAttribute('alt'),
-              title  => $item->getAttribute('alt'),
-              srcset => join( q{, }, @srcset ),
-              sizes  => join( q{, }, @sizes ),
-              src    => "${prefix}/images/${path}_1x.webp",
-              width  => $data->{'1x'}->{'width'},
-              height => $data->{'1x'}->{'height'},
-            }
-          );
-        }
-
-        my $link = $dom->tree->createElement('a');
-        $link->setAttribute( href  => $src );
-        $link->setAttribute( class => 'content__card--thumbnail' );
-        $link->innerHTML("${img}");
-
-        $item->replace($link);
-      }
-
-      return $entry;
+sub mkGif : prototype($$$$) {
+  my ( $title, $href, $idx, $meta ) = @_;
+  return img(
+    {
+      alt   => $title, title => $title,
+      src   => src( $href, $idx, "1x", 'gif' )->to_string,
+      width => $meta->{'width'}, height => $meta->{'height'}
     }
+  );
+}
+
+sub mkWebP : prototype($$$$) {
+  my ( $title, $href, $idx, $meta ) = @_;
+
+  my @sizes;
+  my @srcset;
+
+  my $default;
+
+  for my $scale (qw(1x 2x)) {
+    my $size = delete $meta->{$scale};
+    next if !defined $size;
+
+    my ( $width, $height ) = @{$size}{qw/width height/};
+
+    push @sizes,  "(max-width: ${width}px) ${width}px";
+    push @srcset, src( $href, $idx, $scale, 'webp' ) . " ${scale}";
+
+    $default //= { width => $width, height => $height };
   }
 
-  return $entry;
+  return img(
+    {
+      alt    => $title, title => $title,
+      srcset => join( q|, |, @srcset ),
+      sizes  => join( q|, |, @sizes ),
+      src    => src( $href, $idx, "1x", 'webp' ),
+      width  => $default->{width},
+      height => $default->{height}
+    }
+  );
+}
+
+sub apply : prototype($$$) {
+  my ( $path, $href, $dom ) = @_;
+
+  for my $item ( $dom->find('p > img:only-child')->@* ) {
+    my $idx = $item->attr('src');
+    next if $idx !~ m{^\d+$};
+
+    my $file = file $path, $idx;
+    my $meta = load $file;
+    next if !defined $meta;
+
+    my $alt = $item->attr('alt');
+    my $img =
+        exists $meta->{'gif'}
+        ? mkGif $alt, $href, $idx, $meta->{'gif'}
+        : mkWebP $alt, $href, $idx, $meta;
+
+    my $src   = src $href, $idx, "1x", ( exists $meta->{'gif'} ? 'gif' : 'webp' );
+    my $image = $dom->tree->createElement('a');
+    $image->attr( href  => $src->to_string );
+    $image->attr( class => 'content__card--thumbnail' );
+    $image->innerHTML("${img}");
+
+    $item->replace($image);
+  }
+}
+
+sub transform {
+  my ( $class, $entry ) = @_;
+  return $entry unless defined $entry->dom && $entry->dom isa 'HTML5::DOM::Element';
+
+  my $dom  = $entry->dom->clone(1);
+  my $href = $entry->href->clone;
+  apply $entry->meta->{'path'}, $href, $dom;
+
+  return $entry->clone( dom => $dom );
 }
 
 1;

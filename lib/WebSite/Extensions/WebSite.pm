@@ -1,62 +1,70 @@
 package WebSite::Extensions::WebSite;
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
-use feature qw(state);
+use feature qw(isa);
 
-use Kalaclista::Data::WebSite;
-use Kalaclista::HyperScript qw(a div h2 p cite blockquote small);
+use Exporter::Lite;
 
-use WebSite::Context;
+use Kalaclista::HyperScript qw(a div h2 p blockquote cite small);
 
-sub website {
-  state $initialized;
-  if ( !$initialized ) {
-    my $path = WebSite::Context->instance->cache('website/src.yaml')->path;
-    Kalaclista::Data::WebSite->init($path);
+use WebSite::Context::Path   qw(srcdir);
+use WebSite::Loader::WebSite qw(external);
 
-    $initialized = !!1;
+BEGIN {
+  WebSite::Loader::WebSite->init( srcdir->child('data/website.csv')->to_string );
+}
+
+our @EXPORT_OK = qw(cardify apply);
+
+sub cardify : prototype($) {
+  my $website = shift;
+
+  if ( !$website->gone ) {
+    return a(
+      { href => $website->href->to_string },
+      h2( $website->title ),
+      p( cite( $website->cite ) ),
+      blockquote( p( $website->title ) ),
+    );
   }
 
-  my @args = @_;
-  return Kalaclista::Data::WebSite->load(@args);
+  return div(
+    h2( $website->title ),
+    p( cite( $website->cite ), small('無効なリンクです') ),
+    blockquote( p( $website->title ) ),
+  );
+}
+
+sub apply : prototype($) {
+  my $dom = shift;
+
+  for my $item ( $dom->find('ul > li:only-child > a:only-child')->@* ) {
+    my $href  = $item->getAttribute('href');
+    my $title = $item->innerText;
+
+    next if $href !~ m{^https?};
+
+    my $website = external $title, $href;
+    my $card    = cardify $website;
+
+    my $aside = $item->tree->createElement('aside');
+    $aside->attr( class => 'content__card--website' . ( $website->gone ? ' gone' : q{} ) );
+    $aside->innerHTML( $card->to_string );
+
+    $item->parent->parent->replace($aside);
+  }
 }
 
 sub transform {
   my ( $class, $entry ) = @_;
+  return $entry unless defined $entry->dom && $entry->dom isa 'HTML5::DOM::Element';
 
-  for my $item ( $entry->dom->find('ul > li:only-child > a:only-child')->@* ) {
-    my $href = $item->getAttribute('href');
-    my $text = $item->innerText;
+  my $dom = $entry->dom->clone(1);
+  apply $dom;
 
-    next if $href !~ m{^https?};
-
-    my $html;
-    my $web = website( text => $text, href => $href );
-
-    if ( !$web->gone ) {
-      $html = a(
-        { href => $web->permalink },
-        h2( $web->title ),
-        p( cite( $web->cite ) ),
-        blockquote( p( $web->summary ) )
-      );
-    }
-    else {
-      $html = div(
-        h2( $web->title ),
-        p( cite( $web->cite ), small('（無効なリンクです）') ),
-        blockquote( p( $web->summary ) )
-      );
-    }
-
-    my $article = $item->tree->createElement('aside');
-    $article->setAttribute( class => 'content__card--website' . ( $web->gone ? ' gone' : q{} ) );
-    $article->innerHTML( $html->to_string );
-    $item->parent->parent->replace($article);
-  }
+  return $entry->clone( dom => $dom );
 }
 
 1;

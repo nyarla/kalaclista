@@ -174,34 +174,34 @@ subtest website => sub {
 
   subtest production => sub {
     my $c = instance( production => 'runtime' );
-    is $c->website->permalink,             'https://the.kalaclista.com/';
-    is $c->sections->{'posts'}->permalink, 'https://the.kalaclista.com/posts/';
-    is $c->sections->{'echos'}->permalink, 'https://the.kalaclista.com/echos/';
-    is $c->sections->{'notes'}->permalink, 'https://the.kalaclista.com/notes/';
+    is $c->website->href->to_string,             'https://the.kalaclista.com';
+    is $c->sections->{'posts'}->href->to_string, 'https://the.kalaclista.com/posts/';
+    is $c->sections->{'echos'}->href->to_string, 'https://the.kalaclista.com/echos/';
+    is $c->sections->{'notes'}->href->to_string, 'https://the.kalaclista.com/notes/';
   };
 
   subtest development => sub {
     my $c = instance( development => 'runtime' );
-    is $c->website->permalink,             'http://nixos:1313/';
-    is $c->sections->{'posts'}->permalink, 'http://nixos:1313/posts/';
-    is $c->sections->{'echos'}->permalink, 'http://nixos:1313/echos/';
-    is $c->sections->{'notes'}->permalink, 'http://nixos:1313/notes/';
+    is $c->website->href->to_string,             'http://nixos:1313';
+    is $c->sections->{'posts'}->href->to_string, 'http://nixos:1313/posts/';
+    is $c->sections->{'echos'}->href->to_string, 'http://nixos:1313/echos/';
+    is $c->sections->{'notes'}->href->to_string, 'http://nixos:1313/notes/';
   };
 
   subtest staging => sub {
     my $c = instance( staging => 'runtime' );
-    is $c->website->permalink,             'http://nixos:1313/';
-    is $c->sections->{'posts'}->permalink, 'http://nixos:1313/posts/';
-    is $c->sections->{'echos'}->permalink, 'http://nixos:1313/echos/';
-    is $c->sections->{'notes'}->permalink, 'http://nixos:1313/notes/';
+    is $c->website->href->to_string,             'http://nixos:1313';
+    is $c->sections->{'posts'}->href->to_string, 'http://nixos:1313/posts/';
+    is $c->sections->{'echos'}->href->to_string, 'http://nixos:1313/echos/';
+    is $c->sections->{'notes'}->href->to_string, 'http://nixos:1313/notes/';
   };
 
   subtest test => sub {
     my $c = instance( test => 'runtime' );
-    is $c->website->permalink,             'https://example.com/';
-    is $c->sections->{'posts'}->permalink, 'https://example.com/posts/';
-    is $c->sections->{'echos'}->permalink, 'https://example.com/echos/';
-    is $c->sections->{'notes'}->permalink, 'https://example.com/notes/';
+    is $c->website->href->to_string,             'https://example.com';
+    is $c->sections->{'posts'}->href->to_string, 'https://example.com/posts/';
+    is $c->sections->{'echos'}->href->to_string, 'https://example.com/echos/';
+    is $c->sections->{'notes'}->href->to_string, 'https://example.com/notes/';
   };
 };
 

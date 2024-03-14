@@ -18,6 +18,7 @@
               gnumake
               imagemagick
               jhead
+              libidn.dev
               libwebp
               libxcrypt
               libxml2.dev

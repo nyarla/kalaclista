@@ -24,9 +24,6 @@ css: .test-in-shell .test-set-stage
 	@echo generate css
 	@perl bin/compile-css.pl
 
-css-test: .test-in-shell .test-set-stage
-	@prove bin/compile-css.pl
-
 images: .test-in-shell .test-set-stage
 	@echo generate webp
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
@@ -36,9 +33,6 @@ images: .test-in-shell .test-set-stage
 		| sed 's#*$(ROOTDIR)/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum
-
-images-test: .test-in-shell .test-set-stage
-	@prove bin/compile-webp.pl
 
 entries: .test-in-shell .test-set-stage
 	@echo generate precompiled entries source
@@ -56,10 +50,6 @@ entries: .test-in-shell .test-set-stage
 	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
 	@rm $(CACHEDIR)/entries/target
 
-website: .test-in-shell .test-set-stage
-	@echo generate website.json
-	@perl bin/compile-website-yaml.pl
-
 assets: .test-in-shell .test-set-stage
 	@echo copy assets
 	@cp -r $(ROOTDIR)/assets/* public/$(KALACLISTA_ENV)/
@@ -74,7 +64,7 @@ pages: .test-in-shell .test-set-stage
 
 index: .test-in-shell .test-set-stage
 	@echo generate index
-	@echo -e "posts\nechos\nnotes" | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
+	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
 
 home: .test-in-shell .test-set-stage
 	@echo generate home
@@ -83,7 +73,7 @@ home: .test-in-shell .test-set-stage
 gen: .test-in-shell .test-set-stage
 	@$(MAKE) images
 	@$(MAKE) entries
-	@$(MAKE) -j6 assets css website sitemap_xml home index
+	@$(MAKE) -j6 assets css sitemap_xml home index
 	@$(MAKE) pages
 
 clean: .test-in-shell .test-set-stage
@@ -116,17 +106,14 @@ test: .test-in-shell
 
 test-scripts: .test-in-shell .test-set-stage
 	prove -v bin/compile-*.pl
-	prove -v bin/gen.pl
 
 ci: .test-in-shell
 	@env KALACLISTA_ENV=test $(MAKE) clean
 	@env KALACLISTA_ENV=test $(MAKE) test-scripts
 	@env KALACLISTA_ENV=test $(MAKE) clean
 	@env KALACLISTA_ENV=test $(MAKE) gen
-	# TODO: wait for improve test $(MAKE)s
-	@env KALACLISTA_ENV=test prove -j$(FULL) t/lib/Context.t
-	@env KALACLISTA_ENV=test prove -j$(FULL) -r t/common
-	#@env KALACLISTA_ENV=test prove -j$(FULL) -r t/
+	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/lib
+	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/common
 
 .PHONY: shell serve up
 

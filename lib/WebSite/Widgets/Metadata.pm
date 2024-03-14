@@ -1,223 +1,241 @@
 package WebSite::Widgets::Metadata;
 
-use strict;
-use warnings;
+use v5.38;
 use utf8;
 
 use feature qw(state);
 
 use Exporter::Lite;
+use JSON::XS qw(encode_json);
 
-our @EXPORT = qw(metadata);
-
-use Kalaclista::HyperScript;
-
-use WebSite::Helper::Hyperlink qw(href);
-use WebSite::Helper::Digest    qw(digest);
+use Kalaclista::HyperScript qw|head meta link_ title script style raw|;
 
 use WebSite::Context;
+use WebSite::Context::URI qw(href);
 
-my %tables = (
-  posts => [ 'Blog',    'BlogPosting' ],
-  echos => [ 'Blog',    'BlogPosting' ],
-  notes => [ 'WebSite', 'Article' ],
-  pages => [ 'WebSite', 'WebPage' ],
-);
+use WebSite::Helper::Digest qw(digest);
 
-my $author = {
-  '@type' => 'Person',
-  'email' => 'nyarla@kalaclista.com',
-  'name'  => 'OKAMURA Naoki aka nyarla',
-  'url'   => 'https://the.kalaclista.com/nyarla/',
-};
+our @EXPORT    = qw(metadata);
+our @EXPORT_OK = ( @EXPORT, qw(type rel common feed feeds cardinfo jsonld headers notfound) );
 
-my $publisher = {
-  '@type' => 'Organization',
-  'logo'  => {
-    '@type'      => 'ImageObject',
-    'contentUrl' => 'https://the.kalaclista.com/assets/avatar.png',
-  },
-};
-
-sub types {
+sub type : prototype($$) {
   my ( $kind, $section ) = @_;
 
-  if ( $kind eq 'permalink' ) {
-    if ( $section eq q{posts} || $section eq q{echos} || $section eq q{notes} ) {
-      return $tables{$section}->[1];
-    }
-
-    return $tables{'pages'}->[1];
+  if ( $kind eq q|permalink| ) {
+    return q|BlogPosting| if $section eq q|posts| || $section eq q|echos|;
+    return q|Article|     if $section eq q|notes|;
+    return q|WebPage|;
+  }
+  elsif ( $kind eq q|index| || $kind eq q|home| ) {
+    return q|Blog| if $section eq q|posts| || $section eq q|echos|;
+    return q|WebSite|;
   }
 
-  if ( $section eq q{posts} || $section eq q{echos} || $section eq q{notes} ) {
-    return $tables{$section}->[0];
-  }
-
-  return $tables{'pages'}->[0];
+  return q|WebPage|;
 }
 
-sub item {
-  my ( $item, $href, $type ) = @_;
+my sub author {
+  state $author ||= {
+    '@type' => 'Person',
+    name    => 'OKAMURA Naoki aka nyarla',
+    email   => 'nyarla@kalaclista.com',
+    url     => 'https://the.kalaclista.com/nyarla/'
+  };
 
-  my %attr;
-  @attr{qw( rel href )} = ( $item, $href );
-  $attr{'type'} = $type if ( defined $type );
-
-  return link_( \%attr );
+  return $author;
 }
 
-sub global {
-  state $result;
-  return $result->@* if ( defined $result );
+my sub publisher {
+  state $publisher ||= {
+    '@type' => 'Organization',
+    logo    => {
+      '@type'    => 'ImageObject',
+      contentUrl => 'https://the.kalaclista.com/assets/avatar.png',
+    },
+  };
 
-  my $digest  = digest("lib/WebSite/Templates/Stylesheet.pm");
-  my $baseURI = WebSite::Context->instance->baseURI;
+  return $publisher;
+}
 
-  $result ||= [];
-  push $result->@*, (
-    meta( { charset => 'utf-8' } ),
-    meta(
+sub rel : prototype($$;$) {
+  my $item = shift;
+  my $href = shift;
+  my $type = shift // q{};
+
+  return link_( { rel => $item, href => $href, ( $type ne q{} ? ( type => $type ) : () ) } );
+}
+
+sub feed : prototype($) {
+  my $section = shift;
+  my $c       = WebSite::Context->instance;
+  my $website = $section eq q|pages| ? $c->website : $c->sections->{$section};
+  my $prefix  = $section eq q|pages| ? ""          : "/${section}";
+
+  return (
+    link_(
       {
-        name    => 'viewport',
-        content => 'width=device-width,minimum-scale=1,initial-scale=1'
+        rel   => 'alternate',
+        title => "@{[ $website->title ]}の RSS フィード",
+        href  => href("${prefix}/index.xml")->to_string,
+        type  => 'application/rss+xml',
       }
     ),
-    item( manifest           => href( '/manifest.webmanifest', $baseURI ) ),
-    item( icon               => href( '/favicon.ico',          $baseURI ) ),
-    item( icon               => href( '/icon.svg',             $baseURI ), 'images/svg+xml' ),
-    item( 'apple-touch-icon' => href( '/apple-touch-icon.png', $baseURI ) ),
-
-    link_( { rel => 'author', href => 'http://www.hatena.ne.jp/nyarla-net/' } ),
-
-    link_( { rel => 'stylesheet', href => href( "/main-${digest}.css", $baseURI ) } ),
+    link_(
+      {
+        rel   => 'alternate',
+        title => "@{[ $website->title ]}の Atom フィード",
+        href  => href("${prefix}/atom.xml")->to_string,
+        type  => 'application/atom+xml',
+      }
+    ),
+    link_(
+      {
+        rel   => 'alternate',
+        title => "@{[ $website->title ]}の JSON フィード",
+        href  => href("${prefix}/jsonfeed.json")->to_string,
+        type  => 'application/feed+json',
+      }
+    )
   );
-
-  return $result->@*;
 }
 
-sub in_section {
-  state $cache ||= {};
+sub cardinfo : prototype($$$) {
+  my ( $kind, $page, $website ) = @_;
+  my $avatar = href('/assets/avatar.png')->to_string;
 
+  my $title =
+      ( $kind eq 'permalink' )
+      ? join( q{ - }, $page->title, $website->title )
+      : $website->title;
+
+  my $summary =
+      $kind eq 'permalink'
+      ? ( $page->summary ne q{} ? $page->summary : ( $page->entries->[0]->dom->at('*:first-child')->text =~ m{^(.{,70})} )[0] . '……' )
+      : $website->summary;
+  $summary =~ s{​}{}g;
+
+  my $jsonld = encode_json( jsonld( $page->kind, $page, $website ) );
+  utf8::decode($jsonld);
+
+  return (
+    title($title),
+    meta( { name => 'description', content => $summary } ),
+
+    meta( { property => 'og:title',       content => $page->title } ),
+    meta( { property => 'og:site_name',   content => $website->title } ),
+    meta( { property => 'og:image',       content => $avatar } ),
+    meta( { property => 'og:url',         content => $page->href->to_string } ),
+    meta( { property => 'og:description', content => $summary } ),
+    meta( { property => 'og:locale',      content => 'ja_JP' } ),
+
+    (
+      $kind eq q|permalink|
+      ? (
+        meta( { property => 'og:type',              content => 'article' } ),
+        meta( { property => 'og:published_time',    content => $page->entries->[0]->date } ),
+        meta( { property => 'og:modified_time',     content => $page->entries->[0]->updated } ),
+        meta( { property => 'og:section',           content => $page->section } ),
+        meta( { property => 'og:author:first_name', content => 'Naoki' } ),
+        meta( { property => 'og:author:last_name',  content => 'OKAMURA' } ),
+          )
+      : (
+        meta( { property => 'og:type',    content => 'website' } ),
+        meta( { property => 'og:section', content => $page->section } ),
+      )
+    ),
+
+    meta( { name => 'twitter:card',        content => 'summary' } ),
+    meta( { name => 'twitter:site',        content => '@kalaclista' } ),
+    meta( { name => 'twitter:title',       content => $title } ),
+    meta( { name => 'twitter:description', content => $summary } ),
+    meta( { name => 'twitter:image',       content => $avatar } ),
+
+    script( { type => 'application/ld+json' }, raw($jsonld) ),
+  );
+
+}
+
+sub common {
+  state $html ||= [
+    meta( { charset => 'utf-8' } ),
+    meta( { name    => 'viewport', content => 'width=device-width,initial-scale=1' } ),
+    rel( manifest   => href('/manifest.webmanifest')->to_string ),
+    rel( icon       => href('/favicon.ico')->to_string ),
+    rel( icon       => href('/icon.svg')->to_string, 'image/svg+xml' ),
+    rel( author     => 'http://www.hatena.ne.jp/nyarla-net/' ),
+    rel( stylesheet => href("/main-@{[ digest('lib/WebSite/Templates/Stylesheet.pm') ]}.css")->to_string )
+  ];
+
+  return $html->@*;
+}
+
+sub feeds {
+  state $c     ||= WebSite::Context->instance;
+  state $feeds ||= {
+    map { $_ => [ feed $_ ] } qw(posts echos notes pages),
+  };
+
+  return $feeds->{ (shift) };
+}
+
+sub jsonld {
+  my ( $kind, $page, $website ) = @_;
+
+  my $title = ( $kind eq 'permalink' ) ? $page->title : $website->title;
+
+  my $self = {
+    '@context' => 'https://schema.org',
+    '@id'      => $page->href->to_string,
+    '@type'    => type( $page->kind, $page->section ),
+    headline   => $title,
+    author     => author,
+    publisher  => publisher,
+    image      => href('/assets/avatar.png')->to_string,
+  };
+
+  if ( $kind ne 'home' ) {
+    $self->{'mainEntityOfPage'} = $website->href->to_string;
+  }
+
+  my $items = [];
+  for my $idx ( 0 .. $page->breadcrumb->length - 1 ) {
+    push $items->@*, +{
+      '@type'  => 'ListItem',
+      name     => $page->breadcrumb->index($idx)->title,
+      item     => $page->breadcrumb->index($idx)->href->to_string,
+      position => $idx + 1,
+    };
+  }
+
+  return [
+    $self,
+    {
+      '@context'      => 'https://schema.org',
+      '@type'         => 'BreadcrumbList',
+      itemListElement => $items
+    }
+  ];
+}
+
+sub headers {
   my $page = shift;
-
-  return $cache->{ $page->section }->@*
-      if ( exists $cache->{ $page->section } );
-
-  my $c = WebSite::Context->instance;
+  my $c    = WebSite::Context->instance;
   my $website =
       ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
       ? $c->sections->{ $page->section }
       : $c->website;
-  my $prefix = ( $website != $c->website ) ? '/' . $page->section : q{};
-  my @result = (
-    feed(
-      "@{[ $website->title ]}の RSS フィード",
-      href( "${prefix}/index.xml", $c->baseURI ),
-      "application/rss+xml"
-    ),
-    feed(
-      "@{[ $website->title ]}の Atom フィード",
-      href( "${prefix}/atom.xml", $c->baseURI ),
-      "application/atom+xml"
-    ),
-    feed(
-      "@{[ $website->title ]}の JSON フィード",
-      href( "${prefix}/jsonfeed.json", $c->baseURI ),
-      "application/feed+json"
-    ),
-  );
-
-  $cache->{ $page->section } = [@result];
-  return @result;
-}
-
-sub page {
-  my $c    = WebSite::Context->instance;
-  my $page = shift;
-
-  my $title   = $page->title;
-  my $website = (
-    ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
-    ? $c->sections->{ $page->section }
-    : $c->website
-  );
-
-  my $avatar  = href( '/assets/avatar.png', $page->href );
-  my $href    = $page->href->to_string;
-  my $section = $page->section;
-  my $kind    = $page->kind;
-  my $tree    = $page->breadcrumb;
-  my $meta    = $page->entries->[0];
-  my $parent  = $tree->index( $tree->length - 2 )->permalink;
-
-  my $docname = $title eq $website->title ? $title            : "${title} - @{[ $website->title ]}";
-  my $docdesc = $title eq $website->title ? $website->summary : $page->summary;
-
-  my @ogp = (
-    property( 'og:title',       $title ),
-    property( 'og:site_name',   $website->title ),
-    property( 'og:image',       $avatar ),
-    property( 'og:url',         $href ),
-    property( 'og:description', $docdesc ),
-    property( 'og:locale',      'ja_JP' ),
-  );
-
-  if ( $kind eq 'permalink' ) {
-    push @ogp, (
-      property( 'og:type',              'article' ),
-      property( 'og:published_time',    $meta->date ),
-      property( 'og:modified_time',     $meta->updated ),
-      property( 'og:section',           $section ),
-      property( 'og:author:first_name', 'Naoki' ),
-      property( 'og:author:last_name',  'OKAMURA' ),
-    );
-  }
-  else {
-    push @ogp, property( 'og:type', 'website' );
-  }
-
-  my @twitter = (
-    data_( 'twitter:card',        'summary' ),
-    data_( 'twitter:site',        '@kalaclista' ),
-    data_( 'twitter:title',       $docname ),
-    data_( 'twitter:description', $docdesc, ),
-    data_( 'twitter:image',       $avatar ),
-  );
-
-  my %jsonld;
-  @jsonld{qw( title href type author publisher image parent )} =
-      ( $title, $href, types( $kind, $section ), $author, $publisher, { '@type' => 'ImageObject', contentUrl => $avatar }, $parent );
-
-  if ( $tree->length == 1 ) {
-    delete $jsonld{'parent'};
-  }
+  my $title = ( $page->kind eq q|permalink| ) ? $page->title : $website->title;
+  my $href  = $page->href;
 
   my @css;
-  if ( ref( my $css = $page->entries->[0]->meta('css') ) eq 'ARRAY' ) {
-    push @css, map { style( raw($_) ) } $css->@*;
+  if ( $page->kind eq 'permalink' && exists $page->entries->[0]->meta->{'css'} && $page->entries->[0]->meta->{'css'} ) {
+    push @css, $page->entries->[0]->meta->{'css'}->@*;
   }
 
-  my @breadcrumb =
-      map {
-        {
-          name => $page->breadcrumb->index($_)->title,
-          href => $page->breadcrumb->index($_)->permalink
-        }
-      } ( 0 .. $page->breadcrumb->length - 1 );
   return (
-    title($docname),
-    meta( { name => 'description', content => $docdesc } ),
-
-    link_( { rel => 'canonical', href => $href } ),
-
-    @ogp, @twitter,
-
-    script(
-      { type => 'application/ld+json' },
-      raw( jsonld( {%jsonld}, @breadcrumb ) )
-    ),
-    @css,
+    cardinfo( $page->kind, $page, $website ),
+    feeds( $page->section ),
+    ( @css > 0 ? style( raw(@css) ) : () ),
   );
 }
 
@@ -226,8 +244,8 @@ sub notfound {
   my $c    = WebSite::Context->instance;
 
   return (
-    title( $page->title . ' - ' . $c->website->title ),
-    meta( { name => 'description', content => "ページが見つかりません" } ),
+    title( join q{ - }, $page->title, $c->website->title ),
+    meta( { name => 'description', content => 'ページが見つかりません' } ),
   );
 }
 
@@ -235,9 +253,8 @@ sub metadata {
   my $page = shift;
 
   return head(
-    global(),
-    in_section($page),
-    ( $page->kind ne '404' ? page($page) : notfound($page) ),
+    common,
+    ( $page->kind eq '404' ? notfound($page) : headers($page) ),
   );
 }
 

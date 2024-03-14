@@ -56,8 +56,8 @@ sub content {
                 date( $_->date ),
                 '：（',
                 a(
-                  { href => href( "/@{[ $_->type ]}/", $baseURI ) },
-                  $c->sections->{ $_->type }->label,
+                  { href => href( "/@{[ $_->section ]}/", $baseURI ) },
+                  $c->sections->{ $_->section }->label,
                 ),
                 '）'
               ),

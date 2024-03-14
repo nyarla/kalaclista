@@ -10,34 +10,28 @@ use Exporter::Lite;
 
 our @EXPORT = qw(profile);
 
-use Kalaclista::HyperScript;
-use WebSite::Helper::Hyperlink qw(href hyperlink);
+use Kalaclista::HyperScript qw(section figure figcaption section nav p a wbr img);
 
 use WebSite::Context;
+use WebSite::Context::URI qw(href);
 
 sub profile {
-  state $result;
-  return $result if ( defined $result );
-
-  my $baseURI = WebSite::Context->instance->baseURI;
-  $result = section(
+  state $profile ||= section(
     { id => 'profile' },
-
     figure(
       p(
         a(
-          { href => href( '/nyarla/', $baseURI ) },
+          { href => href('/nyarla/')->to_string },
           img(
             {
-              src    => href( '/assets/avatar.svg', $baseURI ),
-              height => 96,
-              width  => 96,
+              src    => href('/assets/avatar.svg')->to_string,
+              height => 96, width => 96,
               alt    => 'アバターアイコン兼ロゴ'
             }
           )
         )
       ),
-      figcaption( a( { href => href( '/nyarla/', $baseURI ) }, 'にゃるら（カラクリスタ）' ) )
+      figcaption( a( { href => href('/nyarla/')->to_string }, 'にゃるら（カラクリスタ）' ) )
     ),
 
     section(
@@ -48,18 +42,16 @@ sub profile {
 
     nav(
       p(
-        hyperlink( 'GitHub', 'https://github.com/nyarla/' ),
+        a( { href => 'https://github.com/nyarla/' }, 'GitHub' ),
         wbr,
-        hyperlink( 'Zenn', 'https://zenn.dev/nyarla' ),
+        a( { href => 'https://zenn.dev/nyarla' }, 'Zenn' ),
         wbr,
-        hyperlink( 'GoToSocial', 'https://kalaclista.com/@nyarla' ),
+        a( { href => 'https://kalaclista.com/@nyarla' }, 'GoToSocial' ),
         wbr,
-        hyperlink( 'Misskey.io', 'https://misskey.io/@nyarla' ),
+        a( { href => 'https://misskey.io/@nyarla' }, 'Misskey.io' ),
       )
     )
   );
-
-  return $result;
 }
 
 1;

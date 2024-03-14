@@ -9,8 +9,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(digest);
 
-use YAML::XS;
-use WebSite::Context;
+use WebSite::Context::Path qw(rootdir);
 
 sub calculate {
   my $path   = shift;
@@ -21,8 +20,7 @@ sub calculate {
 }
 
 sub digest {
-  state $rootdir ||= WebSite::Context->instance->dirs->rootdir;
-  state $cache   ||= {};
+  state $cache ||= {};
 
   my $file = shift;
 
@@ -30,10 +28,11 @@ sub digest {
     return $cache->{$file};
   }
 
-  my $path   = $rootdir->child($file)->path;
+  my $path   = rootdir->child($file)->path;
   my $digest = calculate($path);
 
   $cache->{$file} = $digest;
+
   return $digest;
 }
 

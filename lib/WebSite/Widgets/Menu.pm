@@ -10,34 +10,29 @@ use Exporter::Lite;
 
 our @EXPORT = qw(sitemenu);
 
-use Kalaclista::HyperScript    qw(nav hr p);
-use WebSite::Helper::Hyperlink qw(hyperlink href);
+use Kalaclista::HyperScript qw(nav hr p a);
 
-use WebSite::Context;
+use WebSite::Context::URI qw(href);
 
 my $search = 'https://cse.google.com/cse?cx=018101178788962105892:toz3mvb2bhr#gsc.tab=0';
 
 sub sitemenu {
-  state $result;
-  return $result if ( defined $result );
-
-  my $baseURI = WebSite::Context->instance->baseURI;
-  $result = nav(
+  state $html ||= nav(
     { id => 'menu' },
     p(
       { class => 'section' },
-      hyperlink( 'ブログ', href( '/posts/', $baseURI ) ),
-      hyperlink( '日記',  href( '/echos/', $baseURI ) ),
-      hyperlink( 'メモ帳', href( '/notes/', $baseURI ) ),
+      a( { href => href('/posts/')->to_string }, 'ブログ' ),
+      a( { href => href('/echos/')->to_string }, '日記' ),
+      a( { href => href('/notes/')->to_string }, 'メモ帳' ),
     ),
     p(
       { class => 'help' },
-      hyperlink( 'プロフィール', href( '/nyarla/', $baseURI ) ),
-      hyperlink( '検索',     $search ),
+      a( { href => href('/nyarla/')->to_string }, 'プロフィール' ),
+      a( { href => $search },                     '検索' ),
     ),
   );
 
-  return $result;
+  return $html;
 }
 
 1;
