@@ -141,7 +141,7 @@ sub compile {
   utf8::encode($data) if utf8::is_utf8($data);
   $in->emit($data);
 
-  my $nvim = q|nvim --headless -n -es | . ( -e $nvimrc ? qq|-u $nvimrc| : q|| );
+  my $nvim = q|nvim --headless -n | . ( -e $nvimrc ? qq|-u $nvimrc| : q|| );
   my $cmds = qq# -c "e @{[ $in->path ]} | ${ftcmd} | TOhtml | w! @{[ $out->path ]} | qa!" #;
 
   `$nvim $cmds 2>&1 >/dev/null`;
