@@ -163,7 +163,7 @@ sub common {
     rel( icon       => href('/favicon.ico')->to_string ),
     rel( icon       => href('/icon.svg')->to_string, 'image/svg+xml' ),
     rel( author     => 'http://www.hatena.ne.jp/nyarla-net/' ),
-    rel( stylesheet => href("/main-@{[ digest('lib/WebSite/Templates/Stylesheet.pm') ]}.css")->to_string )
+    rel( stylesheet => href("/main-@{[ digest('deps/css/main.css') ]}.css")->to_string )
   ];
 
   return $html->@*;

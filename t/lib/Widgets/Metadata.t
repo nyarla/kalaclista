@@ -306,7 +306,7 @@ subtest common => sub {
   is $dom->at('link[rel="icon"][type]')->attr('type'),       'image/svg+xml';
   is $dom->at('link[rel="author"]')->attr('href'),           'http://www.hatena.ne.jp/nyarla-net/';
   is $dom->at('link[rel="stylesheet"]')->attr('href'),
-      href(qq|/main-@{[ digest("lib/WebSite/Templates/Stylesheet.pm") ]}.css|)->to_string;
+      href(qq|/main-@{[ digest("deps/css/main.css") ]}.css|)->to_string;
 };
 
 subtest feeds => sub {

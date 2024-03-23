@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply text-gray-darker bg-gray-lighter dark:text-gray-lighter dark:bg-gray-darker;
+  }
+
+  body > * {
+    @apply max-w-2xl p-4 mx-auto;
+  }
+
+  a {
+    @apply underline text-blue-dark hover:decoration-2 dark:text-blue-light;
+  }
+}
