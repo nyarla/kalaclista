@@ -7,9 +7,25 @@ use utf8;
 use feature qw(state);
 
 use Kalaclista::HyperScript;
-use WebSite::Helper::Hyperlink qw(href);
+use WebSite::Context::Environment qw(env);
 
 use WebSite::Widgets::Layout;
+
+sub ads {
+  return raw(<<'...');
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1273544194033160"
+     crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="fluid"
+     data-ad-layout-key="-gc-d+1s-3c+3o"
+     data-ad-client="ca-pub-1273544194033160"
+     data-ad-slot="5004342069"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+...
+}
 
 sub readtime {
   my $text = shift;
@@ -46,6 +62,7 @@ sub content {
       hr( { class => 'sep' } ),
       raw( $entry->dom->innerHTML ),
     ),
+    ( env->production ? aside(ads) : () ),
   );
 }
 
