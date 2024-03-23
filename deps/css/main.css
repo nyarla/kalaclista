@@ -16,3 +16,9 @@
     @apply underline text-blue-dark hover:decoration-2 dark:text-blue-light;
   }
 }
+
+@layer components {
+  .card-rounded {
+    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+  }
+}
