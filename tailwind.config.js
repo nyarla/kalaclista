@@ -21,14 +21,14 @@ module.exports = {
   theme: {
     colors: {
       blue: {
-        light: "#33BBEE",
+        light: "#B0E0FF",
         dark: "#005577",
       },
 
       gray: {
-        darkest: "#000000",
-        darker: "#303030",
-        dark: "#333333",
+        darkest: "#222222",
+        darker: "#333333",
+        dark: "#444444",
         light: "#E7E7E7",
         lighter: "#F0F0F0",
         lightest: "#F7F7F7",
