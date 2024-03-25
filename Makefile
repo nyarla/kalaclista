@@ -22,7 +22,7 @@ endif
 
 css: .test-in-shell .test-set-stage
 	@echo generate css
-	@perl bin/compile-css.pl
+	@pnpm exec tailwindcss -i deps/css/main.css -o public/$(KALACLISTA_ENV)/main-$$(openssl dgst -r -sha256 deps/css/main.css | cut -c 1-7).css --minify
 
 images: .test-in-shell .test-set-stage
 	@echo generate webp
