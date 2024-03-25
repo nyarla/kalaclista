@@ -21,4 +21,8 @@
   .card-rounded {
     @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
   }
+
+  .card-rounded-md {
+    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+  }
 }
