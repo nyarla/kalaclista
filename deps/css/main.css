@@ -212,7 +212,7 @@
     }
 
     & .content__card--affiliate ul li {
-      @apply leading-7 list-['▸'] ml-2 pl-1;
+      @apply leading-7 list-['▸'] ml-2 pl-1 dark:text-gray-clay;
     }
 
     & .content__card--affiliate ul li.amazon::marker {
