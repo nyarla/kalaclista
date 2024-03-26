@@ -38,12 +38,13 @@ sub profile {
     ),
 
     section(
-      { class => 'entry__content' },
-      p( '『輝かしい青春』なんて失かった人。', br( classes(qw|sm:hidden|) ), '次に備えて待機中。' ),
-      p( '今は趣味でプログラミングをして',   br( classes(qw|sm:hidden|) ), '生活しています。' ),
+      classes(qw|ms:ml-28|),
+      p( classes(qw|my-2|), '『輝かしい青春』なんて失かった人。', br( classes(qw|sm:hidden|) ), '次に備えて待機中。' ),
+      p( classes(qw|my-2|), '今は趣味でプログラミングをして',   br( classes(qw|sm:hidden|) ), '生活しています。' ),
     ),
 
     nav(
+      classes(qw|sm:ml-28|),
       p(
         a( classes(qw|mr-2|), { href => 'https://github.com/nyarla/' }, 'GitHub' ),
         wbr,
