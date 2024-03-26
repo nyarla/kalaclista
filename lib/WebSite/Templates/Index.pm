@@ -35,7 +35,7 @@ sub content {
     my $date = date( $entry->date );
     push @contents,
         li(
-          time_( { datetime => $date }, "${date}：" ),
+          time_( { datetime => $date }, $date ),
           a( { href => $entry->href->to_string, class => 'title' }, $entry->title )
         );
   }
@@ -52,11 +52,12 @@ sub content {
   }
 
   return article(
-    { class => [qw( entry entry__archives )] },
+    classes(qw|entry entry__archives|),
 
     header( h1( a( { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
 
     section(
+      classes(qw|entry__content|),
       { class => 'entry__content' },
       p($summary),
       hr,

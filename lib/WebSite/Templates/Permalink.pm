@@ -49,7 +49,7 @@ sub content {
   my $readtime = readtime( $entry->dom->innerHTML );
 
   return article(
-    { class => 'entry entry__permalink' },
+    classes(qw|entry entry__permalink|),
     header(
       h1( a( { href => $entry->href->to_string }, $entry->title ) ),
       p(
@@ -58,7 +58,7 @@ sub content {
       ),
     ),
     section(
-      { class => 'entry__content' },
+      classes(q|entry__content|),
       hr( { class => 'sep' } ),
       raw( $entry->dom->innerHTML ),
     ),

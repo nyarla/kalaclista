@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply text-gray-darker bg-gray-lighter dark:text-gray-lighter dark:bg-gray-darker;
+  }
+
+  body > * {
+    @apply max-w-2xl p-4 mx-auto;
+  }
+
+  a {
+    @apply underline text-blue-dark hover:decoration-2 dark:text-blue-light;
+  }
+}
+
+@layer components {
+  .card-rounded {
+    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+  }
+
+  .card-rounded-md {
+    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+  }
+
+  .entry {
+    & > header {
+      & {
+        @apply mb-4;
+      }
+
+      & > h1 {
+        @apply text-3xl font-bold my-4 sm:my-0;
+      }
+
+      & > h1 > a {
+        @apply text-gray-darkest dark:text-gray-lightest;
+      }
+
+      & > h1 > a:hover {
+        @apply text-gray-dark dark:text-gray-light;
+      }
+
+      & > p {
+        @apply flex my-4;
+      }
+
+      & > p > * {
+        @apply w-2/4 text-sm;
+      }
+
+      & > p > *:first-child {
+        @apply text-left;
+      }
+
+      & > p > *:last-child {
+        @apply text-right;
+      }
+    }
+  }
+
+  .entry__content {
+    & > * {
+      @apply mb-4;
+    }
+
+    & > h2 {
+      @apply text-2xl font-bold;
+    }
+
+    & > h3 {
+      @apply text-xl font-bold;
+    }
+
+    & > h4 {
+      @apply text-lg font-bold;
+    }
+
+    & > h5 {
+      @apply text-base font-bold;
+    }
+
+    & > h6 {
+      @apply text-base;
+    }
+
+    & p {
+      @apply leading-7;
+    }
+
+    & hr {
+      @apply my-4 border-4 rounded-2xl border-gray-light dark:border-gray-darkest;
+    }
+
+    & > ul,
+    & > ol,
+    & > dl {
+      @apply my-4;
+    }
+
+    & ul > li,
+    & ol > li {
+      @apply ml-4 list-disc;
+    }
+
+    & ul > li:last-child,
+    & ol > li:last-child,
+    & dl > dd:last-child {
+      @apply mb-1;
+    }
+
+    & li::marker {
+      @apply text-blue-dark dark:text-blue-light;
+    }
+
+    & blockquote {
+      @apply relative pl-3;
+    }
+
+    & blockquote::before {
+      @apply absolute top-0.5 bottom-0.5 left-0 w-1 content-[''] rounded-lg bg-purple-light;
+    }
+
+    & pre > code,
+    & *:not(pre) > code {
+      @apply font-mono;
+    }
+
+    & pre > code {
+      @apply block px-4 py-2 rounded-lg overflow-x-scroll text-gray-lightest bg-gray-darkest;
+    }
+
+    & *:not(pre) > code {
+      @apply px-1.5 py-0.5 rounded-md text-gray-darkest bg-gray-light dark:text-gray-clay dark:bg-gray-darker;
+    }
+
+    & .content__card--thumbnail img {
+      @apply rounded-2xl border-8 border-gray-light dark:border-gray-darkest;
+    }
+
+    & .content__card--website a,
+    & .content__card--website div {
+      @apply block rounded-2xl border-8 px-4 py-2 no-underline border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+    }
+
+    & .content__card--website a *,
+    & .content__card--website div * {
+      @apply truncate;
+    }
+
+    & .content__card--website a h2,
+    & .content__card--website div h2 {
+      @apply font-bold text-gray-darkest dark:text-gray-lightest;
+    }
+
+    & .content__card--website a > p,
+    & .content__card--website div > p {
+      @apply my-1;
+    }
+
+    & .content__card--website a cite,
+    & .content__card--website div cite {
+      @apply text-sm not-italic underline dark:text-blue-light;
+    }
+
+    & .content__card--website a blockquote,
+    & .content__card--website div blockquote {
+      @apply text-sm text-gray-darkest dark:text-gray-lightest;
+    }
+
+    & .content__card--website a:hover {
+      @apply border-double border-gray-clay dark:border-gray-clay;
+    }
+
+    & .content__card--website a:hover cite {
+      @apply decoration-2;
+    }
+
+    & .content__card--website div {
+      @apply border-gray-clay bg-gray-light;
+    }
+
+    & .content__card--website div small {
+      @apply text-xs;
+    }
+
+    & .content__card--website div small::before {
+      @apply content-['（'];
+    }
+
+    & .content__card--website div small::after {
+      @apply content-['）'];
+    }
+
+    & .content__card--affiliate {
+      @apply rounded-2xl border-8 px-4 py-2 border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+    }
+
+    & .content__card--affiliate h2 {
+      @apply mb-2;
+    }
+
+    & .content__card--affiliate h2 a {
+      @apply font-bold text-gray-darkest dark:text-gray-lightest;
+    }
+
+    & .content__card--affiliate h2 a:hover {
+      @apply font-bold text-gray-dark dark:text-gray-light;
+    }
+
+    & .content__card--affiliate ul li {
+      @apply leading-7 list-['▸'] ml-2 pl-1 dark:text-gray-clay;
+    }
+
+    & .content__card--affiliate ul li.amazon::marker {
+      @apply text-[#FF9900];
+    }
+
+    & .content__card--affiliate ul li a {
+      @apply decoration-[#FF9900];
+    }
+
+    & .content__card--affiliate ul li.rakuten::marker {
+      @apply text-[#D70000];
+    }
+
+    & .content__card--affiliate ul li.rakuten a {
+      @apply decoration-[#D70000];
+    }
+
+    & .content__card--affiliate ul li a {
+      @apply text-gray-dark dark:text-gray-light;
+    }
+
+    & .archives li {
+      @apply mb-3;
+    }
+
+    & .archives li time {
+      @apply block text-xs;
+    }
+
+    & .archives li span {
+      @apply mx-1 text-gray-dark;
+    }
+
+    & .logs {
+      overflow-wrap: anywhere;
+    }
+
+    & .logs *:first-child {
+      @apply ml-0;
+    }
+
+    & .logs * {
+      @apply mx-1.5 text-nowrap;
+    }
+
+    & #profile__information img {
+      @apply inline-block dark:bg-gray-light dark:rounded-3xl;
+    }
+
+    & #profile__information h2 {
+      @apply text-2xl font-bold my-2;
+    }
+
+    & #profile__information p {
+      @apply leading-8;
+    }
+  }
+}

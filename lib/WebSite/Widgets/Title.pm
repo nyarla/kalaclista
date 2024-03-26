@@ -8,7 +8,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(banner);
 
-use Kalaclista::HyperScript qw(nav p a img hr span br);
+use Kalaclista::HyperScript qw(nav p a img hr span br classes);
 
 use WebSite::Context;
 use WebSite::Context::URI qw(href);
@@ -20,13 +20,16 @@ sub breadcrumb {
 
   push @tree, a(
     { href => href('/')->to_string },
-    img( { src => href('/assets/avatar.svg')->to_string, height => 50, width => 50, alt => '' } ),
-    br,
+    img(
+      classes(qw|card-rounded-md inline-block box-content my-4 dark:border-gray-darker dark:bg-gray-lightest|),
+      { src => href('/assets/avatar.svg')->to_string, height => 50, width => 50, alt => '' }
+    ),
+    br(),
     'カラクリスタ'
   );
 
   if ( $page->section =~ m{^(?:posts|echos|notes)$} ) {
-    push @tree, span('→');
+    push @tree, span( classes(qw|inline-block mx-1|), '→' );
     push @tree, a( { href => href("/@{[ $page->section ]}/") }, $c->sections->{ $page->section }->label );
   }
 
@@ -34,7 +37,7 @@ sub breadcrumb {
 }
 
 sub banner {
-  return nav( { id => 'global' }, p( breadcrumb(shift) ) );
+  return nav( classes(qw|text-center|), { id => 'global' }, p( breadcrumb(shift) ) );
 }
 
 1;

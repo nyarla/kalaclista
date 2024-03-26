@@ -9,15 +9,16 @@ use Exporter::Lite;
 
 our @EXPORT = qw(siteinfo);
 
-use Kalaclista::HyperScript qw(p footer a);
+use Kalaclista::HyperScript qw(p footer a classes);
 
 use WebSite::Context::URI qw(href);
 
 sub siteinfo {
   state $info ||= footer(
     { id => 'copyright' },
+    classes(qw|my-4 text-center|),
     p(
-      "(c) 2006-@{[ (localtime)[5] + 1900 ]} ",
+      "© 2006-@{[ (localtime)[5] + 1900 ]} ",
       a( { href => href('/nyarla/')->to_string }, 'OKAMURA Naoki aka nyarla' ),
     ),
   );

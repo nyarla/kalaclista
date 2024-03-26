@@ -19,7 +19,7 @@ subtest footer => sub {
 
   my $dom = dom($footer)->at('footer#copyright');
 
-  is $dom->at('p')->textContent,      "(c) 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla";
+  is $dom->at('p')->textContent,      "© 2006-@{[ (localtime)[5] + 1900 ]} OKAMURA Naoki aka nyarla";
   is $dom->at('p > a')->attr('href'), href('/nyarla/')->to_string;
 };
 
