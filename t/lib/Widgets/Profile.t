@@ -30,7 +30,7 @@ subtest profile => sub {
   is $figure->at('figcaption > a')->attr('href'), href('/nyarla/')->to_string;
   is $figure->at('figcaption > a')->text,         'にゃるら（カラクリスタ）';
 
-  my $section = $dom->at('.entry__content');
+  my $section = $dom->at('#profile > section');
   is $section->find('p')->length, 2;
 
   my $nav = $dom->at('nav');
