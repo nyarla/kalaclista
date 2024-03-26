@@ -10,7 +10,9 @@ use Exporter::Lite;
 our @EXPORT = qw( layout );
 
 use Kalaclista::HyperScript;
-use WebSite::Helper::Hyperlink qw(hyperlink href);
+
+use WebSite::Context::Environment qw(env);
+use WebSite::Context::URI         qw(href);
 
 use WebSite::Context;
 
@@ -31,30 +33,30 @@ my $goat   = script(
 );
 
 sub layout {
-  state $c         ||= WebSite::Context->instance;
-  state $analytics ||= [ $c->production ? ($goat) : () ];
+  state $analytics ||= [ env->production ? ($goat) : () ];
   my ( $vars, $content ) = @_;
-
-  my $baseURI = $c->baseURI;
 
   return document(
     metadata($vars),
-    [
+    body(
+      classes(qw|px-4|),
       banner($vars),
       main(
+        classes(qw|card-rounded my-8|),
         nav(
+          classes(qw|text-center sm:float-right|),
           { id => 'section' },
-          hyperlink( 'ブログ', href( '/posts/', $baseURI ) ),
-          hyperlink( '日記',  href( '/echos/', $baseURI ) ),
-          hyperlink( 'メモ帳', href( '/notes/', $baseURI ) ),
-          a( { href => $search, 'aria-label' => 'Google カスタム検索ページへのリンクです' }, '検索' ),
+          a( classes(qw|ml-2|), { href => href('/posts/') },                                    'ブログ' ),
+          a( classes(qw|ml-2|), { href => href('/echos/') },                                    '日記' ),
+          a( classes(qw|ml-2|), { href => href('/notes/') },                                    'メモ帳' ),
+          a( classes(qw|ml-2|), { href => $search, 'aria-label' => 'Google カスタム検索ページへのリンクです' }, '検索' ),
         ),
         $content
       ),
       profile,
       siteinfo,
       $analytics->@*,
-    ]
+    )
   );
 }
 

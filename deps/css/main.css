@@ -25,4 +25,12 @@
   .card-rounded-md {
     @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
   }
+
+  .entry {
+    & > header {
+      & > h1 {
+        @apply text-3xl font-bold my-4 sm:my-0;
+      }
+    }
+  }
 }
