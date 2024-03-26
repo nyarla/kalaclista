@@ -19,9 +19,10 @@ sub date {
 
 sub content {
   return article(
-    { class => 'entry entry__notfound' },
+    classes(qw|entry entry__notfound|),
     header( h1('404 not found') ),
     section(
+      classes(qw|entry__content|),
       { class => 'entry__content' },
       hr( { class => 'sep' } ),
       p('要求されたページは見つかりませんでした。'),

@@ -22,13 +22,18 @@ module.exports = {
     colors: {
       blue: {
         light: "#B0E0FF",
-        dark: "#005577",
+        dark: "#406077",
+      },
+
+      purple: {
+        light: "#CC88CC",
       },
 
       gray: {
         darkest: "#222222",
         darker: "#333333",
         dark: "#444444",
+        clay: "#D0D0D0",
         light: "#E7E7E7",
         lighter: "#F0F0F0",
         lightest: "#F7F7F7",

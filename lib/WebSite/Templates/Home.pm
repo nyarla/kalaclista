@@ -20,11 +20,11 @@ sub content {
   my $baseURI = $c->baseURI;
 
   return article(
-    { class => 'entry entry__home' },
+    classes(qw|entry entry__home|),
     header( h1('カラクリスタとは？') ),
     section(
+      classes(q|entry__content|),
       hr( { class => 'sep' } ),
-      { class => 'entry__content' },
       p(
         'カラクリスタとは',
         a(
@@ -54,13 +54,12 @@ sub content {
               time_(
                 { datetime => date( $_->date ) },
                 date( $_->date ),
-                '：（',
-                a(
-                  { href => href( "/@{[ $_->section ]}/", $baseURI ) },
-                  $c->sections->{ $_->section }->label,
-                ),
-                '）'
               ),
+              a(
+                { href => href( "/@{[ $_->section ]}/", $baseURI ) },
+                $c->sections->{ $_->section }->label,
+              ),
+              span('▹'),
               a( { href => $_->href, class => 'title' }, $_->title )
             )
           } $page->entries->@*

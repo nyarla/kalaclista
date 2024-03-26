@@ -74,7 +74,7 @@ subtest indexes => sub {
 
         for my $item ( $article->find('.archives li')->@* ) {
           like $item->at('time')->attr('datetime'), qr|^\d{4}-\d{2}-\d{2}$|;
-          like $item->at('time')->text,             qr|^\d{4}-\d{2}-\d{2}：$|;
+          like $item->at('time')->text,             qr|^\d{4}-\d{2}-\d{2}$|;
           like $item->at('a.title')->attr('href'),  qr<^${href}(?:\d{4}/\d{2}/\d{2}/\d{6}|[^/]+/)>;
         }
 
