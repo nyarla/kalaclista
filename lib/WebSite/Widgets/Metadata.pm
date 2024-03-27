@@ -11,7 +11,8 @@ use JSON::XS qw(encode_json);
 use Kalaclista::HyperScript qw|head meta link_ title script style raw|;
 
 use WebSite::Context;
-use WebSite::Context::URI qw(href);
+use WebSite::Context::URI  qw(href);
+use WebSite::Context::Path qw(cachedir);
 
 use WebSite::Helper::Digest qw(digest);
 
@@ -163,7 +164,7 @@ sub common {
     rel( icon       => href('/favicon.ico')->to_string ),
     rel( icon       => href('/icon.svg')->to_string, 'image/svg+xml' ),
     rel( author     => 'http://www.hatena.ne.jp/nyarla-net/' ),
-    rel( stylesheet => href("/main-@{[ digest('deps/css/main.css') ]}.css")->to_string )
+    rel( stylesheet => href("/main-@{[ digest(cachedir->child('css/main.css')->path) ]}.css")->to_string )
   ];
 
   return $html->@*;
