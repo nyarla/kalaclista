@@ -7,7 +7,7 @@ use feature qw(isa);
 
 use Exporter::Lite;
 
-use Kalaclista::HyperScript qw(a div h2 p blockquote cite small);
+use Kalaclista::HyperScript qw(a div h2 p blockquote img cite small);
 
 use WebSite::Context::Path   qw(srcdir);
 use WebSite::Loader::WebSite qw(external);
@@ -22,18 +22,26 @@ sub cardify : prototype($) {
   my $website = shift;
 
   if ( !$website->gone ) {
+    my $domain  = $website->href->host;
+    my $favicon = img(
+      {
+        src    => "https://www.google.com/s2/favicons?domain=${domain}&sz=32",
+        width  => 16,
+        height => 16,
+        alt    => '',
+      }
+    );
+
     return a(
       { href => $website->href->to_string },
-      h2( $website->title ),
+      h2( $favicon, $website->title ),
       p( cite( $website->cite ) ),
-      blockquote( p( $website->title ) ),
     );
   }
 
   return div(
     h2( $website->title ),
     p( cite( $website->cite ), small('無効なリンクです') ),
-    blockquote( p( $website->title ) ),
   );
 }
 

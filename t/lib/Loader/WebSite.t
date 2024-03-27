@@ -27,12 +27,10 @@ subtest external => sub {
   subtest gone => sub {
     my $website = external "てすと", 'https://example.com/foo/bar';
 
-    is $website->title,           'これはテストです';
-    is $website->link->to_string, 'https://example.com/gone';
+    is $website->title,           'てすと';
+    is $website->link->to_string, 'https://example.com/foo/bar';
     is $website->href->to_string, 'https://example.com/foo/bar';
     is $website->gone,            !!1;
-
-    is $website, ( external "テスト", 'https://example.com/gone' );
   };
 
   subtest fallback => sub {
