@@ -34,14 +34,26 @@ subtest profile => sub {
   is $section->find('p')->length, 2;
 
   my $nav = $dom->at('nav');
-  is $nav->at('p > a:nth-child(1)')->attr('href'), 'https://github.com/nyarla/';
-  is $nav->at('p > a:nth-child(1)')->text,         'GitHub';
-  is $nav->at('p > a:nth-child(3)')->attr('href'), 'https://zenn.dev/nyarla';
-  is $nav->at('p > a:nth-child(3)')->text,         'Zenn';
-  is $nav->at('p > a:nth-child(5)')->attr('href'), 'https://kalaclista.com/@nyarla';
-  is $nav->at('p > a:nth-child(5)')->text,         'GoToSocial';
-  is $nav->at('p > a:nth-child(7)')->attr('href'), 'https://misskey.io/@nyarla';
-  is $nav->at('p > a:nth-child(7)')->text,         'Misskey.io';
+  my $web = $nav->at('p:nth-child(1)');
+  my $sns = $nav->at('p:nth-child(2)');
+
+  is $web->at('a:nth-child(1)')->attr('href'), 'https://github.com/nyarla/';
+  is $web->at('a:nth-child(1)')->text,         'GitHub';
+  is $web->at('a:nth-child(3)')->attr('href'), 'https://zenn.dev/nyarla';
+  is $web->at('a:nth-child(3)')->text,         'Zenn';
+  is $web->at('a:nth-child(5)')->attr('href'), 'https://note.com/kalaclista/';
+  is $web->at('a:nth-child(5)')->text,         'note';
+  is $web->at('a:nth-child(7)')->attr('href'), 'https://sizu.me/nyarla';
+  is $web->at('a:nth-child(7)')->text,         'しずかなインターネット';
+
+  is $sns->at('a:nth-child(1)')->attr('href'), 'https://kalaclista.com/@nyarla';
+  is $sns->at('a:nth-child(1)')->text,         'GoToSocial';
+  is $sns->at('a:nth-child(3)')->attr('href'), 'https://misskey.io/@nyarla';
+  is $sns->at('a:nth-child(3)')->text,         'Misskey.io';
+  is $sns->at('a:nth-child(5)')->attr('href'), 'https://bsky.app/profile/kalaclista.com';
+  is $sns->at('a:nth-child(5)')->text,         'Bluesky';
+  is $sns->at('a:nth-child(7)')->attr('href'), 'https://www.threads.net/@kalaclista';
+  is $sns->at('a:nth-child(7)')->text,         'threads.net';
 };
 
 done_testing;

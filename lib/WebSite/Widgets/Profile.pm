@@ -43,14 +43,31 @@ sub profile {
     nav(
       classes(qw|sm:ml-28|),
       p(
-        a( classes( q|u-url url|, qw|mr-2| ), { href => 'https://github.com/nyarla/' }, 'GitHub' ),
+        a( classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://github.com/nyarla/' }, 'GitHub' ),
         wbr,
-        a( classes( q|u-url url|, qw|mr-2| ), { href => 'https://zenn.dev/nyarla' }, 'Zenn' ),
+        a( classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://zenn.dev/nyarla' }, 'Zenn' ),
         wbr,
-        a( classes( q|u-url url|, qw|mr-2| ), { href => 'https://kalaclista.com/@nyarla' }, 'GoToSocial' ),
+        a( classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://note.com/kalaclista/' }, 'note' ),
         wbr,
-        a( classes( q|u-url url|, qw|mr-2| ), { href => 'https://misskey.io/@nyarla' }, 'Misskey.io' ),
-      )
+        a( classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://sizu.me/nyarla' }, 'しずかなインターネット' ),
+      ),
+      p(
+        a(
+          classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://kalaclista.com/@nyarla' }, 'GoToSocial'
+        ),
+        wbr,
+        a( classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://misskey.io/@nyarla' }, 'Misskey.io' ),
+        wbr,
+        a(
+          classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://bsky.app/profile/kalaclista.com' },
+          'Bluesky'
+        ),
+        wbr,
+        a(
+          classes( q|u-url url|, qw|inline-block mb-2 mr-3 text-nowrap| ), { href => 'https://www.threads.net/@kalaclista' },
+          'threads.net'
+        ),
+      ),
     )
   );
 
