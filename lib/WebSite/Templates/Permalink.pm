@@ -62,7 +62,10 @@ sub content {
       hr( { class => 'sep' } ),
       raw( $entry->dom->innerHTML ),
     ),
-    ( env->production ? aside(ads) : () ),
+    aside(
+      classes(qw|border-8 rounded-2xl p-3 border-gray-light bg-gray-bright dark:border-gray-darkest|),
+      ( env->production ? ads : div( { style => 'display: block; height: 150px; width: 100%; background: #FFF;' }, '' ) ),
+    ),
   );
 }
 
