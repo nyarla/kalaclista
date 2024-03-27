@@ -22,7 +22,8 @@ endif
 
 css: .test-in-shell .test-set-stage
 	@echo generate css
-	@pnpm exec tailwindcss -i deps/css/main.css -o public/$(KALACLISTA_ENV)/main-$$(openssl dgst -r -sha256 deps/css/main.css | cut -c 1-7).css --minify
+	@pnpm exec tailwindcss -i deps/css/main.css -o cache/$(KALACLISTA_ENV)/css/main.css --minify
+	@cp cache/$(KALACLISTA_ENV)/css/main.css public/$(KALACLISTA_ENV)/main-$(shell openssl dgst -r -sha256 cache/$(KALACLISTA_ENV)/css/main.css | cut -c 1-7).css
 
 images: .test-in-shell .test-set-stage
 	@echo generate webp
@@ -70,10 +71,10 @@ home: .test-in-shell .test-set-stage
 	@echo generate home
 	@perl bin/gen.pl home
 
-gen: .test-in-shell .test-set-stage
+gen: .test-in-shell .test-set-stage css
 	@$(MAKE) images
 	@$(MAKE) entries
-	@$(MAKE) -j6 assets css sitemap_xml home index
+	@$(MAKE) -j6 assets sitemap_xml home index
 	@$(MAKE) pages
 
 clean: .test-in-shell .test-set-stage
