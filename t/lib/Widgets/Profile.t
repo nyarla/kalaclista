@@ -26,7 +26,7 @@ subtest profile => sub {
   is $figure->at('p > a > img')->attr('src'),     href('/assets/avatar.svg')->to_string;
   is $figure->at('p > a > img')->attr('width'),   96;
   is $figure->at('p > a > img')->attr('height'),  96;
-  is $figure->at('p > a > img')->attr('alt'),     'アバターアイコン兼ロゴ';
+  is $figure->at('p > a > img')->attr('alt'),     '';
   is $figure->at('figcaption > a')->attr('href'), href('/nyarla/')->to_string;
   is $figure->at('figcaption > a')->text,         'にゃるら（カラクリスタ）';
 
