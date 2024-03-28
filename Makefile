@@ -1,125 +1,153 @@
-FULL := $(shell nproc --all --ignore 1)
-HALF := $(shell echo "$(FULL) / 2" | bc)
-CWD  := $(shell pwd)
+# Check to running environment
+# ============================
+ifeq (,$(findstring $(MAKECMDGOALS),shell))
 
-PAGES := $(shell echo '$(shell date +%Y) - 2006'  | bc)
-INDEX := 3
-
-ROOTDIR := src
-CACHEDIR := cache/$(KALACLISTA_ENV)
-
-ifeq ($(KALACLISTA_ENV),test)
-ROOTDIR := t/fixtures
+# inside perl-shell?
+# ------------------
+ifndef IN_PERL_SHELL
+$(error This command should running on perl-shell. You could enter to perl-shell by `make shell`)
 endif
 
+# KALACLISTA_ENV exists?
+# ----------------------
+ifeq (,$(findstring $(MAKECMDGOALS),"\
+	production development testing cleanup \
+	test test-scripts ci \
+	up serve cpan \
+	post echos notes \
+"))
+
+### KALACLISTA_ENV is defined?
+ifndef KALACLISTA_ENV
+$(error KALACLISTA_ENV is not defined. This variable required to them)
+endif
+
+### KALACLISTA_ENV is one of them?
+ifeq (,$(findstring $(KALACLISTA_ENV),"production development staging test"))
+$(error KALACLISTA_ENV should be ones of them: 'production', 'development', 'staging', 'test')
+endif
+
+endif ## END
+
+endif # END
+
+# CONSTANTS VARIABLES
+# ===================
+FULL := $(shell nproc --all --ignore 1)
+
+# files and directories
+# ---------------------
+ROOT  := $(shell pwd)
+SRC   := $(ROOT)/src
+CACHE := $(ROOT)/cache/$(KALACLISTA_ENV)
+DIST  := $(ROOT)/public/$(KALACLISTA_ENV)
+
+ifeq ($(KALACLISTA_ENV),test)
+SRC   := $(ROOT)/t/fixtures
+endif
+
+# TASKS
+# =====
 .PHONY: clean build dev test
-
-.test-in-shell:
-	@test -n "$(IN_PERL_SHELL)" || (echo 'you need to enter perl shell by `make shell`' >&2 ; exit 1)
-
-.test-set-stage:
-	@test -n "$(KALACLISTA_ENV)" || (echo 'this command needs to set `KALACLISTA_ENV`.' >&2 ; exit 1)
-
-css: .test-in-shell .test-set-stage
+css:
 	@echo generate css
-	@pnpm exec tailwindcss -i deps/css/main.css -o cache/$(KALACLISTA_ENV)/css/main.css --minify
-	@cp cache/$(KALACLISTA_ENV)/css/main.css public/$(KALACLISTA_ENV)/main-$(shell openssl dgst -r -sha256 cache/$(KALACLISTA_ENV)/css/main.css | cut -c 1-7).css
+	@pnpm exec tailwindcss -i $(ROOT)/deps/css/main.css -o $(CACHE)/css/main.css --minify
+	@cp $(CACHE)/css/main.css $(DIST)/main-$$(openssl dgst -r -sha256 $(CACHE)/css/main.css | cut -c 1-7).css
 
-images: .test-in-shell .test-set-stage
+images:
 	@echo generate webp
-	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
-	@touch $(CACHEDIR)/images/latest.sha256sum
-	@comm -23 $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum \
+	@test -d $(CACHE)/images || mkdir -p $(CACHE)/images
+	@openssl dgst -r -sha256 $$(find $(SRC)/images -type f | grep -v '.git') | sort >$(CACHE)/images/now.sha256sum
+	@touch $(CACHE)/images/latest.sha256sum
+	@comm -23 $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*$(ROOTDIR)/images/##' \
+		| sed 's#*$(SRC)/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
-	@mv $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum
+	@mv $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum
 
-entries: .test-in-shell .test-set-stage
+entries:
 	@echo generate precompiled entries source
-	@test -d $(CACHEDIR)/entries || mkdir -p $(CACHEDIR)/entries
-	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/entries/src -type f | grep -v '.git') | sort >$(CACHEDIR)/entries/now.sha256sum
-	@touch $(CACHEDIR)/entries/latest.sha256sum
-	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
+	@test -d $(CACHE)/entries || mkdir -p $(CACHE)/entries
+	@openssl dgst -r -sha256 $$(find $(SRC)/entries/src -type f | grep -v '.git') | sort >$(CACHE)/entries/now.sha256sum
+	@touch $(CACHE)/entries/latest.sha256sum
+	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*$(ROOTDIR)/entries/src/##' >$(CACHEDIR)/entries/target
-	@pnpm exec node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
-	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
+		| sed 's#*$(SRC)/entries/src/##' >$(CACHE)/entries/target
+	@pnpm exec node bin/gen-precompile.js $(SRC) $(CACHE)/entries/target
+	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*$(ROOTDIR)/entries/src/##' \
+		| sed 's#*$(SRC)/entries/src/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-syntax-highlight.pl "{}"
-	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
-	@rm $(CACHEDIR)/entries/target
+	@mv $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum
+	@rm $(CACHE)/entries/target
 
-assets: .test-in-shell .test-set-stage
+assets:
 	@echo copy assets
-	@cp -r $(ROOTDIR)/assets/* public/$(KALACLISTA_ENV)/
+	@cp -r $(SRC)/assets/* $(DIST)/
 
-sitemap_xml: .test-in-shell .test-set-stage
+sitemap_xml:
 	@echo generate sitemap.xml
 	@perl bin/gen.pl sitemap.xml
 
-pages: .test-in-shell .test-set-stage
+pages:
 	@echo generate pages
-	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(PAGES) perl bin/gen.pl permalinks {}
+	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(shell echo '$(shell date +%Y) - 2006'  | bc) perl bin/gen.pl permalinks {}
 
-index: .test-in-shell .test-set-stage
+index:
 	@echo generate index
-	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
+	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P3 perl bin/gen.pl index {}
 
-home: .test-in-shell .test-set-stage
+home:
 	@echo generate home
 	@perl bin/gen.pl home
 
-gen: .test-in-shell .test-set-stage css
-	@$(MAKE) images
-	@$(MAKE) entries
-	@$(MAKE) -j6 assets sitemap_xml home index
-	@$(MAKE) pages
+gen:
+	@$(MAKE) -j4 assets css images entries sitemap_xml
+	@$(MAKE) -j3 home index pages
 
-clean: .test-in-shell .test-set-stage
-	@test ! -d public/$(KALACLISTA_ENV) || rm -rf public/$(KALACLISTA_ENV)
-	@mkdir -p public/$(KALACLISTA_ENV)
-	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
-	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
+clean:
+	@(test ! -d $(DIST) || rm -rf $(DIST)) && mkdir -p $(DIST)
+	@test ! -e $(CACHE)/images/latest.sha256sum || rm $(CACHE)/images/latest.sha256sum
 
-cleanup: .test-in-shell
-	@env KALACLISTA_ENV=production $(MAKE) clean
-	@env KALACLISTA_ENV=staging $(MAKE) clean
-	@env KALACLISTA_ENV=development $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) clean
+cleanup:
+	@$(MAKE) KALACLISTA_ENV=development clean
+	@$(MAKE) KALACLISTA_ENV=production clean
+	@$(MAKE) KALACLISTA_ENV=staging clean
+	@$(MAKE) KALACLISTA_ENV=test clean
 
-production: .test-in-shell
-	@env KALACLISTA_ENV=production $(MAKE) gen
+production:
+	@$(MAKE) KALACLISTA_ENV=production gen
 
-development: .test-in-shell
-	@env KALACLISTA_ENV=development $(MAKE) gen
+development:
+	@$(MAKE) KALACLISTA_ENV=development gen
 
 testing:
-	@env KALACLISTA_ENV=test $(MAKE) gen
+	@$(MAKE) KALACLISTA_ENV=test gen
 
-test: .test-in-shell
-	@env KALACLISTA_ENV=production $(MAKE) clean
-	@env KALACLISTA_ENV=production $(MAKE) test-scripts
-	@env KALACLISTA_ENV=production $(MAKE) clean
-	@env KALACLISTA_ENV=production $(MAKE) gen
-	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
+test: export KALACLISTA_ENV := production
+test:
+	@$(MAKE) clean
+	@$(MAKE) test-scripts
+	@$(MAKE) clean
+	@$(MAKE) gen
+	@prove -j$(FULL) -r t/
 
-test-scripts: .test-in-shell .test-set-stage
-	prove -v bin/compile-*.pl
+test-scripts:
+	prove -j$(FULL) -v bin/compile-*.pl
 
-ci: .test-in-shell
-	@env KALACLISTA_ENV=test $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) test-scripts
-	@env KALACLISTA_ENV=test $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) gen
-	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/lib
-	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/common
+ci: export KALACLISTA_ENV := test
+ci:
+	@$(MAKE) clean
+	@$(MAKE) test-scripts
+	@$(MAKE) clean
+	@$(MAKE) gen
+	@prove -j$(FULL) -lvr t/lib
+	@prove -j$(FULL) -lvr t/common
 
 .PHONY: shell serve up
 
 # temporary solution
-up: .test-in-shell cleanup production
+up: cleanup production
 	pnpm exec wrangler pages deploy public/production
 
 shell:
@@ -127,20 +155,20 @@ shell:
 	@nix develop
 	@pkill proclet || true
 
-cpan: .test-in-shell
+cpan:
 	@test ! -d extlib || rm -rf extlib
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile app/cpanfile
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile cpanfile
 
-serve: .test-in-shell
+serve:
 	proclet start --color
 
 .PHONY: posts echos
 
-posts: .test-in-shell
+posts:
 	@bash bin/new-entry.sh posts
 
-echos: .test-in-shell
+echos:
 	@bash bin/new-entry.sh echos
 
 notes:
