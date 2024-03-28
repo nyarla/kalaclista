@@ -11,7 +11,7 @@ endif
 # KALACLISTA_ENV exists?
 # ----------------------
 ifeq (,$(findstring $(MAKECMDGOALS),"\
-	production development testing \
+	production development testing cleanup \
 	test test-scripts ci \
 	up serve cpan \
 	post echos notes \
