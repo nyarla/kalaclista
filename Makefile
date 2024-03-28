@@ -14,18 +14,39 @@ endif
 
 .PHONY: clean build dev test
 
-.test-in-shell:
-	@test -n "$(IN_PERL_SHELL)" || (echo 'you need to enter perl shell by `make shell`' >&2 ; exit 1)
+ifeq (,$(findstring $(MAKECMDGOALS),shell))
 
-.test-set-stage:
-	@test -n "$(KALACLISTA_ENV)" || (echo 'this command needs to set `KALACLISTA_ENV`.' >&2 ; exit 1)
+# check to inside perl-shell
+ifndef IN_PERL_SHELL
+$(error This command should running on perl-shell. You could enter to perl-shell by `make shell`)
+endif
 
-css: .test-in-shell .test-set-stage
+# check to KALACLISTA_ENV
+ifeq (,$(findstring $(MAKECMDGOALS),"\
+	production development testing \
+	test test-scripts ci \
+	up serve cpan \
+	post echos notes \
+"))
+
+ifndef KALACLISTA_ENV
+$(error KALACLISTA_ENV is not defined. This variable required to them)
+endif
+
+ifeq (,$(findstring $(KALACLISTA_ENV),"production development staging test"))
+$(error KALACLISTA_ENV should be ones of them: 'production', 'development', 'staging', 'test')
+endif
+
+endif
+
+endif
+
+css:
 	@echo generate css
 	@pnpm exec tailwindcss -i deps/css/main.css -o cache/$(KALACLISTA_ENV)/css/main.css --minify
 	@cp cache/$(KALACLISTA_ENV)/css/main.css public/$(KALACLISTA_ENV)/main-$(shell openssl dgst -r -sha256 cache/$(KALACLISTA_ENV)/css/main.css | cut -c 1-7).css
 
-images: .test-in-shell .test-set-stage
+images:
 	@echo generate webp
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
 	@touch $(CACHEDIR)/images/latest.sha256sum
@@ -35,7 +56,7 @@ images: .test-in-shell .test-set-stage
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
 	@mv $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum
 
-entries: .test-in-shell .test-set-stage
+entries:
 	@echo generate precompiled entries source
 	@test -d $(CACHEDIR)/entries || mkdir -p $(CACHEDIR)/entries
 	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/entries/src -type f | grep -v '.git') | sort >$(CACHEDIR)/entries/now.sha256sum
@@ -51,64 +72,64 @@ entries: .test-in-shell .test-set-stage
 	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
 	@rm $(CACHEDIR)/entries/target
 
-assets: .test-in-shell .test-set-stage
+assets:
 	@echo copy assets
 	@cp -r $(ROOTDIR)/assets/* public/$(KALACLISTA_ENV)/
 
-sitemap_xml: .test-in-shell .test-set-stage
+sitemap_xml:
 	@echo generate sitemap.xml
 	@perl bin/gen.pl sitemap.xml
 
-pages: .test-in-shell .test-set-stage
+pages:
 	@echo generate pages
 	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(PAGES) perl bin/gen.pl permalinks {}
 
-index: .test-in-shell .test-set-stage
+index:
 	@echo generate index
 	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
 
-home: .test-in-shell .test-set-stage
+home:
 	@echo generate home
 	@perl bin/gen.pl home
 
-gen: .test-in-shell .test-set-stage css
+gen: css
 	@$(MAKE) images
 	@$(MAKE) entries
 	@$(MAKE) -j6 assets sitemap_xml home index
 	@$(MAKE) pages
 
-clean: .test-in-shell .test-set-stage
+clean:
 	@test ! -d public/$(KALACLISTA_ENV) || rm -rf public/$(KALACLISTA_ENV)
 	@mkdir -p public/$(KALACLISTA_ENV)
 	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
 	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
 
-cleanup: .test-in-shell
+cleanup:
 	@env KALACLISTA_ENV=production $(MAKE) clean
 	@env KALACLISTA_ENV=staging $(MAKE) clean
 	@env KALACLISTA_ENV=development $(MAKE) clean
 	@env KALACLISTA_ENV=test $(MAKE) clean
 
-production: .test-in-shell
+production:
 	@env KALACLISTA_ENV=production $(MAKE) gen
 
-development: .test-in-shell
+development:
 	@env KALACLISTA_ENV=development $(MAKE) gen
 
 testing:
 	@env KALACLISTA_ENV=test $(MAKE) gen
 
-test: .test-in-shell
+test:
 	@env KALACLISTA_ENV=production $(MAKE) clean
 	@env KALACLISTA_ENV=production $(MAKE) test-scripts
 	@env KALACLISTA_ENV=production $(MAKE) clean
 	@env KALACLISTA_ENV=production $(MAKE) gen
 	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
 
-test-scripts: .test-in-shell .test-set-stage
+test-scripts:
 	prove -v bin/compile-*.pl
 
-ci: .test-in-shell
+ci:
 	@env KALACLISTA_ENV=test $(MAKE) clean
 	@env KALACLISTA_ENV=test $(MAKE) test-scripts
 	@env KALACLISTA_ENV=test $(MAKE) clean
@@ -119,7 +140,7 @@ ci: .test-in-shell
 .PHONY: shell serve up
 
 # temporary solution
-up: .test-in-shell cleanup production
+up: cleanup production
 	pnpm exec wrangler pages deploy public/production
 
 shell:
@@ -127,20 +148,20 @@ shell:
 	@nix develop
 	@pkill proclet || true
 
-cpan: .test-in-shell
+cpan:
 	@test ! -d extlib || rm -rf extlib
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile app/cpanfile
 	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile cpanfile
 
-serve: .test-in-shell
+serve:
 	proclet start --color
 
 .PHONY: posts echos
 
-posts: .test-in-shell
+posts:
 	@bash bin/new-entry.sh posts
 
-echos: .test-in-shell
+echos:
 	@bash bin/new-entry.sh echos
 
 notes:
