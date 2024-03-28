@@ -116,37 +116,40 @@ clean:
 	@test ! -e $(CACHE)/images/latest.sha256sum || rm $(CACHE)/images/latest.sha256sum
 
 cleanup:
-	@env KALACLISTA_ENV=production $(MAKE) clean
-	@env KALACLISTA_ENV=staging $(MAKE) clean
-	@env KALACLISTA_ENV=development $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) clean
+	@$(MAKE) KALACLISTA_ENV=production clean
+	@$(MAKE) KALACLISTA_ENV=staging clean
+	@$(MAKE) KALACLISTA_ENV=development clean
+	@$(MAKE) KALACLISTA_ENV=test clean
+	@$(MAKE) KALACLISTA_ENV=production clean
 
 production:
-	@env KALACLISTA_ENV=production $(MAKE) gen
+	@$(MAKE) KALACLISTA_ENV=production gen
 
 development:
-	@env KALACLISTA_ENV=development $(MAKE) gen
+	@$(MAKE) KALACLISTA_ENV=development gen
 
 testing:
-	@env KALACLISTA_ENV=test $(MAKE) gen
+	@$(MAKE) KALACLISTA_ENV=test gen
 
+test: export KALACLISTA_ENV := production
 test:
-	@env KALACLISTA_ENV=production $(MAKE) clean
-	@env KALACLISTA_ENV=production $(MAKE) test-scripts
-	@env KALACLISTA_ENV=production $(MAKE) clean
-	@env KALACLISTA_ENV=production $(MAKE) gen
-	@env KALACLISTA_ENV=production prove -j$(FULL) -r t/
+	@$(MAKE) clean
+	@$(MAKE) test-scripts
+	@$(MAKE) clean
+	@$(MAKE) gen
+	@prove -j$(FULL) -r t/
 
 test-scripts:
 	prove -v bin/compile-*.pl
 
+ci: export KALACLISTA_ENV := test
 ci:
-	@env KALACLISTA_ENV=test $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) test-scripts
-	@env KALACLISTA_ENV=test $(MAKE) clean
-	@env KALACLISTA_ENV=test $(MAKE) gen
-	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/lib
-	@env KALACLISTA_ENV=test prove -j$(FULL) -lvr t/common
+	@$(MAKE) clean
+	@$(MAKE) test-scripts
+	@$(MAKE) clean
+	@$(MAKE) gen
+	@prove -j$(FULL) -lvr t/lib
+	@prove -j$(FULL) -lvr t/common
 
 .PHONY: shell serve up
 
