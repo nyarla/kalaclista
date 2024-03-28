@@ -34,10 +34,6 @@ endif # END
 # CONSTANTS VARIABLES
 # ===================
 FULL := $(shell nproc --all --ignore 1)
-HALF := $(shell echo "$(FULL) / 2" | bc)
-
-PAGES := $(shell echo '$(shell date +%Y) - 2006'  | bc)
-INDEX := 3
 
 # files and directories
 # ---------------------
@@ -95,21 +91,19 @@ sitemap_xml:
 
 pages:
 	@echo generate pages
-	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(PAGES) perl bin/gen.pl permalinks {}
+	@seq 2006 $(shell date +%Y) | xargs -I{} -P$(shell echo '$(shell date +%Y) - 2006'  | bc) perl bin/gen.pl permalinks {}
 
 index:
 	@echo generate index
-	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P$(INDEX) perl bin/gen.pl index {}
+	@printf "%s\n%s\n%s\n" posts echos notes | xargs -I{} -P3 perl bin/gen.pl index {}
 
 home:
 	@echo generate home
 	@perl bin/gen.pl home
 
-gen: css
-	@$(MAKE) images
-	@$(MAKE) entries
-	@$(MAKE) -j6 assets sitemap_xml home index
-	@$(MAKE) pages
+gen:
+	@$(MAKE) -j4 assets css images entries sitemap_xml
+	@$(MAKE) -j3 home index pages
 
 clean:
 	@(test ! -d $(DIST) || rm -rf $(DIST)) && mkdir -p $(DIST)
@@ -140,7 +134,7 @@ test:
 	@prove -j$(FULL) -r t/
 
 test-scripts:
-	prove -v bin/compile-*.pl
+	prove -j$(FULL) -v bin/compile-*.pl
 
 ci: export KALACLISTA_ENV := test
 ci:
