@@ -31,6 +31,8 @@ endif ## END
 
 endif # END
 
+# CONSTANTS VARIABLES
+# ===================
 FULL := $(shell nproc --all --ignore 1)
 HALF := $(shell echo "$(FULL) / 2" | bc)
 CWD  := $(shell pwd)
@@ -45,6 +47,8 @@ ifeq ($(KALACLISTA_ENV),test)
 ROOTDIR := t/fixtures
 endif
 
+# TASKS
+# =====
 .PHONY: clean build dev test
 css:
 	@echo generate css
