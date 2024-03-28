@@ -35,16 +35,19 @@ endif # END
 # ===================
 FULL := $(shell nproc --all --ignore 1)
 HALF := $(shell echo "$(FULL) / 2" | bc)
-CWD  := $(shell pwd)
 
 PAGES := $(shell echo '$(shell date +%Y) - 2006'  | bc)
 INDEX := 3
 
-ROOTDIR := src
-CACHEDIR := cache/$(KALACLISTA_ENV)
+# files and directories
+# ---------------------
+ROOT  := $(shell pwd)
+SRC   := $(ROOT)/src
+CACHE := $(ROOT)/cache/$(KALACLISTA_ENV)
+DIST  := $(ROOT)/public/$(KALACLISTA_ENV)
 
 ifeq ($(KALACLISTA_ENV),test)
-ROOTDIR := t/fixtures
+SRC   := $(ROOT)/t/fixtures
 endif
 
 # TASKS
@@ -52,38 +55,39 @@ endif
 .PHONY: clean build dev test
 css:
 	@echo generate css
-	@pnpm exec tailwindcss -i deps/css/main.css -o cache/$(KALACLISTA_ENV)/css/main.css --minify
-	@cp cache/$(KALACLISTA_ENV)/css/main.css public/$(KALACLISTA_ENV)/main-$(shell openssl dgst -r -sha256 cache/$(KALACLISTA_ENV)/css/main.css | cut -c 1-7).css
+	@pnpm exec tailwindcss -i $(ROOT)/deps/css/main.css -o $(CACHE)/css/main.css --minify
+	@cp $(CACHE)/css/main.css $(DIST)/main-$$(openssl dgst -r -sha256 $(CACHE)/css/main.css | cut -c 1-7).css
 
 images:
 	@echo generate webp
-	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/images -type f | grep -v '.git') | sort >$(CACHEDIR)/images/now.sha256sum
-	@touch $(CACHEDIR)/images/latest.sha256sum
-	@comm -23 $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum \
+	@test -d $(CACHE)/images || mkdir -p $(CACHE)/images
+	@openssl dgst -r -sha256 $$(find $(SRC)/images -type f | grep -v '.git') | sort >$(CACHE)/images/now.sha256sum
+	@touch $(CACHE)/images/latest.sha256sum
+	@comm -23 $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*$(ROOTDIR)/images/##' \
+		| sed 's#*$(SRC)/images/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
-	@mv $(CACHEDIR)/images/now.sha256sum $(CACHEDIR)/images/latest.sha256sum
+	@mv $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum
 
 entries:
 	@echo generate precompiled entries source
-	@test -d $(CACHEDIR)/entries || mkdir -p $(CACHEDIR)/entries
-	@openssl dgst -r -sha256 $$(find $(ROOTDIR)/entries/src -type f | grep -v '.git') | sort >$(CACHEDIR)/entries/now.sha256sum
-	@touch $(CACHEDIR)/entries/latest.sha256sum
-	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
+	@test -d $(CACHE)/entries || mkdir -p $(CACHE)/entries
+	@openssl dgst -r -sha256 $$(find $(SRC)/entries/src -type f | grep -v '.git') | sort >$(CACHE)/entries/now.sha256sum
+	@touch $(CACHE)/entries/latest.sha256sum
+	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*$(ROOTDIR)/entries/src/##' >$(CACHEDIR)/entries/target
-	@pnpm exec node bin/gen-precompile.js $(ROOTDIR) $(CACHEDIR)/entries/target
-	@comm -23 $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum \
+		| sed 's#*$(SRC)/entries/src/##' >$(CACHE)/entries/target
+	@pnpm exec node bin/gen-precompile.js $(SRC) $(CACHE)/entries/target
+	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
-		| sed 's#*$(ROOTDIR)/entries/src/##' \
+		| sed 's#*$(SRC)/entries/src/##' \
 		| xargs -I{} -P$(FULL) perl bin/compile-syntax-highlight.pl "{}"
-	@mv $(CACHEDIR)/entries/now.sha256sum $(CACHEDIR)/entries/latest.sha256sum
-	@rm $(CACHEDIR)/entries/target
+	@mv $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum
+	@rm $(CACHE)/entries/target
 
 assets:
 	@echo copy assets
-	@cp -r $(ROOTDIR)/assets/* public/$(KALACLISTA_ENV)/
+	@cp -r $(SRC)/assets/* $(DIST)/
 
 sitemap_xml:
 	@echo generate sitemap.xml
@@ -108,10 +112,8 @@ gen: css
 	@$(MAKE) pages
 
 clean:
-	@test ! -d public/$(KALACLISTA_ENV) || rm -rf public/$(KALACLISTA_ENV)
-	@mkdir -p public/$(KALACLISTA_ENV)
-	@test ! -e cache/$(KALACLISTA_ENV)/images/latest.sha256sum || rm cache/$(KALACLISTA_ENV)/images/latest.sha256sum
-	@test ! -e cache/$(KALACLISTA_ENV)/images/data || rm -rf cache/$(KALACLISTA_ENV)/images/data
+	@(test ! -d $(DIST) || rm -rf $(DIST)) && mkdir -p $(DIST)
+	@test ! -e $(CACHE)/images/latest.sha256sum || rm $(CACHE)/images/latest.sha256sum
 
 cleanup:
 	@env KALACLISTA_ENV=production $(MAKE) clean
