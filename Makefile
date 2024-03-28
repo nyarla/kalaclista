@@ -1,3 +1,36 @@
+# Check to running environment
+# ============================
+ifeq (,$(findstring $(MAKECMDGOALS),shell))
+
+# inside perl-shell?
+# ------------------
+ifndef IN_PERL_SHELL
+$(error This command should running on perl-shell. You could enter to perl-shell by `make shell`)
+endif
+
+# KALACLISTA_ENV exists?
+# ----------------------
+ifeq (,$(findstring $(MAKECMDGOALS),"\
+	production development testing \
+	test test-scripts ci \
+	up serve cpan \
+	post echos notes \
+"))
+
+### KALACLISTA_ENV is defined?
+ifndef KALACLISTA_ENV
+$(error KALACLISTA_ENV is not defined. This variable required to them)
+endif
+
+### KALACLISTA_ENV is one of them?
+ifeq (,$(findstring $(KALACLISTA_ENV),"production development staging test"))
+$(error KALACLISTA_ENV should be ones of them: 'production', 'development', 'staging', 'test')
+endif
+
+endif ## END
+
+endif # END
+
 FULL := $(shell nproc --all --ignore 1)
 HALF := $(shell echo "$(FULL) / 2" | bc)
 CWD  := $(shell pwd)
@@ -13,34 +46,6 @@ ROOTDIR := t/fixtures
 endif
 
 .PHONY: clean build dev test
-
-ifeq (,$(findstring $(MAKECMDGOALS),shell))
-
-# check to inside perl-shell
-ifndef IN_PERL_SHELL
-$(error This command should running on perl-shell. You could enter to perl-shell by `make shell`)
-endif
-
-# check to KALACLISTA_ENV
-ifeq (,$(findstring $(MAKECMDGOALS),"\
-	production development testing \
-	test test-scripts ci \
-	up serve cpan \
-	post echos notes \
-"))
-
-ifndef KALACLISTA_ENV
-$(error KALACLISTA_ENV is not defined. This variable required to them)
-endif
-
-ifeq (,$(findstring $(KALACLISTA_ENV),"production development staging test"))
-$(error KALACLISTA_ENV should be ones of them: 'production', 'development', 'staging', 'test')
-endif
-
-endif
-
-endif
-
 css:
 	@echo generate css
 	@pnpm exec tailwindcss -i deps/css/main.css -o cache/$(KALACLISTA_ENV)/css/main.css --minify
