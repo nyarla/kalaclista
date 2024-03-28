@@ -149,7 +149,7 @@
 
     & .content__card--website a,
     & .content__card--website div {
-      @apply block rounded-2xl border-8 px-4 py-2 no-underline border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+      @apply block rounded-2xl border-8 px-4 py-4 no-underline border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
     }
 
     & .content__card--website a *,
@@ -162,6 +162,10 @@
       @apply font-bold text-gray-darkest dark:text-gray-lightest;
     }
 
+    & .content__card--website a h2 img {
+      @apply inline align-[-2px] mr-1;
+    }
+
     & .content__card--website a > p,
     & .content__card--website div > p {
       @apply my-1;
@@ -170,11 +174,6 @@
     & .content__card--website a cite,
     & .content__card--website div cite {
       @apply text-sm not-italic underline dark:text-blue-light;
-    }
-
-    & .content__card--website a blockquote,
-    & .content__card--website div blockquote {
-      @apply text-sm text-gray-darkest dark:text-gray-lightest;
     }
 
     & .content__card--website a:hover {

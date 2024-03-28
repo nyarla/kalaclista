@@ -46,10 +46,23 @@ sub init {
 
 sub external : prototype($$) {
   my ( $title, $link ) = @_;
-  return websites->{$link} if exists websites->{$link};
-  return Kalaclista::Data::WebSite->new(
-    title => $title,
-    href  => URI::Fast->new($link),
-    gone  => !!0,
-  );
+
+  my $website = websites->{$link};
+  if ( !defined $website ) {
+    return Kalaclista::Data::WebSite->new(
+      title => $title,
+      href  => URI::Fast->new($link),
+      gone  => !!0,
+    );
+  }
+
+  if ( $website->gone ) {
+    return Kalaclista::Data::WebSite->new(
+      title => $title,
+      href  => URI::Fast->new($link),
+      gone  => !!1,
+    );
+  }
+
+  return $website;
 }

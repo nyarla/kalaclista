@@ -41,10 +41,15 @@ subtest cardify => sub {
     my $html = cardify $website;
     my $dom  = dom $html->to_string;
 
-    is $dom->at('a')->getAttribute('href'),         'https://example.com/active';
-    is $dom->at('a > h2')->textContent,             'これはテストです';
-    is $dom->at('a > p > cite')->textContent,       'https://example.com/active';
-    is $dom->at('a > blockquote > p')->textContent, 'これはテストです';
+    ok $dom->at('a > h2 > img');
+    is $dom->at('a > h2 > img')->attr('width'),  16;
+    is $dom->at('a > h2 > img')->attr('height'), 16;
+    is $dom->at('a > h2 > img')->attr('alt'),    '';
+    like $dom->at('a > h2 > img')->attr('src'), qr|^https://www\.google\.com/s2/favicons\?domain=[^&]+&sz=32$|;
+
+    is $dom->at('a')->getAttribute('href'),   'https://example.com/active';
+    is $dom->at('a > h2')->textContent,       'これはテストです';
+    is $dom->at('a > p > cite')->textContent, 'https://example.com/active';
   };
 
   subtest gone => sub {
@@ -58,10 +63,9 @@ subtest cardify => sub {
     my $html = cardify $website;
     my $dom  = dom $html->to_string;
 
-    is $dom->at('div > h2')->textContent,             'これはテストです';
-    is $dom->at('div > p > cite')->textContent,       'https://example.com/gone';
-    is $dom->at('div > p > small')->textContent,      '無効なリンクです';
-    is $dom->at('div > blockquote > p')->textContent, 'これはテストです';
+    is $dom->at('div > h2')->textContent,        'これはテストです';
+    is $dom->at('div > p > cite')->textContent,  'https://example.com/gone';
+    is $dom->at('div > p > small')->textContent, '無効なリンクです';
   };
 };
 
@@ -83,8 +87,8 @@ subtest apply => sub {
   is $dom->at('.content__card--website a > h2')->textContent,       'これはテストです';
   is $dom->at('.content__card--website a > p > cite')->textContent, 'https://example.com/website';
 
-  is $dom->at('.content__card--website.gone div > h2')->textContent,       'これはテストです';
-  is $dom->at('.content__card--website.gone div > p > cite')->textContent, 'https://example.com/foo/bar';
+  is $dom->at('.content__card--website.gone div > h2')->textContent,       'これはリンクです';
+  is $dom->at('.content__card--website.gone div > p > cite')->textContent, 'https://example.com/gone';
 };
 
 subtest transform => sub {
