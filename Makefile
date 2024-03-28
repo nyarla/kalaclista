@@ -110,11 +110,10 @@ clean:
 	@test ! -e $(CACHE)/images/latest.sha256sum || rm $(CACHE)/images/latest.sha256sum
 
 cleanup:
+	@$(MAKE) KALACLISTA_ENV=development clean
 	@$(MAKE) KALACLISTA_ENV=production clean
 	@$(MAKE) KALACLISTA_ENV=staging clean
-	@$(MAKE) KALACLISTA_ENV=development clean
 	@$(MAKE) KALACLISTA_ENV=test clean
-	@$(MAKE) KALACLISTA_ENV=production clean
 
 production:
 	@$(MAKE) KALACLISTA_ENV=production gen
