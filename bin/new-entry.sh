@@ -39,7 +39,7 @@ kind:
 ...
 
   echo "${fullpath}"
-  nvim "${fullpath}"
+  nvim-run "${fullpath}"
 }
 
 main "$@"
