@@ -34,7 +34,7 @@ sub splitpath {
 
 sub getSize {
   my $path = (shift)->to_string;
-  die "No such file or directory: ${$path}" if !-e $path;
+  die "No such file or directory: ${path}" if !-e $path;
 
   my $size = `identify '${path}' | head -n1 | cut -d' ' -f3`;
   chomp($size);
