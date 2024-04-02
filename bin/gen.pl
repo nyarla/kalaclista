@@ -239,12 +239,9 @@ sub main {
     };
 
     for my $entry (@entries) {
-      my $dom     = $entry->dom;
-      my $summary = $entry->summary // ( ( $dom->at('.sep ~ *') // $dom->at('*:first-child') )->textContent ) . "……";
-
       my $page = Kalaclista::Data::Page->new(
         title   => $entry->title,
-        summary => $summary,
+        summary => $entry->summary,
         section => $entry->section,
         kind    => 'permalink',
         entries => [ entry $entry->meta->{'path'} ],

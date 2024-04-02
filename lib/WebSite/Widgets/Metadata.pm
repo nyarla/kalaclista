@@ -111,7 +111,7 @@ sub cardinfo : prototype($$$) {
 
   my $summary =
       $kind eq 'permalink'
-      ? ( $page->summary ne q{} ? $page->summary : ( $page->entries->[0]->dom->at('*:first-child')->text =~ m{^(.{,70})} )[0] . '……' )
+      ? ( $page->summary ne q{} ? $page->summary : ( $page->entries->[0]->dom->text =~ m{^(.{,70})} )[0] . '……' )
       : $website->summary;
   $summary =~ s{​}{}g;
 
