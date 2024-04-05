@@ -10,8 +10,6 @@
           name = "the.kalaclista.com-v5";
           targetPkgs = p:
             with p; [
-              cmark
-              cmark-gfm
               coreutils
               curl
               esbuild
