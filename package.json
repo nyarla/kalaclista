@@ -1,8 +1,5 @@
 {
   "dependencies": {
-    "budoux": "^0.6.2",
-    "html-minifier": "^4.0.0",
-    "normalize.css": "^8.0.1",
     "tailwindcss": "^3.4.3",
     "wrangler": "^3.42.0"
   }
