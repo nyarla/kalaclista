@@ -38,13 +38,12 @@ jobs:
             imagemagick \
             libidn-dev \
             make \
+            minify \
             neovim \
             neovim-runtime \
             openssl \
             sed \
-            webp
-
-          go install github.com/tdewolff/minify/v2/cmd/minify@latest
+            webp \
           # done
 
       - name: Concat cpanfile
