@@ -3,7 +3,7 @@
 use v5.38;
 use utf8;
 
-use Test2::V0;
+use Test2::V0 ':DEFAULT', '!prop';
 use YAML::XS qw(LoadFile);
 
 use WebSite::Context::Environment qw(env);
