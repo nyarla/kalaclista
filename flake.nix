@@ -18,6 +18,7 @@
               libwebp
               libxcrypt
               libxml2.dev
+              minify
               nodePackages.prettier
               nodejs
               openssl.dev

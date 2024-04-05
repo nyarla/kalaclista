@@ -105,6 +105,7 @@ home:
 gen:
 	@$(MAKE) -j4 assets css images entries sitemap_xml
 	@$(MAKE) -j3 home index pages
+	@minify -q -r -a -o $(DIST)/ $(DIST)/
 
 clean:
 	@(test ! -d $(DIST) || rm -rf $(DIST)) && mkdir -p $(DIST)
