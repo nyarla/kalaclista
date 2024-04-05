@@ -42,7 +42,9 @@ jobs:
             neovim-runtime \
             openssl \
             sed \
-            webp \
+            webp
+
+          go install github.com/tdewolff/minify/v2/cmd/minify@latest
           # done
 
       - name: Concat cpanfile
