@@ -11,11 +11,9 @@
           targetPkgs = p:
             with p; [
               coreutils
-              curl
               esbuild
               gnumake
               imagemagick
-              jhead
               libidn.dev
               libwebp
               libxcrypt
@@ -23,7 +21,6 @@
               nodePackages.prettier
               nodejs
               openssl.dev
-              optipng
               perl
               perlPackages.Appcpanminus
               perlPackages.Appcpm
