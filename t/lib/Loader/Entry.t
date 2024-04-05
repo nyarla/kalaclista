@@ -9,7 +9,7 @@ BEGIN {
   $ENV{'KALACLISTA_ENV'} = 'test';
 }
 
-use Test2::V0;
+use Test2::V0 ':DEFAULT', '!prop';
 use HTML5::DOM;
 
 use WebSite::Context::Path;
