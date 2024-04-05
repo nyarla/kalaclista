@@ -73,7 +73,8 @@ entries:
 	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*$(SRC)/entries/src/##' >$(CACHE)/entries/target
-	@pnpm exec node bin/gen-precompile.js $(SRC) $(CACHE)/entries/target
+	@cat $(CACHE)/entries/target \
+		| xargs -I{} -P$(FULL) perl bin/compile-markdown.pl "{}"
 	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
 		| cut -d ' ' -f2 \
 		| sed 's#*$(SRC)/entries/src/##' \
