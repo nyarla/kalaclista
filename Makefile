@@ -14,7 +14,7 @@ ifeq (,$(findstring $(MAKECMDGOALS),"\
 	production development testing cleanup \
 	test test-scripts ci \
 	up serve cpan \
-	post echos notes \
+	posts echos notes \
 "))
 
 ### KALACLISTA_ENV is defined?
