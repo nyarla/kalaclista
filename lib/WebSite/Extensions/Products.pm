@@ -7,7 +7,7 @@ use feature qw(isa);
 
 use Exporter::Lite;
 
-use Kalaclista::HyperScript qw(h2 ul li a raw);
+use Kalaclista::HyperScript qw(h2 div ul li a raw classes);
 
 use WebSite::Context::Path qw(srcdir);
 use WebSite::Loader::Products;
@@ -30,8 +30,16 @@ sub cardify : prototype($) {
     return $html;
   }
 
+  my $margin;
+
   $html .= h2( a( { href => $data->description->[0]->href->to_string }, $data->title ) );
-  $html .= ul( map { linkify($_) } $data->description->@* );
+
+  if ( defined $data->thumbnail && $data->thumbnail ne q{} ) {
+    $margin = classes(qw|sm:min-h-52|);
+    $html .= div( classes(qw|[&>a>img]:!m-0 [&>a>img]:rounded-2xl float-none sm:float-right sm:-mt-8|), raw( $data->thumbnail ) );
+  }
+
+  $html .= ul( ( defined $margin ? $margin : () ), map { linkify($_) } $data->description->@* );
 
   return $html;
 }
