@@ -1,5 +1,5 @@
 requires( 'App::watcher',                '== 0.13' );
-requires( 'Markdown::Perl',              '== 1.01' );
+requires( 'Markdown::Perl',              '== 1.03' );
 requires( 'Perl::Tidy',                  '== 20240202' );
 requires( 'Plack',                       '== 1.0051' );
 requires( 'Plack::Middleware::DirIndex', '== 1.01' );
