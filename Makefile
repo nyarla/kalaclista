@@ -158,9 +158,9 @@ shell:
 	@pkill proclet || true
 
 cpan:
-	@test ! -d extlib || rm -rf extlib
-	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile app/cpanfile
-	@cpm install -L extlib --home=$(HOME)/Applications/Development/cpm --cpanfile cpanfile
+	@test ! -d local || rm -rf local
+	@cpm install -L local --home=$(HOME)/Applications/Development/cpm --cpanfile app/cpanfile
+	@cpm install -L local --home=$(HOME)/Applications/Development/cpm --cpanfile cpanfile
 
 serve:
 	proclet start --color
