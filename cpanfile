@@ -8,5 +8,6 @@ requires( 'Text::CSV',                   '== 2.04' );
 requires( 'Time::Moment',                '== 0.44' );
 requires( 'Unicode::CaseFold',           '== 1.01' );
 requires( 'XML::LibXML',                 '== 2.0210' );
+requires( 'YAML::Tiny',                  '== 1.74' );
 
 # vim: ft=perl :
