@@ -57,12 +57,12 @@ jobs:
       - name: Concat cpanfile
         run:
           cat cpanfile app/cpanfile >cpanfile.test
+          mv cpanfile.test cpanfile
       # perl environment
       - uses: shogo82148/actions-setup-perl@28eae78d12c2bba1163aec45d123f6d9228bc307 # v1.29.0
         with:
           perl-version: '5.38'
           install-modules-with: cpm
-          install-modules-args: '--cpanfile=cpanfile.test'
 
       # pnpm environment
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
