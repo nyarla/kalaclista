@@ -34,8 +34,8 @@
             ];
 
           runScript = writeShellScript "start.sh" ''
-            export PATH=$(pwd)/extlib/bin:$PATH
-            export PERL5LIB=$(pwd)/extlib/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
+            export PATH=$(pwd)/local/bin:$PATH
+            export PERL5LIB=$(pwd)/local/lib/perl5:$(pwd)/app/lib:$(pwd)/lib
 
             unset IN_NIX_SHELL
             export IN_PERL_SHELL=1
