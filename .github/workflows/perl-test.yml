@@ -55,7 +55,7 @@ jobs:
           sudo chmod +x /usr/bin/minify
 
       - name: Concat cpanfile
-        run:
+        run: |
           cat cpanfile app/cpanfile >cpanfile.test
           mv cpanfile.test cpanfile
       # perl environment
