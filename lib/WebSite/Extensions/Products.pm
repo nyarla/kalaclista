@@ -24,7 +24,7 @@ sub cardify : prototype($) {
   my $html = q{};
 
   if ( $data->description->[0]->gone ) {
-    $html .= h2( $data->title );
+    $html .= h2( classes(qw|p-name fn|), $data->title );
     $html .= ul( li('この商品の取り扱いは終了しました') );
 
     return $html;
@@ -32,7 +32,7 @@ sub cardify : prototype($) {
 
   my $margin;
 
-  $html .= h2( a( { href => $data->description->[0]->href->to_string }, $data->title ) );
+  $html .= h2( a( classes(qw|p-name fn u-url url|), { href => $data->description->[0]->href->to_string }, $data->title ) );
 
   if ( defined $data->thumbnail && $data->thumbnail ne q{} ) {
     $margin = classes(qw|sm:min-h-52|);
@@ -48,11 +48,11 @@ sub linkify : prototype($) {
   my $link = shift;
 
   if ( $link->href->host eq 'amzn.to' ) {
-    return li( { class => 'amazon' }, a( { href => $link->href->to_string }, 'Amazon.co.jp で探す' ) );
+    return li( classes(qw|u-url url amazon|), a( { href => $link->href->to_string }, 'Amazon.co.jp で探す' ) );
   }
 
   if ( $link->href->host eq 'a.r10.to' ) {
-    return li( { class => 'rakuten' }, a( { href => $link->href->to_string }, '楽天で探す' ) );
+    return li( classes(qw|u-url url rakuten|), a( { href => $link->href->to_string }, '楽天で探す' ) );
   }
 
   return ();
@@ -73,7 +73,7 @@ sub apply : prototype($) {
     my $html = cardify $product;
 
     my $aside = $item->tree->createElement('aside');
-    $aside->attr( class => 'content__card--affiliate' );
+    $aside->attr( class => 'content__card--affiliate h-product hproduct' );
     $aside->innerHTML($html);
 
     $item->parent->replace($aside);
