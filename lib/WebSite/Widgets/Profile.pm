@@ -60,6 +60,7 @@ sub profile {
           classes(q|u-url url|), { href => 'https://bsky.app/profile/kalaclista.com' },
           'Bluesky'
         ),
+        wbr,
         a(
           classes(q|u-url url|), { href => 'https://www.threads.net/@kalaclista' },
           'threads.net'
