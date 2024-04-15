@@ -44,12 +44,12 @@ sub layout {
       main(
         classes(qw|card-rounded my-8|),
         nav(
-          classes(qw|text-center sm:float-right|),
+          classes(qw|text-center sm:float-right [&>a]:ml-2|),
           { id => 'section' },
-          a( classes(qw|ml-2|), { href => href('/posts/') },                                    'ブログ' ),
-          a( classes(qw|ml-2|), { href => href('/echos/') },                                    '日記' ),
-          a( classes(qw|ml-2|), { href => href('/notes/') },                                    'メモ帳' ),
-          a( classes(qw|ml-2|), { href => $search, 'aria-label' => 'Google カスタム検索ページへのリンクです' }, '検索' ),
+          a( { href => href('/posts/') },                                    'ブログ' ),
+          a( { href => href('/echos/') },                                    '日記' ),
+          a( { href => href('/notes/') },                                    'メモ帳' ),
+          a( { href => $search, 'aria-label' => 'Google カスタム検索ページへのリンクです' }, '検索' ),
         ),
         $content
       ),
