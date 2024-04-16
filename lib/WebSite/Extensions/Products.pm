@@ -48,11 +48,11 @@ sub linkify : prototype($) {
   my $link = shift;
 
   if ( $link->href->host eq 'amzn.to' ) {
-    return li( classes(qw|u-url url amazon|), a( { href => $link->href->to_string }, 'Amazon.co.jp で探す' ) );
+    return li( classes(qw|u-url url p-name fn amazon|), a( { href => $link->href->to_string }, 'Amazon.co.jp で探す' ) );
   }
 
   if ( $link->href->host eq 'a.r10.to' ) {
-    return li( classes(qw|u-url url rakuten|), a( { href => $link->href->to_string }, '楽天で探す' ) );
+    return li( classes(qw|u-url url p-name fn rakuten|), a( { href => $link->href->to_string }, '楽天で探す' ) );
   }
 
   return ();
