@@ -164,6 +164,7 @@ sub common {
     rel( icon       => href('/favicon.ico')->to_string ),
     rel( icon       => href('/icon.svg')->to_string, 'image/svg+xml' ),
     rel( author     => 'http://www.hatena.ne.jp/nyarla-net/' ),
+    rel( author     => 'https://the.kalaclista.com/nyarla' ),
     rel( stylesheet => href("/main-@{[ digest(cachedir->child('css/main.css')->path) ]}.css")->to_string )
   ];
 
