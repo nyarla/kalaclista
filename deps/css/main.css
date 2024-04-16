@@ -8,6 +8,7 @@
   html,
   body {
     @apply text-gray-darker bg-gray-lighter dark:text-gray-lighter dark:bg-gray-darker;
+    font-feature-settings: "palt" 1;
   }
 
   body > * {
@@ -94,7 +95,7 @@
     }
 
     & p {
-      @apply leading-7;
+      @apply leading-8;
     }
 
     & hr {
@@ -109,7 +110,7 @@
 
     & ul > li,
     & ol > li {
-      @apply ml-4 list-disc;
+      @apply ml-4 list-disc leading-7;
     }
 
     & ul > li:last-child,
