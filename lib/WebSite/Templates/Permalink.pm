@@ -49,16 +49,16 @@ sub content {
   my $readtime = readtime( $entry->dom->innerHTML );
 
   return article(
-    classes(qw|entry entry__permalink|),
+    classes(qw|entry entry__permalink h-entry hentry|),
     header(
-      h1( a( { href => $entry->href->to_string }, $entry->title ) ),
+      h1( a( classes(qw|p-name fn u-url|), { href => $entry->href->to_string }, $entry->title ) ),
       p(
-        time_( { datetime => $date }, "更新：${date}" ),
+        time_( classes(qw|dt-published published|), { datetime => $date }, "更新：${date}" ),
         span("読了まで：約${readtime}分"),
       ),
     ),
     section(
-      classes(q|entry__content|),
+      classes(q|entry__content e-content entry-content|),
       hr( { class => 'sep' } ),
       raw( $entry->dom->innerHTML ),
     ),

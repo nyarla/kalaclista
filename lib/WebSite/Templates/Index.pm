@@ -35,8 +35,9 @@ sub content {
     my $date = date( $entry->date );
     push @contents,
         li(
-          time_( { datetime => $date }, $date ),
-          a( { href => $entry->href->to_string, class => 'title' }, $entry->title )
+          classes(qw|h-entry hentry|),
+          time_( classes(qw|dt-published published|), { datetime => $date }, $date ),
+          a( classes(qw|u-url url p-name entry-title title|), { href => $entry->href->to_string }, $entry->title )
         );
   }
 
@@ -52,18 +53,17 @@ sub content {
   }
 
   return article(
-    classes(qw|entry entry__archives|),
+    classes(qw|entry entry__archives h-feed hfeed|),
 
-    header( h1( a( { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
+    header( h1( a( classes(qw|p-name fn u-url|), { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
 
     section(
       classes(qw|entry__content|),
-      { class => 'entry__content' },
-      p($summary),
+      p( classes(qw|p-summary site-description|), $summary ),
       hr,
       ( $section ne 'notes' ? strong("${year}年：") : () ),
       ul( { class => 'archives' }, @contents ),
-      ( $section ne 'notes' ? ( hr, p( { class => 'logs' }, "過去ログ：", raw( join q{/}, @archives ) ) ) : () ),
+      ( $section ne 'notes' ? ( hr, p( classes(qw|logs|), "過去ログ：", raw( join q{/}, @archives ) ) ) : () ),
     )
   );
 }

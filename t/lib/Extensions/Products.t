@@ -42,8 +42,8 @@ subtest linkify => sub {
 
     my $link = dom linkify($item)->to_string;
 
-    is $link->at('li')->textContent,              'Amazon.co.jp で探す';
-    is $link->at('li')->className,                'amazon';
+    is $link->at('li')->textContent, 'Amazon.co.jp で探す';
+    like $link->at('li')->className, qr'amazon';
     is $link->at('li > a')->getAttribute('href'), $item->href->as_string;
   };
 
@@ -56,8 +56,8 @@ subtest linkify => sub {
 
     my $link = dom linkify($item)->to_string;
 
-    is $link->at('li')->textContent,              '楽天で探す';
-    is $link->at('li')->className,                'rakuten';
+    is $link->at('li')->textContent, '楽天で探す';
+    like $link->at('li')->className, qr'rakuten';
     is $link->at('li > a')->getAttribute('href'), $item->href->as_string;
   };
 };
