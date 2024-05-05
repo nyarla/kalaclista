@@ -150,7 +150,7 @@ ci:
 
 # temporary solution
 up: cleanup production
-	pnpm exec wrangler pages deploy public/production
+	pnpm exec wrangler pages deploy
 
 shell:
 	@cp /etc/nixos/flake.lock .
