@@ -1,6 +1,6 @@
 requires( 'App::watcher',                '== 0.13' );
-requires( 'Markdown::Perl',              '== 1.03' );
-requires( 'Perl::Tidy',                  '== 20240202' );
+requires( 'Markdown::Perl',              '== 1.04' );
+requires( 'Perl::Tidy',                  '== 20240511' );
 requires( 'Plack',                       '== 1.0051' );
 requires( 'Plack::Middleware::DirIndex', '== 1.01' );
 requires( 'Proclet',                     '== 0.35' );
