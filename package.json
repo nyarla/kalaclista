@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "tailwindcss": "^3.4.3",
-    "wrangler": "^3.52.0"
+    "wrangler": "^3.53.1"
   }
 }
