@@ -4,6 +4,7 @@ requires( 'Perl::Tidy',                  '== 20240511' );
 requires( 'Plack',                       '== 1.0051' );
 requires( 'Plack::Middleware::DirIndex', '== 1.01' );
 requires( 'Proclet',                     '== 0.35' );
+requires( 'Readonly',                    '== 2.05' );
 requires( 'Text::CSV',                   '== 2.04' );
 requires( 'Time::Moment',                '== 0.44' );
 requires( 'Unicode::CaseFold',           '== 1.01' );
