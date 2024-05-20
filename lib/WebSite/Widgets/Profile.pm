@@ -48,8 +48,6 @@ sub profile {
         wbr,
         a( classes(q|u-url url p-name fn|), { href => 'https://zenn.dev/nyarla' }, 'Zenn' ),
         wbr,
-        a( classes(q|u-url url p-name fn|), { href => 'https://note.com/kalaclista/' }, 'note' ),
-        wbr,
         a( classes(q|u-url url p-name fn|), { href => 'https://sizu.me/nyarla' }, 'しずかなインターネット' ),
       ),
       p(
@@ -57,16 +55,6 @@ sub profile {
         a( classes(q|u-url url p-name fn|), { href => 'https://kalaclista.com/@nyarla' }, 'GoToSocial' ),
         wbr,
         a( classes(q|u-url url p-name fn|), { href => 'https://misskey.io/@nyarla' }, 'Misskey.io' ),
-        wbr,
-        a(
-          classes(q|u-url url p-name fn|), { href => 'https://bsky.app/profile/kalaclista.com' },
-          'Bluesky'
-        ),
-        wbr,
-        a(
-          classes(q|u-url url p-name fn|), { href => 'https://www.threads.net/@kalaclista' },
-          'threads.net'
-        ),
       ),
     )
   );
