@@ -19,7 +19,7 @@ use WebSite::Context::URI;
 
 use WebSite::Loader::Entry;
 
-use WebSite::Context;
+use WebSite::Context::WebSite qw(website section);
 
 sub make {
   my ( $page, $tmpl, $dist ) = @_;
@@ -34,7 +34,6 @@ sub make {
 
 sub main {
   my $action  = shift;
-  my $c       = WebSite::Context->init(qr{^bin$});
   my $distdir = distdir;
 
   if ( $action eq 'sitemap.xml' ) {
@@ -56,7 +55,7 @@ sub main {
     };
 
     my $page = Kalaclista::Data::Page->new(
-      title   => $c->website->title,
+      title   => website->title,
       section => 'pages',
       kind    => 'home',
       entries => [ grep { defined $_ } @entries[ 0 .. 10 ] ],
@@ -64,17 +63,17 @@ sub main {
     );
 
     $page->breadcrumb->push(
-      label   => $c->website->label,
-      title   => $c->website->title,
-      summary => $c->website->summary,
+      label   => website->label,
+      title   => website->title,
+      summary => website->summary,
       href    => href('/'),
     );
 
     make( $page, 'Home', $distdir->child('index.html') );
 
     my $feed = Kalaclista::Data::Page->new(
-      title   => $c->website->title,
-      summary => $c->website->summary,
+      title   => website->title,
+      summary => website->summary,
       section => 'pages',
       kind    => 'home',
       entries => [ map { entry $_ } grep { defined $_ } @entries[ 0 .. 5 ] ],
@@ -106,10 +105,12 @@ sub main {
 
     return 0 if @entries == 0;
 
+    my $website = section($section);
+
     if ( $section eq 'notes' ) {
       my $page = Kalaclista::Data::Page->new(
-        title   => $c->sections->{$section}->title,
-        summary => $c->sections->{$section}->summary,
+        title   => $website->title,
+        summary => $website->summary,
         section => $section,
         kind    => 'home',
         href    => href("/${section}/"),
@@ -117,24 +118,24 @@ sub main {
       );
 
       $page->breadcrumb->push(
-        label   => $c->website->label,
-        title   => $c->website->title,
-        summary => $c->website->summary,
-        href    => $c->website->href->clone,
+        label   => website->label,
+        title   => website->title,
+        summary => website->summary,
+        href    => website->href->clone,
       );
 
       $page->breadcrumb->push(
-        label   => $c->sections->{$section}->label,
-        title   => $c->sections->{$section}->title,
-        summary => $c->sections->{$section}->summary,
+        label   => $website->label,
+        title   => $website->title,
+        summary => $website->summary,
         href    => href("/${section}/"),
       );
 
       make( $page, 'Index', $distdir->child("${section}/index.html") );
 
       my $feed = Kalaclista::Data::Page->new(
-        title   => $c->sections->{$section}->title,
-        summary => $c->sections->{$section}->summary,
+        title   => $website->title,
+        summary => $website->summary,
         section => $section,
         kind    => 'home',
         entries => [ map { entry $_ } grep { defined $_ } ( sort { $b->date cmp $a->date } @entries )[ 0 .. 4 ] ],
@@ -155,7 +156,7 @@ sub main {
 
         my $page = Kalaclista::Data::Page->new(
           title   => qq<${year}年の記事一覧>,
-          summary => $c->sections->{$section}->title . "の${year}年の記事一覧です",
+          summary => $website->title . "の${year}年の記事一覧です",
           section => $section,
           kind    => 'index',
           entries => [@contents],
@@ -164,21 +165,21 @@ sub main {
         );
 
         $page->breadcrumb->push(
-          label   => $c->website->label,
-          title   => $c->website->title,
-          summary => $c->website->summary,
-          href    => $c->website->href->clone,
+          label   => website->label,
+          title   => website->title,
+          summary => website->summary,
+          href    => website->href->clone,
         );
 
         $page->breadcrumb->push(
-          label   => $c->sections->{$section}->label,
-          title   => $c->sections->{$section}->title,
-          summary => $c->sections->{$section}->summary,
+          label   => $website->label,
+          title   => $website->title,
+          summary => $website->summary,
           href    => href("/${section}/"),
         );
 
         $page->breadcrumb->push(
-          label   => $c->sections->{$section}->label,
+          label   => $website->label,
           title   => $page->title,
           summary => $page->summary,
           href    => $page->href->clone,
@@ -188,8 +189,8 @@ sub main {
 
         if ( $year == $end ) {
           my $home = Kalaclista::Data::Page->new(
-            title   => $c->sections->{$section}->title,
-            summary => $c->sections->{$section}->summary,
+            title   => $website->title,
+            summary => $website->summary,
             section => $section,
             kind    => 'home',
             entries => $page->entries,
@@ -198,24 +199,24 @@ sub main {
           );
 
           $home->breadcrumb->push(
-            label   => $c->website->label,
-            title   => $c->website->title,
-            summary => $c->website->summary,
-            href    => $c->website->href->clone,
+            label   => website->label,
+            title   => website->title,
+            summary => website->summary,
+            href    => website->href->clone,
           );
 
           $home->breadcrumb->push(
-            label   => $c->sections->{$section}->label,
-            title   => $c->sections->{$section}->title,
-            summary => $c->sections->{$section}->summary,
+            label   => $website->label,
+            title   => $website->title,
+            summary => $website->summary,
             href    => href("/${section}/"),
           );
 
           make( $home, 'Index', $distdir->child("${section}/index.html") );
 
           my $feed = Kalaclista::Data::Page->new(
-            title   => $c->sections->{$section}->title,
-            summary => $c->sections->{$section}->summary,
+            title   => $website->title,
+            summary => $website->summary,
             section => $section,
             kind    => 'home',
             entries => [ map { entry $_ } grep { defined $_ } ( sort { $b->date cmp $a->date } @entries )[ 0 .. 4 ] ],
@@ -239,7 +240,8 @@ sub main {
     };
 
     for my $entry (@entries) {
-      my $page = Kalaclista::Data::Page->new(
+      my $website = section( $entry->section );
+      my $page    = Kalaclista::Data::Page->new(
         title   => $entry->title,
         summary => $entry->summary,
         section => $entry->section,
@@ -249,23 +251,23 @@ sub main {
       );
 
       $page->breadcrumb->push(
-        label   => $c->website->label,
-        title   => $c->website->title,
-        summary => $c->website->summary,
-        href    => $c->website->href->clone,
+        label   => website->label,
+        title   => website->title,
+        summary => website->summary,
+        href    => website->href->clone,
       );
 
       if ( $entry->section ne 'pages' ) {
         $page->breadcrumb->push(
-          label   => $c->sections->{ $entry->section }->label,
-          title   => $c->sections->{ $entry->section }->title,
-          summary => $c->sections->{ $entry->section }->summary,
+          label   => $website->label,
+          title   => $website->title,
+          summary => $website->summary,
           href    => href("/@{[ $entry->section ]}/"),
         );
       }
 
       $page->breadcrumb->push(
-        label   => ( $entry->section eq 'pages' ? $c->website : $c->sections->{ $entry->section } )->label,
+        label   => $website->label,
         title   => $entry->title,
         summary => $entry->summary,
         href    => $entry->href->clone,

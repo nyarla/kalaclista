@@ -9,12 +9,11 @@ use YAML::XS qw(Load);
 
 use Kalaclista::Loader::Files qw(files);
 
-use WebSite::Context;
-use WebSite::Context::Path qw(distdir);
-use WebSite::Context::URI  qw(href);
+use WebSite::Context::WebSite qw(section website);
+use WebSite::Context::Path    qw(distdir);
+use WebSite::Context::URI     qw(href);
 
-my sub dom : prototype($) { state $p ||= HTML5::DOM->new;                 $p->parse(shift) }
-my sub c                  { state $c ||= WebSite::Context->init(qr{^t$}); $c }
+my sub dom : prototype($) { state $p ||= HTML5::DOM->new; $p->parse(shift) }
 
 subtest indexes => sub {
   for my $section (qw|posts echos notes|) {
@@ -37,7 +36,7 @@ subtest indexes => sub {
         utf8::decode($html);
 
         my $dom     = dom $html;
-        my $website = c->sections->{$section};
+        my $website = section($section);
         my $head    = $dom->at('head');
         my $article = $dom->body->at('article.entry__archives');
         my $href    = $website->href->to_string;
@@ -126,8 +125,8 @@ subtest indexes => sub {
             itemListElement => [
               {
                 '@type'  => 'ListItem',
-                name     => c->website->title,
-                item     => c->website->href->to_string,
+                name     => website->title,
+                item     => website->href->to_string,
                 position => 1,
               },
               {
@@ -175,8 +174,8 @@ subtest indexes => sub {
             itemListElement => [
               {
                 '@type'  => 'ListItem',
-                name     => c->website->title,
-                item     => c->website->href->to_string,
+                name     => website->title,
+                item     => website->href->to_string,
                 position => 1,
               },
               {

@@ -8,15 +8,13 @@ use HTML5::DOM;
 
 use Kalaclista::Data::Page;
 
-use WebSite::Context;
+use WebSite::Context::WebSite q(section);
 use WebSite::Context::URI   qw(href);
 use WebSite::Widgets::Title qw(banner);
 
 my sub dom : prototype($) { state $dom ||= HTML5::DOM->new; $dom->parse(shift)->body }
 
 subtest title => sub {
-  my $c = WebSite::Context->init(qr{^t$});
-
   for my $section (qw(posts echos notes pages)) {
     my $page = Kalaclista::Data::Page->new( section => $section );
     my $html = banner($page);
@@ -34,7 +32,7 @@ subtest title => sub {
     if ( $section ne q{pages} ) {
       is $dom->at('#global > p > span')->textContent,          '→';
       is $dom->at('#global > p > a:last-child')->attr('href'), href("/${path}")->to_string;
-      is $dom->at('#global > p > a:last-child')->textContent,  $c->sections->{$section}->label;
+      is $dom->at('#global > p > a:last-child')->textContent,  section($section)->label;
     }
     else {
       is scalar( $dom->find('#global > p a')->@* ), 1;

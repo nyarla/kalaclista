@@ -15,17 +15,15 @@ use Kalaclista::Data::WebSite;
 
 use Kalaclista::HyperScript qw(head);
 
-use WebSite::Context;
-use WebSite::Context::URI  qw(href);
-use WebSite::Context::Path qw(cachedir);
+use WebSite::Context::WebSite qw(section);
+use WebSite::Context::URI     qw(href);
+use WebSite::Context::Path    qw(cachedir);
 
 use WebSite::Helper::Digest qw(digest);
 
 use WebSite::Widgets::Metadata qw(type rel feed cardinfo common feeds jsonld notfound);
 
 my sub dom : prototype($) { state $dom ||= HTML5::DOM->new; $dom->parse(shift) }
-
-WebSite::Context->init(qr{^t$});
 
 subtest type => sub {
   my $tests = [
@@ -89,8 +87,6 @@ qq|<link href="@{[ href("$prefix/jsonfeed.json")->to_string ]}" rel="alternate" 
 };
 
 subtest cardinfo => sub {
-  my $c = WebSite::Context->instance;
-
   my sub entry {
     my $section = shift;
     return Kalaclista::Data::Entry->new(
@@ -137,7 +133,7 @@ subtest cardinfo => sub {
 
     if ( $kind eq q|permalink| ) {
       $page->breadcrumb->push(
-        label   => ( $entry->section eq 'pages' ? $c->website : $c->sections->{ $entry->section } )->label,
+        label   => section( $entry->section )->label,
         title   => $entry->title,
         summary => $entry->summary,
         href    => $entry->href,
@@ -147,18 +143,13 @@ subtest cardinfo => sub {
     return $page;
   }
 
-  my sub website {
-    my $section = shift;
-    return $section eq q{pages} ? $c->website : $c->sections->{$section};
-  }
-
   my $tests = [
     (
       map {
         +{
           kind    => $_->[0],
-          page    => page( $_->@*, website( $_->[1] ) ),
-          website => website( $_->[1] ),
+          page    => page( $_->@*, section( $_->[1] ) ),
+          website => section( $_->[1] ),
         },
       } (
         [qw|permalink posts /2023/01/01/000000/|],

@@ -11,7 +11,6 @@ use HTML5::DOM;
 
 use WebSite::Widgets::Profile qw(profile);
 
-use WebSite::Context;
 use WebSite::Context::URI qw(href);
 
 my sub dom : prototype($) { state $p ||= HTML5::DOM->new; $p->parse(shift)->body }

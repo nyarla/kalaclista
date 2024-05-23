@@ -5,9 +5,9 @@ use warnings;
 use utf8;
 
 use Kalaclista::HyperScript;
-use WebSite::Helper::Hyperlink qw(href);
 
-use WebSite::Context;
+use WebSite::Context::WebSite;
+use WebSite::Context::URI qw(href);
 use WebSite::Widgets::Layout;
 
 sub date {
@@ -15,9 +15,7 @@ sub date {
 }
 
 sub content {
-  my $page    = shift;
-  my $c       = WebSite::Context->instance;
-  my $baseURI = $c->baseURI;
+  my $page = shift;
 
   return article(
     classes(qw|entry entry__home|),
@@ -56,8 +54,8 @@ sub content {
                 date( $_->date ),
               ),
               a(
-                { href => href( "/@{[ $_->section ]}/", $baseURI ) },
-                $c->sections->{ $_->section }->label,
+                { href => href("/@{[ $_->section ]}/") },
+                WebSite::Context::WebSite::section( $_->section )->label,
               ),
               span('▹'),
               a( { href => $_->href, class => 'title' }, $_->title )
@@ -72,15 +70,15 @@ sub content {
 
       ul(
         li(
-          a( { href => href( '/posts/', $baseURI ) }, 'ブログ' ),
+          a( { href => href('/posts/') }, 'ブログ' ),
           '：一般的なブログ。しっかりした記事を書いている'
         ),
         li(
-          a( { href => href( '/echos/', $baseURI ) }, '日記' ),
+          a( { href => href('/echos/') }, '日記' ),
           '：いわゆる日記。週報と月報、あと割とラフな記事を載せている'
         ),
         li(
-          a( { href => href( '/notes/', $baseURI ) }, 'メモ帳' ),
+          a( { href => href('/notes/') }, 'メモ帳' ),
           '：個人的なメモっぽいもの。Wiki 感を出したかった（つもり）'
         ),
       ),
@@ -91,49 +89,49 @@ sub content {
         li(
           'カラクリスタ全体：',
           '  ',
-          a( { href => href( '/index.xml', $baseURI ) }, 'RSS 2.0' ),
+          a( { href => href('/index.xml') }, 'RSS 2.0' ),
           '  ',
-          a( { href => href( '/atom.xml', $baseURI ) }, 'Atom' ),
+          a( { href => href('/atom.xml') }, 'Atom' ),
           '  ',
-          a( { href => href( '/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
+          a( { href => href('/jsonfeed.json') }, 'JSONFeed' ),
         ),
 
         li(
           'ブログ：',
           '  ',
-          a( { href => href( '/posts/index.xml', $baseURI ) }, 'RSS 2.0' ),
+          a( { href => href('/posts/index.xml') }, 'RSS 2.0' ),
           '  ',
-          a( { href => href( '/posts/atom.xml', $baseURI ) }, 'Atom' ),
+          a( { href => href('/posts/atom.xml') }, 'Atom' ),
           '  ',
-          a( { href => href( '/posts/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
+          a( { href => href('/posts/jsonfeed.json') }, 'JSONFeed' ),
         ),
 
         li(
           '日記：',
           '  ',
-          a( { href => href( '/echos/index.xml', $baseURI ) }, 'RSS 2.0' ),
+          a( { href => href('/echos/index.xml') }, 'RSS 2.0' ),
           '  ',
-          a( { href => href( '/echos/atom.xml', $baseURI ) }, 'Atom' ),
+          a( { href => href('/echos/atom.xml') }, 'Atom' ),
           '  ',
-          a( { href => href( '/echos/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
+          a( { href => href('/echos/jsonfeed.json') }, 'JSONFeed' ),
         ),
 
         li(
           'メモ帳：',
           '  ',
-          a( { href => href( '/notes/index.xml', $baseURI ) }, 'RSS2.0' ),
+          a( { href => href('/notes/index.xml') }, 'RSS2.0' ),
           '  ',
-          a( { href => href( '/notes/atom.xml', $baseURI ) }, 'Atom' ),
+          a( { href => href('/notes/atom.xml') }, 'Atom' ),
           '  ',
-          a( { href => href( '/notes/jsonfeed.json', $baseURI ) }, 'JSONFeed' ),
+          a( { href => href('/notes/jsonfeed.json') }, 'JSONFeed' ),
         )
       ),
 
       h2('運営方針と著作権の云々'),
       p('このブログの運営方針と著作権やライセンスの云々は次のページで確認できます：'),
       ul(
-        li( a( { href => href( '/policies/', $baseURI ) }, 'カラクリスタの運営ポリシー' ) ),
-        li( a( { href => href( '/licenses/', $baseURI ) }, 'この Web サイトでのライセンスなどについて' ) ),
+        li( a( { href => href('/policies/') }, 'カラクリスタの運営ポリシー' ) ),
+        li( a( { href => href('/licenses/') }, 'この Web サイトでのライセンスなどについて' ) ),
       ),
 
       h2('連絡先'),
