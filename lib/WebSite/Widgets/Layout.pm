@@ -14,8 +14,6 @@ use Kalaclista::HyperScript;
 use WebSite::Context::Environment qw(env);
 use WebSite::Context::URI         qw(href);
 
-use WebSite::Context;
-
 use WebSite::Widgets::Info;
 use WebSite::Widgets::Menu;
 use WebSite::Widgets::Profile;

@@ -10,12 +10,11 @@ our @EXPORT = qw(banner);
 
 use Kalaclista::HyperScript qw(nav p a img hr span br classes);
 
-use WebSite::Context;
-use WebSite::Context::URI qw(href);
+use WebSite::Context::WebSite qw(section);
+use WebSite::Context::URI     qw(href);
 
 sub breadcrumb {
   my $page = shift;
-  my $c    = WebSite::Context->instance;
   my @tree;
 
   push @tree, a(
@@ -29,8 +28,9 @@ sub breadcrumb {
   );
 
   if ( $page->section =~ m{^(?:posts|echos|notes)$} ) {
+    my $section = section( $page->section );
     push @tree, span( classes(qw|inline-block mx-1|), '→' );
-    push @tree, a( { href => href("/@{[ $page->section ]}/") }, $c->sections->{ $page->section }->label );
+    push @tree, a( { href => $section->href, }, $section->label );
   }
 
   return @tree;

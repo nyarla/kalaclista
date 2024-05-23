@@ -7,9 +7,9 @@ use utf8;
 use feature qw(state);
 
 use Kalaclista::HyperScript;
-use WebSite::Helper::Hyperlink qw(href);
 
-use WebSite::Context;
+use WebSite::Context::WebSite;
+use WebSite::Context::URI qw(href);
 use WebSite::Widgets::Layout;
 
 sub date {
@@ -18,11 +18,9 @@ sub date {
 
 sub content {
   my $page = shift;
-  my $c    = WebSite::Context->instance;
 
   my $section = $page->section;
-  my $baseURI = $c->baseURI;
-  my $data    = $c->sections->{$section};
+  my $data    = WebSite::Context::WebSite::section($section);
   my $website = $data->title;
   my $summary = $data->summary;
   my $year    = ( split qr{-}, date( $page->entries->[0]->date ) )[0];
@@ -48,14 +46,14 @@ sub content {
         next;
       }
 
-      push @archives, a( { href => href( "/${section}/${yr}/", $baseURI ) }, $yr );
+      push @archives, a( { href => href("/${section}/${yr}/") }, $yr );
     }
   }
 
   return article(
     classes(qw|entry entry__archives h-feed hfeed|),
 
-    header( h1( a( classes(qw|p-name fn u-url|), { href => href( "/${section}/", $baseURI ) }, $website ) ) ),
+    header( h1( a( classes(qw|p-name fn u-url|), { href => href("/${section}/") }, $website ) ) ),
 
     section(
       classes(qw|entry__content|),

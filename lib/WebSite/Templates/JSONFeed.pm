@@ -6,17 +6,16 @@ use utf8;
 
 use JSON::XS;
 
-use WebSite::Context;
-use WebSite::Context::URI qw(href);
+use WebSite::Context::WebSite qw(section);
+use WebSite::Context::URI     qw(href);
 
 my $jsonify = JSON::XS->new->utf8->canonical(1);
 
 sub render {
   my $page    = shift;
-  my $c       = WebSite::Context->instance;
   my $section = $page->section;
-  my $prefix  = $section eq 'pages' ? ''          : "${section}";
-  my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
+  my $prefix  = $section eq 'pages' ? '' : "/${section}";
+  my $website = section($section);
 
   my $href    = href "${prefix}/";
   my $feed    = href "${prefix}/jsonfeed.json";

@@ -5,7 +5,7 @@ use utf8;
 
 use Exporter::Lite;
 
-our @EXPORT_OK = qw(website posts echos notes);
+our @EXPORT_OK = qw(website posts echos notes section);
 
 use Kalaclista::Data::WebSite;
 
@@ -53,6 +53,24 @@ sub notes {
   );
 
   return $website;
+}
+
+sub section {
+  my $section = shift;
+
+  if ( $section eq 'posts' ) {
+    return posts;
+  }
+
+  if ( $section eq 'echos' ) {
+    return echos;
+  }
+
+  if ( $section eq 'notes' ) {
+    return notes;
+  }
+
+  return website;
 }
 
 1;

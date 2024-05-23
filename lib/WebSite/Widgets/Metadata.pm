@@ -10,9 +10,9 @@ use JSON::XS qw(encode_json);
 
 use Kalaclista::HyperScript qw|head meta link_ title script style raw|;
 
-use WebSite::Context;
-use WebSite::Context::URI  qw(href);
-use WebSite::Context::Path qw(cachedir);
+use WebSite::Context::WebSite qw(website section);
+use WebSite::Context::URI     qw(href);
+use WebSite::Context::Path    qw(cachedir);
 
 use WebSite::Helper::Digest qw(digest);
 
@@ -67,33 +67,37 @@ sub rel : prototype($$;$) {
 }
 
 sub feed : prototype($) {
-  my $section = shift;
-  my $c       = WebSite::Context->instance;
-  my $website = $section eq q|pages| ? $c->website : $c->sections->{$section};
-  my $prefix  = $section eq q|pages| ? ""          : "/${section}";
+  my $section = section(shift);
+  my sub path {
+    my $fn   = shift;
+    my $href = $section->href->clone;
+    $href->path( [ ( $href->path ), $fn ] );
+
+    return $href->to_string;
+  }
 
   return (
     link_(
       {
         rel   => 'alternate',
-        title => "@{[ $website->title ]}の RSS フィード",
-        href  => href("${prefix}/index.xml")->to_string,
+        title => "@{[ $section->title ]}の RSS フィード",
+        href  => path('index.xml'),
         type  => 'application/rss+xml',
       }
     ),
     link_(
       {
         rel   => 'alternate',
-        title => "@{[ $website->title ]}の Atom フィード",
-        href  => href("${prefix}/atom.xml")->to_string,
+        title => "@{[ $section->title ]}の Atom フィード",
+        href  => path('atom.xml'),
         type  => 'application/atom+xml',
       }
     ),
     link_(
       {
         rel   => 'alternate',
-        title => "@{[ $website->title ]}の JSON フィード",
-        href  => href("${prefix}/jsonfeed.json")->to_string,
+        title => "@{[ $section->title ]}の JSON フィード",
+        href  => path('jsonfeed.json'),
         type  => 'application/feed+json',
       }
     )
@@ -113,7 +117,6 @@ sub cardinfo : prototype($$$) {
       $kind eq 'permalink'
       ? ( $page->summary ne q{} ? $page->summary : ( $page->entries->[0]->dom->text =~ m{^(.{,70})} )[0] . '……' )
       : $website->summary;
-  $summary =~ s{​}{}g;
 
   my $jsonld = encode_json( jsonld( $page->kind, $page, $website ) );
   utf8::decode($jsonld);
@@ -172,7 +175,6 @@ sub common {
 }
 
 sub feeds {
-  state $c     ||= WebSite::Context->instance;
   state $feeds ||= {
     map { $_ => [ feed $_ ] } qw(posts echos notes pages),
   };
@@ -220,14 +222,10 @@ sub jsonld {
 }
 
 sub headers {
-  my $page = shift;
-  my $c    = WebSite::Context->instance;
-  my $website =
-      ( $page->section eq 'posts' || $page->section eq 'echos' || $page->section eq 'notes' )
-      ? $c->sections->{ $page->section }
-      : $c->website;
-  my $title = ( $page->kind eq q|permalink| ) ? $page->title : $website->title;
-  my $href  = $page->href;
+  my $page    = shift;
+  my $website = section( $page->section );
+  my $title   = ( $page->kind eq q|permalink| ) ? $page->title : $website->title;
+  my $href    = $page->href;
 
   my @css;
   if ( $page->kind eq 'permalink' && exists $page->entries->[0]->meta->{'css'} && $page->entries->[0]->meta->{'css'} ) {
@@ -243,10 +241,9 @@ sub headers {
 
 sub notfound {
   my $page = shift;
-  my $c    = WebSite::Context->instance;
 
   return (
-    title( join q{ - }, $page->title, $c->website->title ),
+    title( join q{ - }, $page->title, website->title ),
     meta( { name => 'description', content => 'ページが見つかりません' } ),
   );
 }

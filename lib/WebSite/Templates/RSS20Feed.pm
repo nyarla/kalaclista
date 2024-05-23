@@ -7,19 +7,19 @@ use utf8;
 use Kalaclista::HyperScript qw(h);
 use Time::Moment;
 
-use WebSite::Context;
-use WebSite::Context::URI qw(href);
+use WebSite::Context::WebSite qw(section);
+use WebSite::Context::URI     qw(href);
 
 my $format = '%a %m %b %Y %T %z';
 
 sub render {
   my $page    = shift;
-  my $c       = WebSite::Context->instance;
   my $section = $page->section;
-  my $prefix  = $section eq 'pages' ? ''          : "/${section}";
-  my $website = $section eq 'pages' ? $c->website : $c->sections->{$section};
+  my $prefix  = $section eq 'pages' ? '' : "/${section}";
+  my $website = section($section);
 
   my $href = href "${prefix}/";
+
   my $feed = href "${prefix}/index.xml";
 
   my @entries = $page->entries->@*;

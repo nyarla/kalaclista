@@ -10,14 +10,13 @@ use YAML::XS qw(Load);
 use Kalaclista::Loader::Files qw(files);
 use Kalaclista::Path;
 
-use WebSite::Context;
-use WebSite::Context::URI  qw(href);
-use WebSite::Context::Path qw(distdir);
+use WebSite::Context::WebSite qw(section website);
+use WebSite::Context::URI     qw(href);
+use WebSite::Context::Path    qw(distdir);
 
 use HTML5::DOM;
 
-my sub dom : prototype($) { state $p ||= HTML5::DOM->new;                 $p->parse(shift) }
-my sub c                  { state $c ||= WebSite::Context->init(qr{^t$}); $c }
+my sub dom : prototype($) { state $p ||= HTML5::DOM->new; $p->parse(shift) }
 
 subtest pages => sub {
   for my $section (qw|posts echos notes pages|) {
@@ -41,7 +40,7 @@ subtest pages => sub {
         utf8::decode($html);
 
         my $dom     = dom $html;
-        my $website = $section ne q|pages| ? c->sections->{$section} : c->website;
+        my $website = section($section);
         my $head    = $dom->at('head');
         my $article = $dom->body->at('.entry__permalink');
         my $href    = $website->href->to_string;
@@ -117,8 +116,8 @@ subtest pages => sub {
             itemListElement => [
               {
                 '@type'  => 'ListItem',
-                name     => c->website->title,
-                item     => c->website->href->to_string,
+                name     => website->title,
+                item     => website->href->to_string,
                 position => 1,
               },
               {
@@ -167,8 +166,8 @@ subtest pages => sub {
             itemListElement => [
               {
                 '@type'  => 'ListItem',
-                name     => c->website->title,
-                item     => c->website->href->to_string,
+                name     => website->title,
+                item     => website->href->to_string,
                 position => 1,
               },
               {
