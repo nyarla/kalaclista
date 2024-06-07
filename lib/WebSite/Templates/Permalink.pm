@@ -46,9 +46,6 @@ sub content {
       hr( { class => 'sep' } ),
       raw( $entry->dom->innerHTML ),
     ),
-    aside(
-      classes(qw|border-8 rounded-2xl p-3 border-gray-light bg-gray-bright dark:border-gray-darkest|),
-    ),
   );
 }
 
