@@ -3,13 +3,17 @@ name: Perl test for kalaclista
 
 on:
   pull_request:
+    branches: ['*']
     paths:
       - ".github/workflows/perl-test.yml"
+      - "app/**"
       - "bin/**"
       - "lib/**"
       - "t/**"
       - "Makefile"
       - "cpanfile"
+      - "package.json"
+      - "pnpm-lock.yaml"
   push:
     branches:
       - main
