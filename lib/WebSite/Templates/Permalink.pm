@@ -11,22 +11,6 @@ use WebSite::Context::Environment qw(env);
 
 use WebSite::Widgets::Layout;
 
-sub ads {
-  return raw(<<'...');
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1273544194033160"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="fluid"
-     data-ad-layout-key="-gc-d+1s-3c+3o"
-     data-ad-client="ca-pub-1273544194033160"
-     data-ad-slot="5004342069"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-...
-}
-
 sub readtime {
   my $text = shift;
   $text =~ s{<pre[\s\S]+?/pre>}{}g;
@@ -64,7 +48,6 @@ sub content {
     ),
     aside(
       classes(qw|border-8 rounded-2xl p-3 border-gray-light bg-gray-bright dark:border-gray-darkest|),
-      ( env->production ? ads : div( { style => 'display: block; height: 150px; width: 100%; background: #FFF;' }, '' ) ),
     ),
   );
 }
