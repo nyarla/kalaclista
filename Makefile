@@ -13,7 +13,7 @@ endif
 ifeq (,$(findstring $(MAKECMDGOALS),"\
 	production development testing cleanup \
 	test test-scripts ci \
-	up serve cpan \
+	up serve cpan date \
 	posts echos notes \
 "))
 
@@ -165,7 +165,7 @@ cpan:
 serve:
 	proclet start --color
 
-.PHONY: posts echos
+.PHONY: posts echos date
 
 posts:
 	@bash bin/new-entry.sh posts
@@ -175,3 +175,6 @@ echos:
 
 notes:
 	@bash bin/new-entry.sh notes
+
+date:
+	@date +%Y-%m-%dT%H:%M:%S+09:00
