@@ -36,8 +36,8 @@ sub cardify : prototype($) {
     return a(
       classes(qw|u-url url|),
       { href => $website->href->to_string },
-      h2( classes(qw|p-name fn|), $favicon, $website->title ),
-      p( cite( $website->cite ) ),
+      h2( classes(qw|p-name fn|), $website->title ),
+      p( $favicon, cite( $website->cite ) ),
     );
   }
 

@@ -22,11 +22,11 @@
 
 @layer components {
   .card-rounded {
-    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
   }
 
   .card-rounded-md {
-    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
   }
 
   .entry {
@@ -99,7 +99,7 @@
     }
 
     & hr {
-      @apply my-4 border-4 rounded-2xl border-gray-light dark:border-gray-darkest;
+      @apply my-4 border-4 rounded-2xl border-gray-light dark:border-gray-clay;
     }
 
     & > ul,
@@ -133,7 +133,7 @@
 
     & pre > code,
     & *:not(pre) > code {
-      @apply font-mono;
+      @apply font-mono text-sm;
     }
 
     & pre > code {
@@ -141,16 +141,16 @@
     }
 
     & *:not(pre) > code {
-      @apply px-1.5 py-0.5 rounded-md text-gray-darkest bg-gray-light dark:text-gray-clay dark:bg-gray-darker;
+      @apply px-1.5 py-0.5 rounded-md text-gray-darkest bg-gray-light dark:text-gray-light dark:bg-gray-dark;
     }
 
     & .content__card--thumbnail img {
-      @apply rounded-2xl border-8 border-gray-light dark:border-gray-darkest;
+      @apply rounded-xl border-4 border-gray-light dark:border-gray-clay;
     }
 
     & .content__card--website a,
     & .content__card--website div {
-      @apply block rounded-2xl border-8 px-4 py-4 no-underline border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+      @apply block rounded-xl border-4 px-4 py-2 no-underline border-gray-light dark:border-gray-clay dark:bg-gray-darkest;
     }
 
     & .content__card--website a *,
@@ -163,8 +163,8 @@
       @apply font-bold text-gray-darkest dark:text-gray-lightest;
     }
 
-    & .content__card--website a h2 img {
-      @apply inline align-[-2px] mr-1;
+    & .content__card--website a p img {
+      @apply inline align-[-3px] mr-1;
     }
 
     & .content__card--website a > p,
@@ -178,7 +178,7 @@
     }
 
     & .content__card--website a:hover {
-      @apply border-double border-gray-clay dark:border-gray-clay;
+      @apply border-gray-clay dark:border-gray-light;
     }
 
     & .content__card--website a:hover cite {
@@ -202,7 +202,11 @@
     }
 
     & .content__card--affiliate {
-      @apply rounded-2xl border-8 px-4 py-2 border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+      @apply rounded-xl border-4 pl-4 pr-2 py-2 border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
+    }
+
+    & .content__card--affiliate::after {
+      @apply content-[''] block clear-both;
     }
 
     & .content__card--affiliate h2 {

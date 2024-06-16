@@ -41,11 +41,11 @@ subtest cardify => sub {
     my $html = cardify $website;
     my $dom  = dom $html->to_string;
 
-    ok $dom->at('a > h2 > img');
-    is $dom->at('a > h2 > img')->attr('width'),  16;
-    is $dom->at('a > h2 > img')->attr('height'), 16;
-    is $dom->at('a > h2 > img')->attr('alt'),    '';
-    like $dom->at('a > h2 > img')->attr('src'), qr|^https://www\.google\.com/s2/favicons\?domain=[^&]+&sz=32$|;
+    ok $dom->at('a > p > img');
+    is $dom->at('a > p > img')->attr('width'),  16;
+    is $dom->at('a > p > img')->attr('height'), 16;
+    is $dom->at('a > p > img')->attr('alt'),    '';
+    like $dom->at('a > p > img')->attr('src'), qr|^https://www\.google\.com/s2/favicons\?domain=[^&]+&sz=32$|;
 
     is $dom->at('a')->getAttribute('href'),   'https://example.com/active';
     is $dom->at('a > h2')->textContent,       'これはテストです';
