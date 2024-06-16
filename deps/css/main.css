@@ -145,7 +145,7 @@
     }
 
     & .content__card--thumbnail img {
-      @apply rounded-2xl border-8 border-gray-light dark:border-gray-darkest;
+      @apply rounded-xl border-4 border-gray-light dark:border-gray-clay;
     }
 
     & .content__card--website a,
