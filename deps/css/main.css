@@ -202,7 +202,11 @@
     }
 
     & .content__card--affiliate {
-      @apply rounded-2xl border-8 pl-4 pr-2 py-2 border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
+      @apply rounded-xl border-4 pl-4 pr-2 py-2 border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
+    }
+
+    & .content__card--affiliate::after {
+      @apply content-[''] block clear-both;
     }
 
     & .content__card--affiliate h2 {

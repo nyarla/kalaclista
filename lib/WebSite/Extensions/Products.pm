@@ -35,11 +35,15 @@ sub cardify : prototype($) {
   $html .= h2( a( classes(qw|p-name fn u-url url|), { href => $data->description->[0]->href->to_string }, $data->title ) );
 
   if ( defined $data->thumbnail && $data->thumbnail ne q{} ) {
-    $margin = classes(qw|sm:min-h-52|);
-    $html .= div( classes(qw|[&>a>img]:!m-0 [&>a>img]:rounded-2xl float-none sm:float-right sm:-mt-8|), raw( $data->thumbnail ) );
+    $html .= div(
+      classes(
+        qw|[&>a>img]:!m-0 [&>a>img]:rounded-lg [&>a>img]:border-2 [&>a>img]:border-gray-light dark:[&>a>img]:border-gray-clay float-none my-4 sm:float-right sm:-mt-8 sm:my-0|
+      ),
+      raw( $data->thumbnail )
+    );
   }
 
-  $html .= ul( ( defined $margin ? $margin : () ), map { linkify($_) } $data->description->@* );
+  $html .= ul( map { linkify($_) } $data->description->@* );
 
   return $html;
 }
