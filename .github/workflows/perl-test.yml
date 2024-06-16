@@ -82,6 +82,7 @@ jobs:
           export PATH=$(pwd)/local/bin:$PATH
           export PERL5LIB=$(pwd)/local/lib/perl5:$(pwd)/app/lib:$(pwd)/lib:$PERL5LIB
           export IN_PERL_SHELL=1
+          export TERM=xterm-256color
 
           # run ci test
           make ci
