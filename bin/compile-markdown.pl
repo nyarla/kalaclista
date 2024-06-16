@@ -16,7 +16,8 @@ use WebSite::Context::Path qw(srcdir);
 
 sub compile : prototype($) {
   state $compiler ||= Markdown::Perl->new(
-    mode => 'github',
+    mode                   => 'github',
+    use_extended_autolinks => !!0,
   );
 
   return $compiler->convert(shift);
