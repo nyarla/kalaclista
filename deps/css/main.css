@@ -141,7 +141,7 @@
     }
 
     & *:not(pre) > code {
-      @apply px-1.5 py-0.5 rounded-md text-gray-darkest bg-gray-light dark:text-gray-clay dark:bg-gray-darker;
+      @apply px-1.5 py-0.5 rounded-md text-gray-darkest bg-gray-light dark:text-gray-light dark:bg-gray-dark;
     }
 
     & .content__card--thumbnail img {
@@ -150,7 +150,7 @@
 
     & .content__card--website a,
     & .content__card--website div {
-      @apply block rounded-2xl border-8 px-4 py-4 no-underline border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+      @apply block rounded-xl border-4 px-4 py-2 no-underline border-gray-light dark:border-gray-clay dark:bg-gray-darkest;
     }
 
     & .content__card--website a *,
@@ -163,7 +163,7 @@
       @apply font-bold text-gray-darkest dark:text-gray-lightest;
     }
 
-    & .content__card--website a h2 img {
+    & .content__card--website a p img {
       @apply inline align-[-2px] mr-1;
     }
 
@@ -178,7 +178,7 @@
     }
 
     & .content__card--website a:hover {
-      @apply border-double border-gray-clay dark:border-gray-clay;
+      @apply border-gray-clay dark:border-gray-light;
     }
 
     & .content__card--website a:hover cite {
