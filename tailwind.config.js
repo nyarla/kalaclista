@@ -21,23 +21,28 @@ module.exports = {
   theme: {
     colors: {
       blue: {
-        dark: "#4a5ba6",
+        dark: "#2050b9",
         light: "#5fc7ff",
       },
 
+      orange: {
+        dark: "#ff7e23",
+        light: "#9a2b0f",
+      },
+
       purple: {
-        light: "#6b519d",
+        dark: "#8f248c",
+        light: "#efa6ff",
       },
 
       gray: {
-        darkest: "#1b1b1b",
-        darker: "#262626",
-        dark: "#303030",
+        darkest: "#111111",
+        darker: "#1b1b1b",
+        dark: "#262626",
         clay: "#777777",
-        light: "#d4d4d4",
-        lighter: "#e2e2e2",
-        lightest: "#f1f1f1",
-        bright: "#ffffff",
+        light: "#e2e2e2",
+        lighter: "#f1f1f1",
+        lightest: "#ffffff",
       },
     },
   },
