@@ -133,7 +133,7 @@
 
     & pre > code,
     & *:not(pre) > code {
-      @apply font-mono;
+      @apply font-mono text-sm;
     }
 
     & pre > code {
