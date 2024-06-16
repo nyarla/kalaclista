@@ -168,6 +168,7 @@ sub parse {
 
 sub doing {
   my $entry = shift;
+  print 'highlight: ', $entry, "\n";
 
   my $prefix = srcdir->child('entries/precompiled');
   my $data   = srcdir->child('entries/code');

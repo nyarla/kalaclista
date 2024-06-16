@@ -25,7 +25,7 @@ sub compile : prototype($) {
 
 sub doing {
   my $path = shift;
-  print $path, "\n";
+  print 'markdown: ', $path, "\n";
 
   my $src    = srcdir->child('entries/src');
   my $prefix = srcdir->child('entries/precompiled');
