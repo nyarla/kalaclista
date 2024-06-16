@@ -34,7 +34,7 @@ sub init {
   my $class = shift;
   my $file  = shift;
   my $data  = loadcsv $file => sub {
-    my ( $date, $name, $amazon, $rakuten, $thumbnail ) = @_;
+    my ( $name, $amazon, $rakuten, $thumbnail ) = @_;
 
     my $gone = $amazon eq q{} && $rakuten eq q{} && $thumbnail eq q{};
 
