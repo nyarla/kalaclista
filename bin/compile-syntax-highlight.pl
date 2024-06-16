@@ -141,15 +141,14 @@ sub compile {
   utf8::encode($data) if utf8::is_utf8($data);
   $in->emit($data);
 
-  my $nvim = q|nvim --headless -n | . ( -e $nvimrc ? qq|-u $nvimrc| : q|| );
-  my $cmds = qq# -c "e @{[ $in->path ]} | ${ftcmd} | TOhtml | w! @{[ $out->path ]} | qa!" #;
+  my $nvim = q|nvim -n | . ( -e $nvimrc ? qq|-u $nvimrc| : q|| );
+  my $cmds = qq# -c "e @{[ $in->path ]} | ${ftcmd} | sleep 2 | TOhtml | w! @{[ $out->path ]} | qa!" #;
 
-  `$nvim $cmds 2>&1 >/dev/null`;
+  `$nvim $cmds 1>/dev/null 2>&1`;
 
   my $html = $out->load;
-  $html =~ s{\n+}{\n}g;
-
   utf8::decode($html);
+
   return $html;
 }
 
@@ -157,6 +156,8 @@ sub parse {
   my $dom   = dom(shift);
   my $style = $dom->at('head > style')->innerHTML;
   my $code  = $dom->at('body > pre')->innerHTML;
+
+  $code =~ s{\n+$}{};
 
   $style =~ s{^<!--|-->$}{}gm;
   $style =~ s{^\s*|\s*$}{}gm;
