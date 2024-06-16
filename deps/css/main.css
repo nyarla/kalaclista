@@ -22,11 +22,11 @@
 
 @layer components {
   .card-rounded {
-    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
   }
 
   .card-rounded-md {
-    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-darkest dark:bg-gray-dark;
+    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
   }
 
   .entry {
@@ -99,7 +99,7 @@
     }
 
     & hr {
-      @apply my-4 border-4 rounded-2xl border-gray-light dark:border-gray-darkest;
+      @apply my-4 border-4 rounded-2xl border-gray-light dark:border-gray-clay;
     }
 
     & > ul,
@@ -202,7 +202,7 @@
     }
 
     & .content__card--affiliate {
-      @apply rounded-2xl border-8 px-4 py-2 border-gray-light dark:border-gray-darker dark:bg-gray-darkest;
+      @apply rounded-2xl border-8 pl-4 pr-2 py-2 border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
     }
 
     & .content__card--affiliate h2 {
