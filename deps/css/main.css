@@ -164,7 +164,7 @@
     }
 
     & .content__card--website a p img {
-      @apply inline align-[-2px] mr-1;
+      @apply inline align-[-3px] mr-1;
     }
 
     & .content__card--website a > p,
