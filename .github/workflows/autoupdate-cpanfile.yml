@@ -27,7 +27,7 @@ jobs:
             libidn-dev
 
       # perl environment
-      - uses: shogo82148/actions-setup-perl@28eae78d12c2bba1163aec45d123f6d9228bc307 # v1.29.0
+      - uses: shogo82148/actions-setup-perl@f551dafcc94572adc179bbddbb409b3ada8f8ff5 # v1.30.0
         with:
           perl-version: '5.38'
           install-modules-with: carton
