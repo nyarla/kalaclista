@@ -63,8 +63,8 @@ dependencies:
     specifier: ^6.0.0
     version: 6.0.0
   wrangler:
-    specifier: ^3.60.3
-    version: 3.60.3
+    specifier: ^3.61.0
+    version: 3.61.0
 
 packages:
 
@@ -110,8 +110,8 @@ packages:
       to-fast-properties: 2.0.0
     dev: false
 
-  /@cloudflare/kv-asset-handler@0.3.2:
-    resolution: {integrity: sha512-EeEjMobfuJrwoctj7FA1y1KEbM0+Q1xSjobIEyie9k4haVEBB7vkDvsasw1pM3rO39mL2akxIAzLMUAtrMHZhA==}
+  /@cloudflare/kv-asset-handler@0.3.3:
+    resolution: {integrity: sha512-wpE+WiWW2kUNwNE0xyl4CtTAs+STjGtouHGiZPGRaisGB7eXXdbvfZdOrQJQVKgTxZiNAgVgmc7fj0sUmd8zyA==}
     engines: {node: '>=16.13'}
     dependencies:
       mime: 3.0.0
@@ -411,11 +411,6 @@ packages:
       '@jridgewell/trace-mapping': 0.3.25
     dev: false
 
-  /@jridgewell/resolve-uri@3.1.1:
-    resolution: {integrity: sha512-dSYZh7HhCDtCKm4QakX0xFpsRDqjjtZf/kjI/v3T3Nwt5r8/qz/M19F9ySyOqU94SXBmeG9ttTul+YnR4LOxFA==}
-    engines: {node: '>=6.0.0'}
-    dev: false
-
   /@jridgewell/resolve-uri@3.1.2:
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
     engines: {node: '>=6.0.0'}
@@ -433,7 +428,7 @@ packages:
   /@jridgewell/trace-mapping@0.3.25:
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
     dependencies:
-      '@jridgewell/resolve-uri': 3.1.1
+      '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: false
 
@@ -526,7 +521,7 @@ packages:
     resolution: {integrity: sha512-Gxiq6xmDR3PnX0RqRGth/Lu5fyFWoXNPfGxXTLORPFpfs8JKPh/eXGhlwc1f0v4VQzPay2KwVl6SGXvJD5qLXw==}
     dependencies:
       '@textlint/ast-node-types': 12.6.1
-      debug: 4.3.4
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -535,7 +530,7 @@ packages:
     resolution: {integrity: sha512-SQ/2DjxVlDVeCEjVlD8c8R2Sl3VGDZEx8o9+i8bV8NUdY8qsSHbo29/BfiUZf/uaX6eeNpZsurtstJ25hbVrsQ==}
     dependencies:
       '@textlint/ast-node-types': 14.0.4
-      debug: 4.3.4
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -559,7 +554,7 @@ packages:
       '@textlint/module-interop': 14.0.4
       '@textlint/types': 14.0.4
       '@textlint/utils': 14.0.4
-      debug: 4.3.4
+      debug: 4.3.5
       rc-config-loader: 4.1.3
       try-resolve: 1.0.1
     transitivePeerDependencies:
@@ -580,7 +575,7 @@ packages:
       '@textlint/module-interop': 14.0.4
       '@textlint/types': 14.0.4
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.3.5
       diff: 5.2.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
@@ -600,7 +595,7 @@ packages:
       '@textlint/source-code-fixer': 12.6.1
       '@textlint/types': 12.6.1
       '@textlint/utils': 12.6.1
-      debug: 4.3.4
+      debug: 4.3.5
       deep-equal: 1.1.2
       structured-source: 4.0.0
     transitivePeerDependencies:
@@ -617,7 +612,7 @@ packages:
       '@textlint/source-code-fixer': 14.0.4
       '@textlint/types': 14.0.4
       '@textlint/utils': 14.0.4
-      debug: 4.3.4
+      debug: 4.3.5
       fast-equals: 4.0.3
       structured-source: 4.0.0
     transitivePeerDependencies:
@@ -632,7 +627,7 @@ packages:
       '@textlint/module-interop': 14.0.4
       '@textlint/types': 14.0.4
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.3.5
       js-yaml: 3.14.1
       lodash: 4.17.21
       pluralize: 2.0.0
@@ -649,7 +644,7 @@ packages:
     resolution: {integrity: sha512-T0HO+VrU9VbLRiEx/kH4+gwGMHNMIGkp0Pok+p0I33saOOLyhfGvwOKQgvt2qkxzQEV2L5MtGB8EnW4r5d3CqQ==}
     dependencies:
       '@textlint/ast-node-types': 12.6.1
-      debug: 4.3.4
+      debug: 4.3.5
       mdast-util-gfm-autolink-literal: 0.1.3
       remark-footnotes: 3.0.0
       remark-frontmatter: 3.0.0
@@ -665,7 +660,7 @@ packages:
     resolution: {integrity: sha512-D9UUxnRJoNROVjOa9bhoQPDdRvlvS/xP3MJo0Kl6b/mJFi0dOlW31WUfpOFjZkp4uXkL+oo0ji7AMnmV6JORsQ==}
     dependencies:
       '@textlint/ast-node-types': 14.0.4
-      debug: 4.3.4
+      debug: 4.3.5
       mdast-util-gfm-autolink-literal: 0.1.3
       remark-footnotes: 3.0.0
       remark-frontmatter: 3.0.0
@@ -709,7 +704,7 @@ packages:
     resolution: {integrity: sha512-J9UZ3uitT+T50ug5X6AoIOwn6kTl54ZmPYBPB9bmH4lwBamN7e4gT65lSweHY1D21elOkq+3bO/OAJMfQfAVHg==}
     dependencies:
       '@textlint/types': 12.6.1
-      debug: 4.3.4
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -718,7 +713,7 @@ packages:
     resolution: {integrity: sha512-gIUeWjF0WdSwgCUhW310hKJsWOyRyFe6PGaqqCk7Mhc+vVcePfmC8mmmhVgeuyys/Dhe+0iaP4M1eJf4COaIQw==}
     dependencies:
       '@textlint/types': 14.0.4
-      debug: 4.3.4
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2325,7 +2320,7 @@ packages:
   /micromark@2.11.4:
     resolution: {integrity: sha512-+WoovN/ppKolQOFIAajxi7Lu9kInbPxFuTBVEavFcL8eAfVstoc5MocPmqBeAdBOJV00uaVjegzH4+MA0DN/uA==}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.5
       parse-entities: 2.0.0
     transitivePeerDependencies:
       - supports-color
@@ -2345,8 +2340,8 @@ packages:
     hasBin: true
     dev: false
 
-  /miniflare@3.20240610.0:
-    resolution: {integrity: sha512-J6aXmkII5gcq+kC4TurxKiR4rC++apPST/K8P/YjqoQQgrJ+NRPacBhf6iVh8R3ujnXYXaq+Ae+gm+LM0XHK/w==}
+  /miniflare@3.20240610.1:
+    resolution: {integrity: sha512-ZkfSpBmX3nJW00yYhvF2kGvjb6f77TOimRR6+2GQvsArbwo6e0iYqLGM9aB/cnJzgFjLMvOv1qj4756iynSxJQ==}
     engines: {node: '>=16.13'}
     hasBin: true
     dependencies:
@@ -2785,7 +2780,7 @@ packages:
   /rc-config-loader@4.1.3:
     resolution: {integrity: sha512-kD7FqML7l800i6pS6pvLyIE2ncbk9Du8Q0gp/4hMPhJU6ZxApkoLcGD8ZeqgiAlfwZ6BlETq6qqe+12DUL207w==}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.5
       js-yaml: 4.1.0
       json5: 2.2.3
       require-from-string: 2.0.2
@@ -3913,8 +3908,8 @@ packages:
       '@cloudflare/workerd-windows-64': 1.20240610.1
     dev: false
 
-  /wrangler@3.60.3:
-    resolution: {integrity: sha512-a6zn/KFnYaYp3nxJR/aP0TeaBvJDkrrfI89KoxUtx28H7zpya/5/VLu3CxQ3PRspEojJGF0s6f3/pddRy3F+BQ==}
+  /wrangler@3.61.0:
+    resolution: {integrity: sha512-feVAp0986x9xL3Dc1zin0ZVXKaqzp7eZur7iPLnpEwjG1Xy4dkVEZ5a1LET94Iyejt1P+EX5lgGcz63H7EfzUw==}
     engines: {node: '>=16.17.0'}
     hasBin: true
     peerDependencies:
@@ -3923,13 +3918,13 @@ packages:
       '@cloudflare/workers-types':
         optional: true
     dependencies:
-      '@cloudflare/kv-asset-handler': 0.3.2
+      '@cloudflare/kv-asset-handler': 0.3.3
       '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.17.19)
       '@esbuild-plugins/node-modules-polyfill': 0.2.2(esbuild@0.17.19)
       blake3-wasm: 2.1.5
       chokidar: 3.5.3
       esbuild: 0.17.19
-      miniflare: 3.20240610.0
+      miniflare: 3.20240610.1
       nanoid: 3.3.7
       path-to-regexp: 6.2.1
       resolve: 1.22.8
