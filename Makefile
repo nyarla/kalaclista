@@ -74,11 +74,8 @@ entries:
 		| cut -d ' ' -f2 \
 		| sed 's#*$(SRC)/entries/src/##' >$(CACHE)/entries/target
 	@cat $(CACHE)/entries/target \
-		| xargs -I{} -P$(FULL) perl bin/compile-markdown.pl "{}"
-	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
-		| cut -d ' ' -f2 \
-		| sed 's#*$(SRC)/entries/src/##' \
-		| xargs -I{} -P$(FULL) perl bin/compile-syntax-highlight.pl "{}"
+		| xargs -I{} -P$(FULL) bash -c \
+			'perl bin/compile-markdown.pl "{}" && perl bin/compile-syntax-highlight.pl "{}"'
 	@mv $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum
 	@rm $(CACHE)/entries/target
 
