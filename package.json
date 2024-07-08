@@ -19,6 +19,6 @@
     "textlint-rule-preset-japanese": "^10.0.3",
     "textlint-rule-preset-jtf-style": "^2.3.14",
     "textlint-rule-prh": "^6.0.0",
-    "wrangler": "^3.61.0"
+    "wrangler": "^3.63.1"
   }
 }
