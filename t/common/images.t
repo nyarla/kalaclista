@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use strict;
-use warnings;
+use v5.38;
+use utf8;
 
 use feature qw(state);
 
@@ -12,24 +12,25 @@ use Kalaclista::Loader::Files qw(files);
 
 use WebSite::Context::Path qw(distdir srcdir);
 
-my sub src  { state $dir ||= srcdir->child('images');  $dir }
-my sub dist { state $dir ||= distdir->child('images'); $dir }
-
 subtest compiled => sub {
-  my $prefix = src->path;
+  my $srcdir  = srcdir->child('images')->path;
+  my $distdir = distdir->child('images')->path;
 
-  map {
-    my $path = $_;
-    $path =~ s|^$prefix/||;
+  for my $file ( files $srcdir ) {
+    utf8::decode($file);
 
-    my ( $dirname, $basename, $extension ) = ( $path =~ m{^(.+)/([^/]+)\.([^.]+)$} );
+    subtest $file => sub {
+      unlike $file, qr<\.git>, 'The file path does not exists `.git` directory';
 
-    my $dir = dist->child($dirname);
-    my $ext = $extension eq 'gif' ? 'gif' : 'webp';
+      my ( $path, $ext ) = $file =~ m<^${srcdir}/([^.]+)\.([^.]+)$>;
 
-    ok -e $dir->child("${basename}_1x.${ext}")->to_string;
-    ok -e $dir->child("${basename}_2x.${ext}")->to_string;
-  } files src->path;
+      my $fn_x1 = $ext eq 'gif' ? "${path}_1x.gif" : "${path}_1x.webp";
+      my $fn_x2 = $ext eq 'gif' ? "${path}_2x.gif" : "${path}_2x.webp";
+
+      ok -e "${distdir}/${fn_x1}", "the 1x scaled file is deployed to distribution directory.";
+      ok -e "${distdir}/${fn_x2}", "The 2x scaled file is deployed to distribution directory.";
+    };
+  }
 };
 
 done_testing;
