@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use strict;
-use warnings;
+use v5.38;
+use utf8;
 
 use Test2::V0;
 
@@ -10,8 +10,18 @@ use Kalaclista::Loader::Files qw(files);
 use WebSite::Context::Path qw(srcdir distdir);
 
 subtest assets => sub {
-  my $src = srcdir->child('assets')->to_string;
-  map { my $path = $_; $path =~ s{^$src/}{}; ok -e distdir->child($path)->path } files $src;
+  my $srcdir  = srcdir->child('assets')->path;
+  my $distdir = distdir->path;
+
+  for my $path ( files $srcdir ) {
+    my $file = $path;
+    $file =~ s<${srcdir}><${distdir}>;
+    $path =~ s<${srcdir}><>;
+
+    diag $file;
+    ok -e $file, "The file of '${path}' is exists on ${distdir}";
+    unlike $path, qr<\.git>, "The path to '${file}' does not include '.git' directory";
+  }
 };
 
 done_testing;
