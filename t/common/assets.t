@@ -14,13 +14,15 @@ subtest assets => sub {
   my $distdir = distdir->path;
 
   for my $path ( files $srcdir ) {
-    my $file = $path;
-    $file =~ s<${srcdir}><${distdir}>;
-    $path =~ s<${srcdir}><>;
+    utf8::decode($path);
 
-    diag $file;
-    ok -e $file, "The file of '${path}' is exists on ${distdir}";
-    unlike $path, qr<\.git>, "The path to '${file}' does not include '.git' directory";
+    subtest $path => sub {
+      my $file = $path;
+      $file =~ s<${srcdir}><${distdir}>;
+
+      ok -e $file, 'The file is deployed to distribution dir';
+      unlike $file, qr<\.git>, "The path does not include '.git' directory.";
+    };
   }
 };
 
