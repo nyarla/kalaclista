@@ -186,12 +186,6 @@ subtest cardinfo => sub {
     is $dom->at('meta[property="og:description"]')->attr('content'), $summary;
     is $dom->at('meta[property="og:locale"]')->attr('content'),      'ja_JP';
 
-    is $dom->at('meta[name="twitter:card"]')->attr('content'),  'summary';
-    is $dom->at('meta[name="twitter:site"]')->attr('content'),  '@kalaclista';
-    is $dom->at('meta[name="twitter:title"]')->attr('content'), $title;
-    is $dom->at('meta[name="twitter:description"]')->attr('content'), ( $kind eq q|permalink| ? $page->summary : $website->summary );
-    is $dom->at('meta[name="twitter:image"]')->attr('content'), href('/assets/avatar.png')->to_string;
-
     my $jsonld = $dom->at('script[type="application/ld+json"]')->innerHTML;
     utf8::encode($jsonld);
     my $json = Load($jsonld);

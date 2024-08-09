@@ -148,12 +148,6 @@ sub cardinfo : prototype($$$) {
       )
     ),
 
-    meta( { name => 'twitter:card',        content => 'summary' } ),
-    meta( { name => 'twitter:site',        content => '@kalaclista' } ),
-    meta( { name => 'twitter:title',       content => $title } ),
-    meta( { name => 'twitter:description', content => $summary } ),
-    meta( { name => 'twitter:image',       content => $avatar } ),
-
     script( { type => 'application/ld+json' }, raw($jsonld) ),
   );
 
