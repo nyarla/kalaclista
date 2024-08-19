@@ -55,6 +55,9 @@ my ($section) = __FILE__ =~ m{([^.]+)\.t$};
           is $head->at('meta[property="og:image"]')->attr('content'), href('/assets/avatar.png')->to_string,
               'The ogp image is the URI of avatar icon';
 
+          is $head->at('meta[property="og:url"]')->attr('content'), href( "/" . ( $fn =~ m{(.+?)/index\.html$} )[0] . '/' )->to_string,
+              'The ogp url is a href of website page';
+
           is $head->at('meta[property="og:description"]')->attr('content'), $website->summary,
               'The ogp description is the website summary';
 
