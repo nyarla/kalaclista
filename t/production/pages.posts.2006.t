@@ -29,7 +29,7 @@ my ( $section, $year ) = __FILE__ =~ m{\.([^./]+).([^.]+)\.t$};
 
   for my $article (@articles) {
     my $fn = $article->href->path;
-    $fn .= "/index.html";
+    $fn .= "index.html";
 
     my $file = distdir->child($fn);
     my $html = $file->load;
@@ -43,7 +43,7 @@ my ( $section, $year ) = __FILE__ =~ m{\.([^./]+).([^.]+)\.t$};
     my $title   = $article->title;
     my $summary = $article->summary ne q{} ? $article->summary : ( $article->dom->text =~ m{^(.{,70})} )[0] . '……';
 
-    subtest $article->date => sub {
+    subtest $fn => sub {
 
       subtest head => sub {
         subtest meta => sub {
