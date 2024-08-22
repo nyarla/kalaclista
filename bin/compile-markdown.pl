@@ -20,7 +20,12 @@ sub main {
   while ( $bw->pending() ) {
     my $result = $bw->get_result;
     if ( exists $result->{'done'} && $result->{'done'} > 0 ) {
-      print "Compiled: " . $result->{'msg'} . ' -> ' . $result->{'dest'} . "\n";
+      my $msg   = $result->{'msg'};
+      my $codes = $result->{'codes'};
+
+      my $log = "Compiled: ${msg}" . ( $codes > 0 ? " (includes code block: ${codes})" : "" );
+
+      print "${log}\n";
     }
   }
 

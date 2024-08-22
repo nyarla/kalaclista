@@ -10,7 +10,7 @@ use Kalaclista::Path;
 
 use WebSite::Context::Path qw(srcdir);
 
-use WebSite::Worker::Markdown qw(compile worker queues should_update);
+use WebSite::Worker::Markdown qw(compile worker queues should_update highlight);
 
 subtest compile => sub {
   my $markdown = <<'...';
@@ -50,6 +50,16 @@ subtest should_update => sub {
   };
 };
 
+subtest highlight => sub {
+  my $html = '<pre><code class="language-bash">$ echo hello, world</code></pre>';
+  my $dir  = Kalaclista::Path->tempdir;
+
+  my $codes = highlight $html, $dir->path;
+
+  is $codes, 1, 'The html has 1 highlight code';
+  ok -e $dir->child('1.yml')->path, 'The highlight file exists';
+};
+
 subtest worker => sub {
   my $src      = Kalaclista::Path->tempfile;
   my $dest     = Kalaclista::Path->tempfile;
@@ -59,6 +69,10 @@ title: hello
 ---
 
 hello, world!
+
+```bash
+$ echo hello, world
+```
 ...
   $dest->remove;
 
@@ -74,6 +88,7 @@ hello, world!
 
   ok $job->{'done'} > 0, 'The worker process is done';
   ok -e $dest->path,     'The proceed file is exists';
+  is $job->{'codes'}, 1, 'The markdwon file includes 1 code block';
 
   $result = worker($job);
 
