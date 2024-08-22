@@ -51,7 +51,33 @@ subtest should_update => sub {
 };
 
 subtest worker => sub {
-  ok 1, 'skip';
+  my $src      = Kalaclista::Path->tempfile;
+  my $dest     = Kalaclista::Path->tempfile;
+  my $markdown = <<'...';
+---
+title: hello
+---
+
+hello, world!
+...
+  $dest->remove;
+
+  $src->emit($markdown);
+
+  my $job = {
+    src  => $src->path,
+    dest => $dest->path,
+    msg  => 'test',
+  };
+
+  my $result = worker($job);
+
+  ok $job->{'done'} > 0, 'The worker process is done';
+  ok -e $dest->path,     'The proceed file is exists';
+
+  $result = worker($job);
+
+  ok $job->{'skip'} > 0, 'The worker skipped if `dest` is newer than `src`';
 };
 
 subtest queues => sub {
@@ -60,7 +86,7 @@ subtest queues => sub {
 
   my @srcs  = sort { $a cmp $b } files $srcdir;
   my @dests = sort { $a cmp $b } files $destdir;
-  my @msgs  = sort { $a cmp $b } map { s<${srcdir}><> } files $srcdir;
+  my @msgs  = sort { $a cmp $b } map { s<${srcdir}><>; $_ } files $srcdir;
 
   my @queues = queues;
 

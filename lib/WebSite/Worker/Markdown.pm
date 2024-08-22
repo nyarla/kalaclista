@@ -98,8 +98,8 @@ sub worker {
   my $markdown = content $src;
   my $html     = compile $markdown;
 
-  my $emitter = Kalaclista::Path::new( path => $dest );
-  $emitter->mkpath;
+  my $emitter = Kalaclista::Path->new( path => $dest );
+  $emitter->parent->mkpath;
   $emitter->emit($html);
 
   $job->{'done'}++;
