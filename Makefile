@@ -66,18 +66,8 @@ images:
 	@mv $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum
 
 entries:
-	@echo generate precompiled entries source
-	@test -d $(CACHE)/entries || mkdir -p $(CACHE)/entries
-	@openssl dgst -r -sha256 $$(find $(SRC)/entries/src -type f | grep -v '.git') | sort >$(CACHE)/entries/now.sha256sum
-	@touch $(CACHE)/entries/latest.sha256sum
-	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
-		| cut -d ' ' -f2 \
-		| sed 's#*$(SRC)/entries/src/##' >$(CACHE)/entries/target
-	@cat $(CACHE)/entries/target \
-		| xargs -I{} -P$(FULL) bash -c \
-			'perl bin/compile-markdown.pl "{}" && perl bin/compile-syntax-highlight.pl "{}"'
-	@mv $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum
-	@rm $(CACHE)/entries/target
+	@echo generate precompiled entry sources
+	@perl bin/compile-markdown.pl $(FULL)
 
 assets:
 	@echo copy assets
@@ -100,7 +90,8 @@ home:
 	@perl bin/gen.pl home
 
 gen:
-	@$(MAKE) -j4 assets css images entries sitemap_xml
+	@$(MAKE) entries
+	@$(MAKE) -j4 assets css images sitemap_xml
 	@$(MAKE) -j3 home index pages
 	@minify -q -r -a -o $(DIST)/ $(DIST)/
 
