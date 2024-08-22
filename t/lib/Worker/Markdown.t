@@ -60,6 +60,7 @@ subtest queues => sub {
 
   my @srcs  = sort { $a cmp $b } files $srcdir;
   my @dests = sort { $a cmp $b } files $destdir;
+  my @msgs  = sort { $a cmp $b } map { s<${srcdir}><> } files $srcdir;
 
   my @queues = queues;
 
@@ -70,6 +71,9 @@ subtest queues => sub {
 
   is $queues[0]->{'dest'},  $dests[0],  'The first job has right destination path';
   is $queues[-1]->{'dest'}, $dests[-1], 'The last job has right destination path';
+
+  is $queues[0]->{'msg'},  $msgs[0],  'The first job has right msg path';
+  is $queues[-1]->{'msg'}, $msgs[-1], 'The last job has right msg path';
 };
 
 done_testing;

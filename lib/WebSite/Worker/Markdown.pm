@@ -132,7 +132,7 @@ sub queues {
     my $msg = $src;
     $msg =~ s<$srcdir><>;
 
-    { src => $src, dest => $dest }
+    { src => $src, dest => $dest, msg => $msg }
   } sort { $a cmp $b } files $srcdir;
 
   return @jobs;
