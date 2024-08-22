@@ -51,8 +51,8 @@ jobs:
           # done
       - name: Install binary commands
         run: |
-          curl -L https://github.com/tdewolff/minify/releases/download/v2.20.19/checksums.txt | grep 'linux_amd64.tar.gz' >checksums.txt
-          curl -LO https://github.com/tdewolff/minify/releases/download/v2.20.19/minify_linux_amd64.tar.gz
+          curl -L https://github.com/tdewolff/minify/releases/download/v2.20.37/checksums.txt | grep 'linux_amd64.tar.gz' >checksums.txt
+          curl -LO https://github.com/tdewolff/minify/releases/download/v2.20.37/minify_linux_amd64.tar.gz
           sha256sum -c checksums.txt
           tar -zxvf minify_linux_amd64.tar.gz
           sudo cp minify /usr/bin/minify
