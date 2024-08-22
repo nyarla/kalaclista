@@ -98,23 +98,21 @@ $ echo hello, world
 subtest queues => sub {
   my $srcdir  = srcdir->child('entries/src')->path;
   my $destdir = srcdir->child('entries/precompiled')->path;
+  my $codedir = srcdir->child('entries/code')->path;
 
-  my @srcs  = sort { $a cmp $b } files $srcdir;
-  my @dests = sort { $a cmp $b } files $destdir;
-  my @msgs  = sort { $a cmp $b } map { s<${srcdir}><>; $_ } files $srcdir;
+  for my $job (queues) {
+    subtest $job->{'msg'} => sub {
+      ok exists $job->{'msg'},  'The job has `msg` field for logging';
+      ok exists $job->{'src'},  'The job has path to a `src` file';
+      ok exists $job->{'dest'}, 'The job has path to a `dest` file';
+      ok exists $job->{'code'}, 'The job has path to a `code` directory';
+      is $job->{'codes'}, 0, 'The count to code blocks is zero';
 
-  my @queues = queues;
-
-  is 0+ @queues, 0+ @srcs, 'Job queues should be a same length of Markdown files';
-
-  is $queues[0]->{'src'},  $srcs[0],  'The first job has right source';
-  is $queues[-1]->{'src'}, $srcs[-1], 'The last job hsa right source';
-
-  is $queues[0]->{'dest'},  $dests[0],  'The first job has right destination path';
-  is $queues[-1]->{'dest'}, $dests[-1], 'The last job has right destination path';
-
-  is $queues[0]->{'msg'},  $msgs[0],  'The first job has right msg path';
-  is $queues[-1]->{'msg'}, $msgs[-1], 'The last job has right msg path';
+      like $job->{'src'},  qr<^${srcdir}>,  'The `src` field begin with `$srcdir`';
+      like $job->{'dest'}, qr<^${destdir}>, 'The `dest` field begin with `$destdir`';
+      like $job->{'code'}, qr<^${codedir}>, 'The `code` field begin with `$codedir`';
+    }
+  }
 };
 
 done_testing;
