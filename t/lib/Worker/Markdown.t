@@ -63,6 +63,7 @@ subtest highlight => sub {
 subtest worker => sub {
   my $src      = Kalaclista::Path->tempfile;
   my $dest     = Kalaclista::Path->tempfile;
+  my $code     = Kalaclista::Path->tempdir;
   my $markdown = <<'...';
 ---
 title: hello
@@ -81,6 +82,7 @@ $ echo hello, world
   my $job = {
     src  => $src->path,
     dest => $dest->path,
+    code => $code->path,
     msg  => 'test',
   };
 
