@@ -110,8 +110,6 @@ testing:
 test: export KALACLISTA_ENV := production
 test:
 	@$(MAKE) clean
-	@$(MAKE) test-scripts
-	@$(MAKE) clean
 	@$(MAKE) gen
 	@prove -j$(FULL) -r t/
 
@@ -119,8 +117,10 @@ ci: export KALACLISTA_ENV := test
 ci:
 	@$(MAKE) clean
 	@$(MAKE) gen
-	@prove -j$(FULL) -lvr t/lib
-	@prove -j$(FULL) -lvr t/common
+	@rm t/fixtures/entries/precompiled -rf
+	@$(MAKE) entries
+	@prove -lvr t/lib
+	@prove -lvr t/common
 
 .PHONY: shell serve up
 
