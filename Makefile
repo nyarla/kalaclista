@@ -116,9 +116,10 @@ test:
 ci: export KALACLISTA_ENV := test
 ci:
 	@$(MAKE) clean
-	@prove -lvr t/lib
-	@$(MAKE) clean
 	@$(MAKE) gen
+	@rm t/fixtures/entries/precompiled -rf
+	@$(MAKE) entries
+	@prove -lvr t/lib
 	@prove -lvr t/common
 
 .PHONY: shell serve up
