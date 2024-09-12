@@ -51,8 +51,7 @@ endif
 .PHONY: clean build dev test
 css:
 	@echo generate css
-	@pnpm exec tailwindcss -i $(ROOT)/deps/css/main.css -o $(CACHE)/css/main.css --minify
-	@cp $(CACHE)/css/main.css $(DIST)/main-$$(openssl dgst -r -sha256 $(CACHE)/css/main.css | cut -c 1-7).css
+	@pnpm exec tailwindcss -i $(ROOT)/deps/css/main.css -o $(DIST)/main-$(shell openssl dgst -r -sha256 $(ROOT)/deps/css/main.css | cut -c 1-7).css --minify
 
 images:
 	@echo convert to webp

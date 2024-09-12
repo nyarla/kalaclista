@@ -12,7 +12,7 @@ use Kalaclista::HyperScript qw|head meta link_ title script style raw|;
 
 use WebSite::Context::WebSite qw(website section);
 use WebSite::Context::URI     qw(href);
-use WebSite::Context::Path    qw(cachedir);
+use WebSite::Context::Path    qw(rootdir);
 
 use WebSite::Helper::Digest qw(digest);
 
@@ -162,7 +162,7 @@ sub common {
     rel( icon       => href('/icon.svg')->to_string, 'image/svg+xml' ),
     rel( author     => 'http://www.hatena.ne.jp/nyarla-net/' ),
     rel( author     => 'https://the.kalaclista.com/nyarla' ),
-    rel( stylesheet => href("/main-@{[ digest(cachedir->child('css/main.css')->path) ]}.css")->to_string )
+    rel( stylesheet => href("/main-@{[ digest(rootdir->child('deps/css/main.css')->path) ]}.css")->to_string )
   ];
 
   return $html->@*;
