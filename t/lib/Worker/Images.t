@@ -90,8 +90,8 @@ subtest should_update => sub {
 subtest worker => sub {
   subtest gif => sub {
     my $src  = srcdir->child('images/foo/bar/2.gif');
-    my $dest = Kalaclista::Path->tempfile;
-    my $data = Kalaclista::Path->tempfile;
+    my $dest = Kalaclista::Path->tempdir->child('2.gif');
+    my $data = Kalaclista::Path->tempfile->child('2.yaml');
     my $job  = {
       src   => $src->path,
       dest  => $dest->path,
@@ -101,8 +101,9 @@ subtest worker => sub {
 
     my $result = worker($job);
 
-    ok -e $dest->path, 'The gif file copied to `$dest`';
-    ok -e $data->path, 'The metadata file exists';
+    ok -e $dest->parent->child('2_1x.gif')->path, 'The gif file copied to `$dest`';
+    ok -e $dest->parent->child('2_2x.gif')->path, 'The gif file copied to `$dest`';
+    ok -e $data->path,                            'The metadata file exists';
 
     is Load( $data->load ), {
       '1x' => {
@@ -123,8 +124,8 @@ subtest worker => sub {
 
   subtest supported => sub {
     my $src  = srcdir->child('images/foo/bar/1.png');
-    my $dest = Kalaclista::Path->tempfile;
-    my $data = Kalaclista::Path->tempfile;
+    my $dest = Kalaclista::Path->tempdir->child('1.png');
+    my $data = Kalaclista::Path->tempdir->child('1.yaml');
     my $job  = {
       src   => $src->path,
       dest  => $dest->path,
@@ -134,8 +135,9 @@ subtest worker => sub {
 
     my $result = worker($job);
 
-    ok -e $dest->path, 'The gif file copied to `$dest`';
-    ok -e $data->path, 'The metadata file exists';
+    ok -e $dest->parent->child('1_1x.webp')->path, 'The gif file copied to `$dest`';
+    ok -e $dest->parent->child('1_2x.webp')->path, 'The gif file copied to `$dest`';
+    ok -e $data->path,                             'The metadata file exists';
 
     is Load( $data->load ), {
       '1x' => {
@@ -165,6 +167,13 @@ subtest queues => sub {
       dest  => $destdir->child('foo/bar/1.png')->path,
       msg   => 'images/foo/bar/1.png',
       data  => $datadir->child('foo/bar/1.yaml')->path,
+      sizes => [ 256, 512 ],
+    },
+    {
+      src   => $srcdir->child('foo/bar/2.gif')->path,
+      dest  => $destdir->child('foo/bar/2.gif')->path,
+      msg   => 'images/foo/bar/2.gif',
+      data  => $datadir->child('foo/bar/2.yaml')->path,
       sizes => [ 256, 512 ],
     }
       ],

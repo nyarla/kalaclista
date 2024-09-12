@@ -128,7 +128,9 @@ sub worker {
 
   if ( $src =~ m|\.gif$| ) {
     for ( my $idx = 0 ; $idx < $sizes->@* ; $idx++ ) {
-      copy( $src, $dest ) if should_update( $src, $dest, "@{[ $idx +1 ]}x" );
+      my $path = $dest;
+      $path =~ s|\.[^.]+$|_@{[ $idx+1 ]}x.gif|;
+      copy( $src, $path ) if should_update( $src, $path );
     }
 
     my ( $width, $height ) = size($src);
@@ -202,7 +204,7 @@ sub queues {
     my $msg = $src;
     $msg =~ s<$srcdir><images>;
 
-    return {
+    +{
       src   => $src,
       dest  => $dest,
       data  => $data,
