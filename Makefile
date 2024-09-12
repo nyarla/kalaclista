@@ -83,7 +83,8 @@ home:
 
 gen:
 	@$(MAKE) entries
-	@$(MAKE) -j4 assets css images sitemap_xml
+	@$(MAKE) images
+	@$(MAKE) -j3 assets css sitemap_xml
 	@$(MAKE) -j3 home index pages
 	@minify -q -r -a -o $(DIST)/ $(DIST)/
 
