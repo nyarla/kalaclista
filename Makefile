@@ -55,15 +55,8 @@ css:
 	@cp $(CACHE)/css/main.css $(DIST)/main-$$(openssl dgst -r -sha256 $(CACHE)/css/main.css | cut -c 1-7).css
 
 images:
-	@echo generate webp
-	@test -d $(CACHE)/images || mkdir -p $(CACHE)/images
-	@openssl dgst -r -sha256 $$(find $(SRC)/images -type f | grep -v '.git') | sort >$(CACHE)/images/now.sha256sum
-	@touch $(CACHE)/images/latest.sha256sum
-	@comm -23 $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum \
-		| cut -d ' ' -f2 \
-		| sed 's#*$(SRC)/images/##' \
-		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
-	@mv $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum
+	@echo convert to webp
+	@perl bin/compile-images.pl $(FULL) 640 1280
 
 entries:
 	@echo generate precompiled entry sources
