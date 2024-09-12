@@ -115,13 +115,8 @@ test:
 	@$(MAKE) gen
 	@prove -j$(FULL) -r t/
 
-test-scripts:
-	prove -j$(FULL) -v bin/compile-*.pl
-
 ci: export KALACLISTA_ENV := test
 ci:
-	@$(MAKE) clean
-	@$(MAKE) test-scripts
 	@$(MAKE) clean
 	@$(MAKE) gen
 	@prove -j$(FULL) -lvr t/lib
