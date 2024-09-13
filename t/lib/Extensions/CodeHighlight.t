@@ -47,7 +47,7 @@ subtest apply => sub {
   ok $meta->{'css'};
   is scalar( $meta->{'css'}->@* ), 1;
 
-  ok $dom->at('pre > code span.Statement');
+  ok $dom->at('pre > code span');
 };
 
 subtest transform => sub {

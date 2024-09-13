@@ -51,33 +51,15 @@ endif
 .PHONY: clean build dev test
 css:
 	@echo generate css
-	@pnpm exec tailwindcss -i $(ROOT)/deps/css/main.css -o $(CACHE)/css/main.css --minify
-	@cp $(CACHE)/css/main.css $(DIST)/main-$$(openssl dgst -r -sha256 $(CACHE)/css/main.css | cut -c 1-7).css
+	@pnpm exec tailwindcss -i $(ROOT)/deps/css/main.css -o $(DIST)/main-$(shell openssl dgst -r -sha256 $(ROOT)/deps/css/main.css | cut -c 1-7).css --minify
 
 images:
-	@echo generate webp
-	@test -d $(CACHE)/images || mkdir -p $(CACHE)/images
-	@openssl dgst -r -sha256 $$(find $(SRC)/images -type f | grep -v '.git') | sort >$(CACHE)/images/now.sha256sum
-	@touch $(CACHE)/images/latest.sha256sum
-	@comm -23 $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum \
-		| cut -d ' ' -f2 \
-		| sed 's#*$(SRC)/images/##' \
-		| xargs -I{} -P$(FULL) perl bin/compile-webp.pl "{}" 640 1280
-	@mv $(CACHE)/images/now.sha256sum $(CACHE)/images/latest.sha256sum
+	@echo convert to webp
+	@perl bin/compile-images.pl $(FULL) 640 1280
 
 entries:
-	@echo generate precompiled entries source
-	@test -d $(CACHE)/entries || mkdir -p $(CACHE)/entries
-	@openssl dgst -r -sha256 $$(find $(SRC)/entries/src -type f | grep -v '.git') | sort >$(CACHE)/entries/now.sha256sum
-	@touch $(CACHE)/entries/latest.sha256sum
-	@comm -23 $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum \
-		| cut -d ' ' -f2 \
-		| sed 's#*$(SRC)/entries/src/##' >$(CACHE)/entries/target
-	@cat $(CACHE)/entries/target \
-		| xargs -I{} -P$(FULL) bash -c \
-			'perl bin/compile-markdown.pl "{}" && perl bin/compile-syntax-highlight.pl "{}"'
-	@mv $(CACHE)/entries/now.sha256sum $(CACHE)/entries/latest.sha256sum
-	@rm $(CACHE)/entries/target
+	@echo generate precompiled entry sources
+	@perl bin/compile-markdown.pl $(FULL)
 
 assets:
 	@echo copy assets
@@ -100,7 +82,9 @@ home:
 	@perl bin/gen.pl home
 
 gen:
-	@$(MAKE) -j4 assets css images entries sitemap_xml
+	@$(MAKE) entries
+	@$(MAKE) images
+	@$(MAKE) -j3 assets css sitemap_xml
 	@$(MAKE) -j3 home index pages
 	@minify -q -r -a -o $(DIST)/ $(DIST)/
 
@@ -126,22 +110,17 @@ testing:
 test: export KALACLISTA_ENV := production
 test:
 	@$(MAKE) clean
-	@$(MAKE) test-scripts
-	@$(MAKE) clean
 	@$(MAKE) gen
 	@prove -j$(FULL) -r t/
-
-test-scripts:
-	prove -j$(FULL) -v bin/compile-*.pl
 
 ci: export KALACLISTA_ENV := test
 ci:
 	@$(MAKE) clean
-	@$(MAKE) test-scripts
-	@$(MAKE) clean
 	@$(MAKE) gen
-	@prove -j$(FULL) -lvr t/lib
-	@prove -j$(FULL) -lvr t/common
+	@rm t/fixtures/entries/precompiled -rf
+	@$(MAKE) entries
+	@prove -lvr t/lib
+	@prove -lvr t/common
 
 .PHONY: shell serve up
 

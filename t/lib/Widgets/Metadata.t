@@ -17,7 +17,7 @@ use Kalaclista::HyperScript qw(head);
 
 use WebSite::Context::WebSite qw(section);
 use WebSite::Context::URI     qw(href);
-use WebSite::Context::Path    qw(cachedir);
+use WebSite::Context::Path    qw(rootdir);
 
 use WebSite::Helper::Digest qw(digest);
 
@@ -292,7 +292,7 @@ subtest common => sub {
   is $dom->at('link[rel="icon"][type]')->attr('type'),       'image/svg+xml';
   is $dom->at('link[rel="author"]')->attr('href'),           'http://www.hatena.ne.jp/nyarla-net/';
   is $dom->at('link[rel="stylesheet"]')->attr('href'),
-      href(qq|/main-@{[ digest(cachedir->child('css/main.css')->path) ]}.css|)->to_string;
+      href(qq|/main-@{[ digest(rootdir->child('deps/css/main.css')->path) ]}.css|)->to_string;
 };
 
 subtest feeds => sub {
