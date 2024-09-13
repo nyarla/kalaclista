@@ -1,7 +1,8 @@
+.wrangler
 cache
-content
+flake.lock
 local
 public
-resources
 src
 t/fixtures/entries/code
+t/fixtures/entries/precompiled
