@@ -19,6 +19,7 @@
               esbuild
               gnumake
               imagemagick
+              libidn
               libidn.dev
               libwebp
               libxcrypt
