@@ -3,14 +3,17 @@
 use v5.38;
 use utf8;
 
+BEGIN {
+  $ENV{'KALACLISTA_ENV'} = 'test';
+}
+
 use Test2::V0;
 
 use YAML::XS qw(Load);
 
 use Kalaclista::Path;
 
-use WebSite::Context::Path qw(srcdir distdir cachedir);
-
+use WebSite::Context::Path  qw(srcdir distdir cachedir);
 use WebSite::Worker::Images qw(copy size resize should_update worker queues);
 
 subtest copy => sub {
