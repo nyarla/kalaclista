@@ -5,10 +5,14 @@ use utf8;
 
 use Parallel::Fork::BossWorkerAsync;
 
-use WebSite::Worker::Markdown qw(worker queues);
+use WebSite::Worker::Markdown      qw(worker queues);
+use WebSite::Helper::MakeDirectory qw(mkpath);
 
 sub main {
   my $parallel = shift;
+
+  my @queues = queues();
+  mkpath( map { $_->{'dest'} } @queues );
 
   my $bw = Parallel::Fork::BossWorkerAsync->new(
     work_handler   => \&worker,
@@ -16,7 +20,7 @@ sub main {
     worker_count   => $parallel,
   );
 
-  $bw->add_work( queues() );
+  $bw->add_work(@queues);
   while ( $bw->pending() ) {
     my $result = $bw->get_result;
     if ( exists $result->{'done'} && $result->{'done'} > 0 ) {
