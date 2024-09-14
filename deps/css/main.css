@@ -5,10 +5,64 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --theme-foreground: theme("colors.gray.10");
+    --theme-foreground-link: theme("colors.blue.35");
+    --theme-foreground-title: theme("colors.gray.0");
+    --theme-foreground-listitem: theme("colors.blue.30");
+    --theme-foreground-cite: theme("colors.green.35");
+
+    --theme-background: theme("colors.gray.95");
+    --theme-background-content: theme("colors.gray.100");
+    --theme-background-inactive: theme("colors.gray.95");
+    --theme-background-avatar: theme("colors.gray.100");
+
+    --theme-border: theme("colors.gray.90");
+    --theme-border-quote: theme("colors.purple.85");
+    --theme-border-thumbnail: theme("colors.gray.100");
+    --theme-border-embedded: theme("colors.blue.80");
+    --theme-border-inactive: theme("colors.gray.80");
+    --theme-border-store: theme("colors.green.80");
+
+    --theme-foreground-code: theme("colors.gray.95");
+    --theme-background-code: theme("colors.gray.10");
+
+    --theme-foreground-code-inline: theme("colors.gray.10");
+    --theme-background-code-inline: theme("colors.gray.90");
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --theme-foreground: theme("colors.gray.90");
+      --theme-foreground-link: theme("colors.blue.90");
+      --theme-foreground-title: theme("colors.gray.100");
+      --theme-foreground-listitem: theme("colors.blue.90");
+      --theme-foreground-cite: theme("colors.green.50");
+
+      --theme-background: theme("colors.gray.0");
+      --theme-background-content: theme("colors.gray.0");
+      --theme-background-embedded: theme("colors.gray.30");
+      --theme-background-inactive: theme("colors.gray.20");
+      --theme-background-avatar: theme("colors.gray.100");
+
+      --theme-border: theme("colors.gray.20");
+      --theme-border-thumbnail: theme("colors.gray.30");
+      --theme-border-embedded: theme("colors.sky.50");
+      --theme-border-inactive: theme("colors.gray.30");
+      --theme-border-store: theme("colors.green.60");
+
+      --theme-foreground-code: theme("colors.gray.95");
+      --theme-background-code: theme("colors.gray.10");
+
+      --theme-foreground-code-inline: theme("colors.gray.90");
+      --theme-background-code-inline: theme("colors.gray.20");
+    }
+  }
+
   html,
   body {
-    @apply text-gray-darker bg-gray-lighter dark:text-gray-lighter dark:bg-gray-darker;
-    font-feature-settings: "palt" 1;
+    color: var(--theme-foreground);
+    background-color: var(--theme-background);
   }
 
   body > * {
@@ -16,17 +70,29 @@
   }
 
   a {
-    @apply underline text-blue-dark hover:decoration-2 dark:text-blue-light;
+    @apply underline hover:decoration-2;
+    color: var(--theme-foreground-link);
   }
 }
 
 @layer components {
   .card-rounded {
-    @apply border-8 rounded-3xl border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
+    @apply border-8 rounded-3xl;
+
+    border-color: var(--theme-border);
+    background-color: var(--theme-background-content);
   }
 
   .card-rounded-md {
-    @apply border-[6px] rounded-2xl border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
+    @apply border-[6px] rounded-2xl;
+
+    border-color: var(--theme-border);
+    background-color: var(--theme-background-content);
+  }
+
+  #global p a img,
+  #profile figure p a img {
+    background-color: var(--theme-background-avatar);
   }
 
   .entry {
@@ -40,11 +106,12 @@
       }
 
       & > h1 > a {
-        @apply text-gray-darkest dark:text-gray-lightest;
+        color: var(--theme-foreground-title);
       }
 
-      & > h1 > a:hover {
-        @apply text-gray-dark dark:text-gray-light;
+      & > h1 > a:hover,
+      & > h1 > a:active {
+        color: var(--theme-foreground-link);
       }
 
       & > p {
@@ -62,10 +129,6 @@
       & > p > *:last-child {
         @apply text-right;
       }
-    }
-
-    & > aside:last-child:has(.adsbygoogle[style*="height: 0px"]) {
-      @apply hidden;
     }
   }
 
@@ -99,7 +162,8 @@
     }
 
     & hr {
-      @apply my-4 border-4 rounded-2xl border-gray-light dark:border-gray-clay;
+      @apply my-4 border-4 rounded-2xl;
+      border-color: var(--theme-border);
     }
 
     & > ul,
@@ -110,7 +174,15 @@
 
     & ul > li,
     & ol > li {
-      @apply ml-4 list-disc leading-7;
+      @apply ml-4 leading-7;
+    }
+
+    & ul > li {
+      @apply list-disc;
+    }
+
+    & ol > li {
+      @apply list-decimal;
     }
 
     & ul > li:last-child,
@@ -120,7 +192,8 @@
     }
 
     & li::marker {
-      @apply text-blue-dark dark:text-blue-light;
+      @apply text-blue-50;
+      color: var(--theme-foreground-listitem);
     }
 
     & blockquote {
@@ -128,7 +201,8 @@
     }
 
     & blockquote::before {
-      @apply absolute top-0.5 bottom-0.5 left-0 w-1 content-[''] rounded-lg bg-purple-light;
+      @apply absolute top-0.5 bottom-0.5 left-0 w-1 content-[''] rounded-lg;
+      background-color: var(--theme-border-quote);
     }
 
     & pre > code,
@@ -137,112 +211,146 @@
     }
 
     & pre > code {
-      @apply block px-4 py-2 rounded-lg overflow-x-scroll text-gray-lightest bg-gray-darkest;
+      @apply block px-4 py-2 rounded-sm overflow-x-scroll shadow-inner shadow-gray-0;
+      color: var(--theme-foreground-code);
+      background-color: var(--theme-background-code);
     }
 
     & *:not(pre) > code {
-      @apply px-1.5 py-0.5 rounded-md text-gray-darkest bg-gray-light dark:text-gray-light dark:bg-gray-dark;
+      @apply px-1.5 py-0.5 rounded-sm;
+      color: var(--theme-foreground-code-inline);
+      background-color: var(--theme-background-code-inline);
     }
 
     & .content__card--thumbnail img {
-      @apply rounded-xl border-4 border-gray-light dark:border-gray-clay;
+      @apply rounded-sm border-4 shadow-md;
+      border-color: var(--theme-border-thumbnail);
     }
 
-    & .content__card--website a,
-    & .content__card--website div {
-      @apply block rounded-xl border-4 px-4 py-2 no-underline border-gray-light dark:border-gray-clay dark:bg-gray-darkest;
-    }
+    & .content__card--website {
+      & > a,
+      & > div {
+        @apply block rounded-sm border-4 px-4 py-2 no-underline shadow-md;
 
-    & .content__card--website a *,
-    & .content__card--website div * {
-      @apply truncate;
-    }
+        & * {
+          @apply truncate;
+        }
 
-    & .content__card--website a h2,
-    & .content__card--website div h2 {
-      @apply font-bold text-gray-darkest dark:text-gray-lightest;
-    }
+        & h2 {
+          @apply font-bold;
+        }
 
-    & .content__card--website a p img {
-      @apply inline align-[-3px] mr-1;
-    }
+        & cite {
+          @apply text-sm not-italic underline;
+        }
+      }
 
-    & .content__card--website a > p,
-    & .content__card--website div > p {
-      @apply my-1;
-    }
+      & > a {
+        & p {
+          @apply my-1;
+        }
 
-    & .content__card--website a cite,
-    & .content__card--website div cite {
-      @apply text-sm not-italic underline dark:text-blue-light;
-    }
+        & p img {
+          @apply inline align-[-3px] mr-1;
+        }
 
-    & .content__card--website a:hover {
-      @apply border-gray-clay dark:border-gray-light;
-    }
+        &:link,
+        &:visited,
+        &:hover,
+        &:active {
+          border-color: var(--theme-border-embedded);
+        }
 
-    & .content__card--website a:hover cite {
-      @apply decoration-2;
-    }
+        &:link,
+        &:visited {
+          & h2 {
+            color: var(--theme-foreground);
+          }
 
-    & .content__card--website div {
-      @apply border-gray-clay bg-gray-light;
-    }
+          & cite {
+            color: var(--theme-foreground-cite);
+          }
+        }
 
-    & .content__card--website div small {
-      @apply text-xs;
-    }
+        &:hover,
+        &:active {
+          & h2,
+          & cite {
+            @apply underline decoration-2;
+          }
+        }
+      }
 
-    & .content__card--website div small::before {
-      @apply content-['（'];
-    }
+      & > div {
+        & {
+          border-color: var(--theme-border-inactive);
+          background-color: var(--theme-background-inactive);
+        }
 
-    & .content__card--website div small::after {
-      @apply content-['）'];
+        & small {
+          & {
+            @apply text-xs;
+          }
+
+          &::before {
+            @apply content-['（'];
+          }
+
+          &::after {
+            @apply content-['）'];
+          }
+        }
+      }
     }
 
     & .content__card--affiliate {
-      @apply rounded-xl border-4 pl-4 pr-2 py-2 border-gray-light bg-gray-lightest dark:border-gray-clay dark:bg-gray-darkest;
-    }
+      & {
+        @apply rounded-sm border-4 pl-4 pr-2 py-2 shadow-md;
+        border-color: var(--theme-border-store);
+      }
 
-    & .content__card--affiliate::after {
-      @apply content-[''] block clear-both;
-    }
+      &::after {
+        @apply content-[''] block clear-both;
+      }
 
-    & .content__card--affiliate h2 {
-      @apply mb-2;
-    }
+      & h2 {
+        @apply mb-2;
 
-    & .content__card--affiliate h2 a {
-      @apply font-bold text-gray-darkest dark:text-gray-lightest;
-    }
+        & a {
+          @apply font-bold;
+          color: var(--theme-foreground);
+        }
 
-    & .content__card--affiliate h2 a:hover {
-      @apply font-bold text-gray-dark dark:text-gray-light;
-    }
+        & + div > a > img {
+          border-color: var(--theme-border);
+        }
+      }
 
-    & .content__card--affiliate ul li {
-      @apply leading-7 list-['▸'] ml-2 pl-1 dark:text-gray-clay;
-    }
+      & ul li {
+        & {
+          @apply leading-7 list-['▸'] ml-2 pl-1 dark:text-gray-25;
+        }
 
-    & .content__card--affiliate ul li.amazon::marker {
-      @apply text-[#FF9900];
-    }
+        &.amazon::marker {
+          @apply text-[#FF9900];
+        }
 
-    & .content__card--affiliate ul li a {
-      @apply decoration-[#FF9900];
-    }
+        &.amazon a {
+          @apply decoration-[#FF9900];
+        }
 
-    & .content__card--affiliate ul li.rakuten::marker {
-      @apply text-[#D70000];
-    }
+        &.rakuten::marker {
+          @apply text-[#D70000];
+        }
 
-    & .content__card--affiliate ul li.rakuten a {
-      @apply decoration-[#D70000];
-    }
+        &.rakuten a {
+          @apply decoration-[#D70000];
+        }
 
-    & .content__card--affiliate ul li a {
-      @apply text-gray-dark dark:text-gray-light;
+        & a {
+          color: var(--theme-foreground);
+        }
+      }
     }
 
     & .archives li {
@@ -254,7 +362,8 @@
     }
 
     & .archives li span {
-      @apply mx-1 text-gray-dark;
+      @apply mx-1;
+      color: var(--theme-foreground);
     }
 
     & .logs {
@@ -270,7 +379,8 @@
     }
 
     & #profile__information img {
-      @apply inline-block dark:bg-gray-light dark:rounded-3xl;
+      @apply inline-block dark:rounded-3xl;
+      background-color: var(--theme-background-avatar);
     }
 
     & #profile__information h2 {

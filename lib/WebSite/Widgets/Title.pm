@@ -20,7 +20,7 @@ sub breadcrumb {
   push @tree, a(
     { href => href('/')->to_string },
     img(
-      classes(qw|card-rounded-md inline-block box-content my-4 dark:border-gray-darker dark:bg-gray-lightest|),
+      classes(qw|card-rounded-md inline-block box-content my-4|),
       { src => href('/assets/avatar.svg')->to_string, height => 50, width => 50, alt => '' }
     ),
     br(),

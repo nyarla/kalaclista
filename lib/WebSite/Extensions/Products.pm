@@ -36,9 +36,7 @@ sub cardify : prototype($) {
 
   if ( defined $data->thumbnail && $data->thumbnail ne q{} ) {
     $html .= div(
-      classes(
-        qw|[&>a>img]:!m-0 [&>a>img]:rounded-lg [&>a>img]:border-2 [&>a>img]:border-gray-light dark:[&>a>img]:border-gray-clay float-none my-4 sm:float-right sm:-mt-8 sm:my-0|
-      ),
+      classes(qw|[&>a>img]:!m-0 [&>a>img]:rounded-sm [&>a>img]:border-2 float-none my-4 sm:float-right sm:-mt-8 sm:my-0|),
       raw( $data->thumbnail )
     );
   }

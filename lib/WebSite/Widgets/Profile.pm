@@ -23,7 +23,7 @@ sub profile {
         a(
           { href => href('/nyarla/')->to_string },
           img(
-            classes( q|u-logo logo|, qw|inline-block dark:bg-gray-light dark:rounded-2xl| ),
+            classes( q|u-logo logo|, qw|inline-block dark:rounded-2xl| ),
             {
               src    => href('/assets/avatar.svg')->to_string,
               height => 96, width => 96, alt => ''
